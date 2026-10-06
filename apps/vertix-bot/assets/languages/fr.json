@@ -529,6 +529,12 @@
         "content": {
           "label": "Événements"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "Ouvrir la facturation"
+        }
       }
     ],
     "textInputs": [
@@ -4246,6 +4252,13 @@
             "{errorLogChannelForbidden}": "\n\n⚠️ Le bot ne peut pas publier la copie des présences. Il a besoin de Voir le salon, Envoyer des messages et Intégrer des liens dans ce salon."
           }
         }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  Ton essai gratuit de {planName} se termine",
+        "description": "L'essai gratuit de {planName} sur **{guildName}** se termine <t:{endsAt}:R>, le <t:{endsAt}:f>.\n\nÀ la fin :\n- **Apparence personnalisée du bot** - le nom, l'avatar, la bannière et la bio que le bot porte sur ton serveur sont retirés.\n- **Générateurs** - seuls tes {maxMasterChannels} premiers continuent de créer des salons.\n\nGarde {planName} pour {monthlyPriceUsd} $ par mois depuis le tableau de bord."
       }
     }
   ],

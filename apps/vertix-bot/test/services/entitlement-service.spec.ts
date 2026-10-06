@@ -395,4 +395,65 @@ describe( "VertixBot/Services/Entitlement", () => {
             await expect( service.canBrand( GUILD_ID ) ).resolves.toBe( false );
         } );
     } );
+
+    describe( "shouldWarnOfTrialEnd()", () => {
+        it( "should warn a server in its trial's last days", async() => {
+            // Act.
+            const { service } = await makeService( { trialEndsAt: daysFromNow( 1 ) } );
+
+            // Assert.
+            await expect( service.shouldWarnOfTrialEnd( GUILD_ID ) ).resolves.toBe( true );
+        } );
+
+        it( "should not warn a server with most of its trial still to go", async() => {
+            // Act.
+            const { service } = await makeService( { trialEndsAt: daysFromNow( 10 ) } );
+
+            // Assert.
+            await expect( service.shouldWarnOfTrialEnd( GUILD_ID ) ).resolves.toBe( false );
+        } );
+
+        it( "should not warn a server that started paying for Pro during its trial", async() => {
+            // Act - it loses nothing when the date passes.
+            const { service } = await makeService( {
+                trialEndsAt: daysFromNow( 1 ),
+                subscription: { priceId: "pri_pro", status: "active", currentPeriodEnd: daysFromNow( 30 ) }
+            } );
+
+            // Assert.
+            await expect( service.shouldWarnOfTrialEnd( GUILD_ID ) ).resolves.toBe( false );
+        } );
+
+        it( "should still warn a server whose subscription has lapsed", async() => {
+            // Act - a lapsed row buys nothing, so the trial is all that holds Pro.
+            const { service } = await makeService( {
+                trialEndsAt: daysFromNow( 1 ),
+                subscription: { priceId: "pri_pro", status: "canceled", currentPeriodEnd: daysFromNow( -3 ) }
+            } );
+
+            // Assert.
+            await expect( service.shouldWarnOfTrialEnd( GUILD_ID ) ).resolves.toBe( true );
+        } );
+    } );
+
+    describe( "getMaxMasterChannelsAfterTrial()", () => {
+        it( "should give what the server keeps with the trial taken out", async() => {
+            // Act - unlimited while the trial runs, the grant once it is over.
+            const { service } = await makeService( { granted: 2, trialEndsAt: daysFromNow( 1 ) } );
+
+            const duringTrial = await service.getMaxMasterChannels( GUILD_ID );
+
+            // Assert.
+            expect( isUnlimitedAllowance( duringTrial ) ).toBe( true );
+            await expect( service.getMaxMasterChannelsAfterTrial( GUILD_ID ) ).resolves.toBe( 2 );
+        } );
+
+        it( "should keep a grant higher than the free allowance", async() => {
+            // Act.
+            const { service } = await makeService( { granted: 5, trialEndsAt: daysFromNow( 1 ) } );
+
+            // Assert.
+            await expect( service.getMaxMasterChannelsAfterTrial( GUILD_ID ) ).resolves.toBe( 5 );
+        } );
+    } );
 } );

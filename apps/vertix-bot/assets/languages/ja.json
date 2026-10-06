@@ -529,6 +529,12 @@
         "content": {
           "label": "イベント"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "お支払いを開く"
+        }
       }
     ],
     "textInputs": [
@@ -4246,6 +4252,13 @@
             "{errorLogChannelForbidden}": "\n\n⚠️ ボットが出席記録のコピーを投稿できません。そのチャンネルで「チャンネルを見る」「メッセージを送信」「埋め込みリンク」の権限が必要です。"
           }
         }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  {planName} の無料トライアルがまもなく終了します",
+        "description": "**{guildName}** の {planName} 無料トライアルは <t:{endsAt}:R>（<t:{endsAt}:f>）に終了します。\n\n終了すると:\n- **ボットのカスタム外観** - サーバー内でボットが使っている名前、アバター、バナー、自己紹介が外れます。\n- **ジェネレーター** - ルームを作り続けるのは最初の {maxMasterChannels} 個だけになります。\n\nダッシュボードから月額 ${monthlyPriceUsd} で {planName} を続けられます。"
       }
     }
   ],

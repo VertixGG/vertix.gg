@@ -70,6 +70,14 @@ export async function logout(): Promise<void> {
     } );
 }
 
-export function getDiscordLoginUrl(): string {
-    return `${ AUTH_BASE_URL }/discord`;
+/**
+ * Function getDiscordLoginUrl() :: Where signing in starts, and the dashboard page to come back to after it.
+ *
+ * The page goes to the api, which keeps it through discord's round trip and sends the visitor back
+ * to it - on the dashboard only, whatever the link says.
+ */
+export function getDiscordLoginUrl( returnTo?: string ): string {
+    return returnTo
+        ? `${ AUTH_BASE_URL }/discord?returnTo=${ encodeURIComponent( returnTo ) }`
+        : `${ AUTH_BASE_URL }/discord`;
 }

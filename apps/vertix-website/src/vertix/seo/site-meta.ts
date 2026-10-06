@@ -253,7 +253,7 @@ export const ROUTE_META: readonly RouteMeta[] = [
         title: "Plans and Pricing | VoiceChannels",
         description:
             "Every voice-channel control is free, with two generators. Pro adds unlimited generators "
-            + "and your own bot profile in your server, for $4 a month.",
+            + "and your own bot profile in your server, for $4 a month - try it free for 14 days, no card.",
         priority: 0.8,
     },
     {

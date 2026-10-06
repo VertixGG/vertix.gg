@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
 import { Server, Loader2, Settings, BotOff } from "lucide-react";
 
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
+import { readReturnPath } from "@vertix.gg/dashboard/src/features/auth/lib/return-path";
 
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 import type { Guild } from "@vertix.gg/dashboard/src/features/auth/types";
@@ -20,6 +22,10 @@ interface ServerSelectionSelectedState {
 
 export function ServerSelectionPage() {
     const navigate = useNavigate();
+
+    // The page somebody was going to before being asked to pick a server - finished on once they
+    // have, rather than on the front page.
+    const returnTo = readReturnPath( useLocation().state ) ?? "/";
 
     const [ state ] = useCommandState<AuthState, ServerSelectionSelectedState>(
         "Dashboard/Auth",
@@ -41,9 +47,9 @@ export function ServerSelectionPage() {
 
     useEffect( () => {
         if ( state.selectedGuild ) {
-            navigate( "/" );
+            navigate( returnTo );
         }
-    }, [ state.selectedGuild, navigate ] );
+    }, [ state.selectedGuild, navigate, returnTo ] );
 
     const handleSelectGuild = async( guild: Guild ) => {
         await selectGuild.run( { guild } );

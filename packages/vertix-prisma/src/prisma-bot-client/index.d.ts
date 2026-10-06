@@ -4816,6 +4816,7 @@ export namespace Prisma {
     setupAt: Date | null
     firstRoomAt: Date | null
     trialEndsAt: Date | null
+    trialWarnedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     updatedAtInternal: Date | null
@@ -4832,6 +4833,7 @@ export namespace Prisma {
     setupAt: Date | null
     firstRoomAt: Date | null
     trialEndsAt: Date | null
+    trialWarnedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     updatedAtInternal: Date | null
@@ -4848,6 +4850,7 @@ export namespace Prisma {
     setupAt: number
     firstRoomAt: number
     trialEndsAt: number
+    trialWarnedAt: number
     createdAt: number
     updatedAt: number
     updatedAtInternal: number
@@ -4866,6 +4869,7 @@ export namespace Prisma {
     setupAt?: true
     firstRoomAt?: true
     trialEndsAt?: true
+    trialWarnedAt?: true
     createdAt?: true
     updatedAt?: true
     updatedAtInternal?: true
@@ -4882,6 +4886,7 @@ export namespace Prisma {
     setupAt?: true
     firstRoomAt?: true
     trialEndsAt?: true
+    trialWarnedAt?: true
     createdAt?: true
     updatedAt?: true
     updatedAtInternal?: true
@@ -4898,6 +4903,7 @@ export namespace Prisma {
     setupAt?: true
     firstRoomAt?: true
     trialEndsAt?: true
+    trialWarnedAt?: true
     createdAt?: true
     updatedAt?: true
     updatedAtInternal?: true
@@ -4987,6 +4993,7 @@ export namespace Prisma {
     setupAt: Date | null
     firstRoomAt: Date | null
     trialEndsAt: Date | null
+    trialWarnedAt: Date | null
     createdAt: Date
     updatedAt: Date
     updatedAtInternal: Date | null
@@ -5020,6 +5027,7 @@ export namespace Prisma {
     setupAt?: boolean
     firstRoomAt?: boolean
     trialEndsAt?: boolean
+    trialWarnedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     updatedAtInternal?: boolean
@@ -5040,12 +5048,13 @@ export namespace Prisma {
     setupAt?: boolean
     firstRoomAt?: boolean
     trialEndsAt?: boolean
+    trialWarnedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     updatedAtInternal?: boolean
   }
 
-  export type GuildOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "name" | "isInGuild" | "lastActiveAt" | "joinedAt" | "leftAt" | "setupAt" | "firstRoomAt" | "trialEndsAt" | "createdAt" | "updatedAt" | "updatedAtInternal", ExtArgs["result"]["guild"]>
+  export type GuildOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "name" | "isInGuild" | "lastActiveAt" | "joinedAt" | "leftAt" | "setupAt" | "firstRoomAt" | "trialEndsAt" | "trialWarnedAt" | "createdAt" | "updatedAt" | "updatedAtInternal", ExtArgs["result"]["guild"]>
   export type GuildInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | Guild$dataArgs<ExtArgs>
     _count?: boolean | GuildCountOutputTypeDefaultArgs<ExtArgs>
@@ -5086,6 +5095,11 @@ export namespace Prisma {
        * lasts reaches new trials only, never one already given.
        */
       trialEndsAt: Date | null
+      /**
+       * When the owner was told the trial is about to run out - written once, by whichever bot claimed
+       * the telling before sending it, so it is said once however many processes are looking.
+       */
+      trialWarnedAt: Date | null
       createdAt: Date
       updatedAt: Date
       updatedAtInternal: Date | null
@@ -5492,6 +5506,7 @@ export namespace Prisma {
     readonly setupAt: FieldRef<"Guild", 'DateTime'>
     readonly firstRoomAt: FieldRef<"Guild", 'DateTime'>
     readonly trialEndsAt: FieldRef<"Guild", 'DateTime'>
+    readonly trialWarnedAt: FieldRef<"Guild", 'DateTime'>
     readonly createdAt: FieldRef<"Guild", 'DateTime'>
     readonly updatedAt: FieldRef<"Guild", 'DateTime'>
     readonly updatedAtInternal: FieldRef<"Guild", 'DateTime'>
@@ -24652,6 +24667,7 @@ export namespace Prisma {
     setupAt: 'setupAt',
     firstRoomAt: 'firstRoomAt',
     trialEndsAt: 'trialEndsAt',
+    trialWarnedAt: 'trialWarnedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     updatedAtInternal: 'updatedAtInternal'
@@ -25229,6 +25245,7 @@ export namespace Prisma {
     setupAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
     firstRoomAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
     trialEndsAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
+    trialWarnedAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
     createdAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAtInternal?: DateTimeNullableFilter<"Guild"> | Date | string | null
@@ -25246,6 +25263,7 @@ export namespace Prisma {
     setupAt?: SortOrder
     firstRoomAt?: SortOrder
     trialEndsAt?: SortOrder
+    trialWarnedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updatedAtInternal?: SortOrder
@@ -25266,6 +25284,7 @@ export namespace Prisma {
     setupAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
     firstRoomAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
     trialEndsAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
+    trialWarnedAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
     createdAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAtInternal?: DateTimeNullableFilter<"Guild"> | Date | string | null
@@ -25283,6 +25302,7 @@ export namespace Prisma {
     setupAt?: SortOrder
     firstRoomAt?: SortOrder
     trialEndsAt?: SortOrder
+    trialWarnedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updatedAtInternal?: SortOrder
@@ -25305,6 +25325,7 @@ export namespace Prisma {
     setupAt?: DateTimeNullableWithAggregatesFilter<"Guild"> | Date | string | null
     firstRoomAt?: DateTimeNullableWithAggregatesFilter<"Guild"> | Date | string | null
     trialEndsAt?: DateTimeNullableWithAggregatesFilter<"Guild"> | Date | string | null
+    trialWarnedAt?: DateTimeNullableWithAggregatesFilter<"Guild"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Guild"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Guild"> | Date | string
     updatedAtInternal?: DateTimeNullableWithAggregatesFilter<"Guild"> | Date | string | null
@@ -26949,6 +26970,7 @@ export namespace Prisma {
     setupAt?: Date | string | null
     firstRoomAt?: Date | string | null
     trialEndsAt?: Date | string | null
+    trialWarnedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -26966,6 +26988,7 @@ export namespace Prisma {
     setupAt?: Date | string | null
     firstRoomAt?: Date | string | null
     trialEndsAt?: Date | string | null
+    trialWarnedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -26982,6 +27005,7 @@ export namespace Prisma {
     setupAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     firstRoomAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialWarnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26998,6 +27022,7 @@ export namespace Prisma {
     setupAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     firstRoomAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialWarnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -27015,6 +27040,7 @@ export namespace Prisma {
     setupAt?: Date | string | null
     firstRoomAt?: Date | string | null
     trialEndsAt?: Date | string | null
+    trialWarnedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -27030,6 +27056,7 @@ export namespace Prisma {
     setupAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     firstRoomAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialWarnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -27045,6 +27072,7 @@ export namespace Prisma {
     setupAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     firstRoomAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialWarnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28968,6 +28996,7 @@ export namespace Prisma {
     setupAt?: SortOrder
     firstRoomAt?: SortOrder
     trialEndsAt?: SortOrder
+    trialWarnedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updatedAtInternal?: SortOrder
@@ -28984,6 +29013,7 @@ export namespace Prisma {
     setupAt?: SortOrder
     firstRoomAt?: SortOrder
     trialEndsAt?: SortOrder
+    trialWarnedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updatedAtInternal?: SortOrder
@@ -29000,6 +29030,7 @@ export namespace Prisma {
     setupAt?: SortOrder
     firstRoomAt?: SortOrder
     trialEndsAt?: SortOrder
+    trialWarnedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updatedAtInternal?: SortOrder
@@ -30715,6 +30746,7 @@ export namespace Prisma {
     setupAt?: Date | string | null
     firstRoomAt?: Date | string | null
     trialEndsAt?: Date | string | null
+    trialWarnedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -30731,6 +30763,7 @@ export namespace Prisma {
     setupAt?: Date | string | null
     firstRoomAt?: Date | string | null
     trialEndsAt?: Date | string | null
+    trialWarnedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -30762,6 +30795,7 @@ export namespace Prisma {
     setupAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     firstRoomAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialWarnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -30777,6 +30811,7 @@ export namespace Prisma {
     setupAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     firstRoomAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialWarnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

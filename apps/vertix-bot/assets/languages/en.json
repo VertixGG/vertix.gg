@@ -529,6 +529,12 @@
         "content": {
           "label": "Events"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "Open billing"
+        }
       }
     ],
     "textInputs": [
@@ -4273,6 +4279,13 @@
             "{errorLogChannelForbidden}": "\n\n⚠️ The bot cannot post the attendance copy. It needs View Channel, Send Messages and Embed Links in that channel."
           }
         }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  Your free {planName} trial is ending",
+        "description": "The free {planName} trial in **{guildName}** ends <t:{endsAt}:R>, on <t:{endsAt}:f>.\n\nWhen it ends:\n- **Custom bot look** - the name, avatar, banner and bio the bot wears in your server come off.\n- **Generators** - only your first {maxMasterChannels} keep making rooms.\n\nKeep {planName} for ${monthlyPriceUsd} a month on the dashboard."
       }
     }
   ],

@@ -12,6 +12,7 @@ import {
 } from "@vertix.gg/api/src/server/services/auth-service";
 import { selectGuildIdsWithBot } from "@vertix.gg/api/src/server/services/dashboard-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
+import { parseDashboardReturnPath } from "@vertix.gg/api/src/server/utils/dashboard-return-path";
 
 import { cacheOwnedGuilds, resolveGuildOwnership } from "@vertix.gg/api/src/server/middleware/guild-access";
 
@@ -30,6 +31,14 @@ declare module "fastify" {
     interface Session {
         userId?: string;
         oauthState?: string;
+
+        /**
+         * The dashboard page somebody was on when they were sent to sign in - `/billing?plan=pro` -
+         * kept across discord's round trip so the callback can send them back to it rather than to
+         * the dashboard's front page. Already checked by `parseDashboardReturnPath()`.
+         */
+        oauthReturnTo?: string;
+
         selectedGuild?: SelectedGuild;
 
         /**
@@ -44,10 +53,17 @@ declare module "fastify" {
 
 const FRONTEND_URL = process.env.DASHBOARD_URL || "http://localhost:3020";
 
-async function handleDiscordAuth( request: FastifyRequest, reply: FastifyReply ) {
+async function handleDiscordAuth(
+    request: FastifyRequest<{ Querystring: { returnTo?: string } }>,
+    reply: FastifyReply
+) {
     try {
         const state = generateState();
         request.session.oauthState = state;
+
+        // Written whether or not there is one, so a sign-in started without a page to come back to
+        // does not inherit the last one's.
+        request.session.oauthReturnTo = parseDashboardReturnPath( request.query.returnTo ) ?? undefined;
 
         await request.session.save();
 
@@ -90,10 +106,15 @@ async function handleDiscordCallback(
         request.session.userId = user.id;
         delete request.session.oauthState;
 
+        // After the dashboard's own address, never on its own - see `parseDashboardReturnPath()`.
+        const returnTo = request.session.oauthReturnTo ?? "";
+
+        delete request.session.oauthReturnTo;
+
         // Explicitly save session before redirect
         await request.session.save();
 
-        return reply.redirect( FRONTEND_URL );
+        return reply.redirect( `${ FRONTEND_URL }${ returnTo }` );
     } catch( error ) {
         request.log.error( error, "Discord callback error" );
         return reply.redirect( `${ FRONTEND_URL }/login?error=auth_failed` );
@@ -227,7 +248,7 @@ async function handleLogout( request: FastifyRequest, reply: FastifyReply ) {
 }
 
 const authRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
-    fastify.get( "/auth/discord", handleDiscordAuth );
+    fastify.get<{ Querystring: { returnTo?: string } }>( "/auth/discord", handleDiscordAuth );
 
     fastify.get<{ Querystring: { code?: string; state?: string; error?: string } }>(
         "/auth/discord/callback",

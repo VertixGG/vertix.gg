@@ -97,11 +97,19 @@ One paid plan. Everything below reads it from one place, so changing it is chang
 
 Monthly only. There is no yearly price, and that is a decision rather than an omission.
 
-**Every server gets Pro free for 14 days, once, with no card.** A room a member makes starts it -
-`GuildActivationService` asks on every room, so a server already using the bot when trials began
-gets its trial from its next room - and `Guild.trialEndsAt` holds when it runs out. Until then
-`resolveHeldTiers()` counts it exactly as paying for Pro: unlimited generators, the bot's profile, no
-panel links. Paddle is nowhere in it.
+**Every server can try Pro free for 14 days, once, with no card.** Its owner starts it from the
+dashboard's Subscription page - `POST /subscription/:guildId/trial`, owner-only like the rest of
+billing - and `Guild.trialEndsAt` holds when it runs out. The website's pricing page sends people
+there (`trialStartUrl()`), with no plan in the address, since a plan there opens its checkout. Until
+the date `resolveHeldTiers()` counts it exactly as paying for Pro: unlimited generators, the bot's
+profile, no panel links. Paddle is nowhere in it.
+
+- **A start can be refused**, with a 409 carrying one of `BILLING_TRIAL_START_REFUSALS`, decided by
+  `resolveTrialStartRefusal()`: no trial on sale, a trial had already (even one long over), Pro paid
+  for already, or the bot not in the server - whose days would otherwise run with nothing to spend
+  them on. The dashboard says each back in its own words.
+- **A room used to start it**, for its first hours in production (`252a55a2`): those trials stand,
+  and nothing the bot sees starts one now.
 
 - **The end is stored, not the start**, so changing `trialDays` reaches trials not yet given and never
   one already running.
@@ -110,7 +118,14 @@ panel links. Paddle is nowhere in it.
 - **Nothing ends a trial but its date**, as with a lapsed subscription: the next
   `GuildBrandingService` sweep takes the profile off (saved, not deleted), and generators past the
   free two pause, newest first.
-- The dashboard's Subscription page shows it, from the same subscription route, as `trial`.
+- **The owner hears of it two days ahead, once.** `GuildTrialWarningService` looks every hour for
+  trials ending within `BILLING_TRIAL_WARNING_DAYS`, skips a server already paying for the plan
+  (`isTrialWarningDue()`), claims `Guild.trialWarnedAt` before sending - so two shards and two bots
+  send it once - and DMs the owner `VertixBot/UI-General/TrialEndingAdapter`: when the trial ends,
+  what that takes away, and a link to the Subscription page. A closed inbox loses it; the log says
+  so, and nothing tries again.
+- The dashboard's Subscription page shows it, from the same subscription route, as `trial`, and
+  offers the button while `trial` is null.
 
 **The bot profile is per server.** Discord's `Modify Current Member` scopes it to the one guild, so a
 Pro server changes how the bot looks there and nowhere else. It is decided by
@@ -202,6 +217,14 @@ the webhook carrying the right guild id, which was the one assumption nothing el
 A checkout arriving with no guild id is a purchase nobody can be given anything for. The dashboard
 is the only thing that opens one, so that is a bug rather than a case — logged loudly, because the
 money is real.
+
+The site's links into the dashboard - `?plan=pro` and the trial's `/billing` - survive signing in.
+They used to end on the dashboard's front page for anybody not signed in already. `ProtectedRoute`
+hands the page it turned somebody away from to the login page and the server picker, the login
+sends it to the api as `?returnTo=`, and the api keeps it in the session (`oauthReturnTo`) through
+discord's round trip and redirects to it after the dashboard's own address - only once
+`parseDashboardReturnPath()` has taken it for a dashboard path, since it is a redirect anybody can
+type into a link.
 
 **`M-06` — reading what a guild has. Done.** The allowance is the higher of the grant and the tier
 paid for; the coverage is oldest-first. A grant is given for a reason and paying should not be able

@@ -1,11 +1,13 @@
 import {
     BILLING_FREE_MAX_MASTER_CHANNELS,
     BILLING_TIER_DEFINITIONS,
+    BILLING_TRIAL_WARNING_DAYS,
     formatMasterChannelAllowance,
-    isUnlimitedAllowance
+    isUnlimitedAllowance,
+    resolveTrialTier
 } from "@vertix.gg/definitions/src/billing-definitions";
 
-import { planCheckoutUrl } from "@vertix.gg/website/src/vertix/shared/discord-app";
+import { planCheckoutUrl, trialStartUrl } from "@vertix.gg/website/src/vertix/shared/discord-app";
 
 /**
  * What a server pays for, and what it gets without paying.
@@ -28,6 +30,10 @@ interface IPlan {
     note: string;
     /** What else the plan buys besides generators, a line each. */
     extras: string[];
+    /** How the plan can be had for nothing first, or null where it cannot. */
+    trial: string | null;
+    /** Where the trial is started - the dashboard, which knows the server - or null with no trial. */
+    trialHref: string | null;
     /** Where its button goes - the dashboard's billing page, already on this plan. */
     href: string;
     /** The one plan a page like this should point at, and only one. */
@@ -61,6 +67,24 @@ const BRANDING_EXTRA = "branding - the bot's own name, avatar, banner and bio in
 const PANEL_LINE_EXTRA = "no \"Add VoiceChannels\" or \"Vote VoiceChannels\" links on your panels";
 
 /**
+ * Function describeTrial() :: A tier's free trial, as the line its card carries - null for a tier with none.
+ *
+ * "Try it", not "first 14 days": the trial is its own button, started whenever the owner likes, and
+ * a card that said "first" would read as days given with a purchase.
+ */
+function describeTrial( tier: { trialDays: number } ): string | null {
+    return tier.trialDays > 0 ? `try it free for ${ tier.trialDays } days - no card` : null;
+}
+
+/**
+ * Function describeTrialOffer() :: The free trial, as the sentence the intro closes on.
+ */
+function describeTrialOffer( tier: { name: string; trialDays: number } ): string {
+    return `Every server can try ${ tier.name } free for ${ tier.trialDays } days, once - no card, and `
+        + "nothing to cancel.";
+}
+
+/**
  * Function describeUpgrade() :: What a paid tier adds to free, as the sentence the intro ends on.
  */
 function describeUpgrade( tier: { name: string; maxMasterChannels: number; includesBranding: boolean } ): string {
@@ -91,6 +115,9 @@ const FEATURED_TIER_SLUG = "pro";
 
 const FEATURED_TIER = BILLING_TIER_DEFINITIONS.find( ( tier ) => FEATURED_TIER_SLUG === tier.slug );
 
+/** The plan every server may try for nothing, asked the way the bot asks it when it starts one. */
+const TRIAL_TIER = resolveTrialTier( BILLING_TIER_DEFINITIONS );
+
 const PLANS: IPlan[] = [
     {
         name: "Free",
@@ -98,6 +125,8 @@ const PLANS: IPlan[] = [
         allowance: `${ BILLING_FREE_MAX_MASTER_CHANNELS } generators`,
         note: "the starting point",
         extras: [],
+        trial: null,
+        trialHref: null,
         href: "/invite-vertix?src=site-pricing",
         isFeatured: false,
         isFree: true
@@ -110,6 +139,8 @@ const PLANS: IPlan[] = [
             : `${ formatMasterChannelAllowance( tier.maxMasterChannels ) } generators`,
         note: describeAllowance( tier.maxMasterChannels ),
         extras: tier.includesBranding ? [ BRANDING_EXTRA, PANEL_LINE_EXTRA ] : [],
+        trial: describeTrial( tier ),
+        trialHref: tier.trialDays > 0 ? trialStartUrl() : null,
         href: planCheckoutUrl( tier.slug ),
         isFeatured: FEATURED_TIER_SLUG === tier.slug,
         isFree: false
@@ -133,7 +164,26 @@ const IN_EVERY_PLAN = [
     "Nothing locked behind a vote"
 ];
 
+/**
+ * What the free trial is, for the questions - only where a plan offers one.
+ *
+ * Says what the end takes away, in the words "And if I cancel?" uses for a plan ending, because a
+ * trial ends the same way: nothing is deleted, the extras pause and the bot's own profile comes off.
+ */
+const TRIAL_QUESTIONS = TRIAL_TIER
+    ? [ {
+        question: "Is there a free trial?",
+        answer: `Yes - every server can try ${ TRIAL_TIER.name } free for ${ TRIAL_TIER.trialDays } days, `
+            + "once. Its owner starts it from the dashboard's Subscription page, on the server it is "
+            + "for, and it asks for no card and never charges. "
+            + `The bot tells the owner ${ BILLING_TRIAL_WARNING_DAYS } days before it ends; `
+            + "when it ends, the bot goes back to its normal profile in your server and the generators "
+            + `past the free ${ BILLING_FREE_MAX_MASTER_CHANNELS } pause - unless the server subscribed by then.`
+    } ]
+    : [];
+
 const QUESTIONS = [
+    ...TRIAL_QUESTIONS,
     {
         question: "Where do I buy one?",
         answer: "From the dashboard, on the server you want to buy it for - a plan covers one "
@@ -180,10 +230,16 @@ function PlanCard( { plan }: { plan: IPlan } ) {
                 { plan.name }
             </h2>
 
-            <div className="flex items-baseline gap-2 mb-6">
+            <div className={ `flex items-baseline gap-2 ${ plan.trial ? "mb-1" : "mb-6" }` }>
                 <span className="text-h2 text-vc-starlight">{ plan.price }</span>
                 { ! plan.isFree && <span className="text-fine text-vc-ice-dim">/ month</span> }
             </div>
+
+            { plan.trial && (
+                <div className="text-fine mb-6" style={ { color: "var(--color-vc-mint)" } }>
+                    { plan.trial }
+                </div>
+            ) }
 
             <div className="text-h5 text-vc-ice">{ plan.allowance }</div>
             <div className="text-fine text-vc-ice-dim mb-1">{ plan.note }</div>
@@ -204,6 +260,15 @@ function PlanCard( { plan }: { plan: IPlan } ) {
                 rel={ plan.isFree ? undefined : "noreferrer" }>
                 { plan.isFree ? "Invite the bot" : `Get ${ plan.name }` }
             </a>
+
+            { plan.trialHref && (
+                <a className="vc-btn vc-btn-effect mt-2 w-full"
+                    href={ plan.trialHref }
+                    target="_blank"
+                    rel="noreferrer">
+                    Start free trial
+                </a>
+            ) }
         </div>
     );
 }
@@ -217,6 +282,8 @@ export default function Pricing() {
                 <p className="text-vc-ice-dim mx-auto max-w-2xl">
                     Every voice-channel control is free, on every plan - nothing a channel owner
                     presses sits behind a paywall. { FEATURED_TIER ? describeUpgrade( FEATURED_TIER ) : null }
+                    { " " }
+                    { TRIAL_TIER ? describeTrialOffer( TRIAL_TIER ) : null }
                 </p>
             </div>
 

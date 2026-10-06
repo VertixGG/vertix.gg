@@ -7,6 +7,7 @@ import { SubscriptionModel } from "@vertix.gg/data/src/models/subscription-model
 
 import {
     isSubscriptionEntitling,
+    isTrialWarningDue,
     readBillingTiers,
     resolveCanBrand,
     resolveMaxMasterChannels
@@ -32,8 +33,9 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
  * server with no row, or one whose paid period has run out, is on whatever it was granted - which
  * is every server that has never bought anything, so the free path stays the one that is exercised.
  *
- * And for a while on Pro without paying: a server's first room starts its free trial (see
- * `GuildActivationService`), and the trial counts exactly as paying would until its date passes.
+ * And for a while on Pro without paying: a server's owner starts its free trial from the dashboard
+ * (the api's subscription route writes the date), and the trial counts exactly as paying would until
+ * that date passes.
  */
 export class EntitlementService extends ServiceBase {
     private readonly debugger: Debugger;
@@ -82,6 +84,36 @@ export class EntitlementService extends ServiceBase {
         this.debugger.log( this.canBrand, `Guild id: '${ guildId }' - Can brand '${ allowed }'` );
 
         return allowed;
+    }
+
+    /**
+     * Function shouldWarnOfTrialEnd() :: Whether this guild should be told now that its free trial is running out.
+     */
+    public async shouldWarnOfTrialEnd( guildId: string, now: Date = new Date() ): Promise<boolean> {
+        const due = isTrialWarningDue( {
+            paidPriceIds: await this.getPaidPriceIds( guildId ),
+            trialEndsAt: await this.getTrialEndsAt( guildId ),
+            tiers: readBillingTiers( process.env ),
+            now
+        } );
+
+        this.debugger.log( this.shouldWarnOfTrialEnd, `Guild id: '${ guildId }' - Trial warning due '${ due }'` );
+
+        return due;
+    }
+
+    /**
+     * Function getMaxMasterChannelsAfterTrial() :: How many generators this guild keeps once its trial is over.
+     *
+     * What it is allowed with the trial taken out and everything else left as it is - the grant, and
+     * whatever it pays for - which is the number a server told its trial is ending needs.
+     */
+    public async getMaxMasterChannelsAfterTrial( guildId: string ): Promise<number> {
+        return resolveMaxMasterChannels( {
+            granted: ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
+            paidPriceIds: await this.getPaidPriceIds( guildId ),
+            tiers: readBillingTiers( process.env )
+        } );
     }
 
     /**

@@ -88,7 +88,7 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
     /**
      * Function startTrial() :: Give a server its one free trial, unless it already had it.
      *
-     * A filter rather than a read and a write, so two rooms made at once cannot both start it. The
+     * A filter rather than a read and a write, so two presses at once cannot both start it. The
      * row outlives the bot leaving, so removing the bot and adding it back keeps the date already
      * given - a trial cannot be had twice that way. Rows written before this field existed have it
      * unset rather than null, so both are matched.
@@ -99,6 +99,42 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         const { count } = await this.prisma.guild.updateMany( {
             where: { guildId, OR: [ { trialEndsAt: { isSet: false } }, { trialEndsAt: null } ] },
             data: { trialEndsAt: endsAt }
+        } );
+
+        return count > 0;
+    }
+
+    /**
+     * Function getTrialsToWarn() :: The servers with the bot whose trial runs out by `cutoff`, not yet told.
+     *
+     * Every server in the database, whichever process speaks for it - the caller keeps to its own. A
+     * trial that has already ended is left out by `now`: telling somebody after the fact warns of
+     * nothing.
+     */
+    public async getTrialsToWarn( now: Date, cutoff: Date ) {
+        return this.prisma.guild.findMany( {
+            where: {
+                isInGuild: true,
+                trialEndsAt: { gt: now, lte: cutoff },
+                OR: [ { trialWarnedAt: { isSet: false } }, { trialWarnedAt: null } ]
+            },
+            select: { guildId: true, trialEndsAt: true }
+        } );
+    }
+
+    /**
+     * Function claimTrialWarning() :: Take the telling of a server's trial running out, unless it is taken.
+     *
+     * A filter rather than a read and a write, for the reason `startTrial()` is one: two shards, and
+     * two bots reading this database, look at the same rows, and only one of them may send it.
+     * Claimed before sending, so a warning that then fails to land is lost rather than sent twice.
+     *
+     * Answers whether this call was the one that took it.
+     */
+    public async claimTrialWarning( guildId: string, at: Date ): Promise<boolean> {
+        const { count } = await this.prisma.guild.updateMany( {
+            where: { guildId, OR: [ { trialWarnedAt: { isSet: false } }, { trialWarnedAt: null } ] },
+            data: { trialWarnedAt: at }
         } );
 
         return count > 0;

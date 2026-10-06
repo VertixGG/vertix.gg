@@ -529,6 +529,12 @@
         "content": {
           "label": "Εκδηλώσεις"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "Άνοιγμα χρεώσεων"
+        }
       }
     ],
     "textInputs": [
@@ -4246,6 +4252,13 @@
             "{errorLogChannelForbidden}": "\n\n⚠️ Το bot δεν μπορεί να αναρτήσει το αντίγραφο της παρουσίας. Χρειάζεται Προβολή καναλιού, Αποστολή μηνυμάτων και Ενσωμάτωση συνδέσμων σε εκείνο το κανάλι."
           }
         }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  Η δωρεάν δοκιμή του {planName} τελειώνει",
+        "description": "Η δωρεάν δοκιμή του {planName} στο **{guildName}** λήγει <t:{endsAt}:R>, στις <t:{endsAt}:f>.\n\nΜόλις λήξει:\n- **Προσαρμοσμένη εμφάνιση bot** - το όνομα, το avatar, το banner και η περιγραφή που έχει το bot στον server σου αφαιρούνται.\n- **Γεννήτριες** - μόνο οι πρώτες {maxMasterChannels} συνεχίζουν να ανοίγουν δωμάτια.\n\nΚράτησε το {planName} με ${monthlyPriceUsd} τον μήνα από το dashboard."
       }
     }
   ],

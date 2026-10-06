@@ -1,17 +1,20 @@
 import process from "process";
 
 import {
+    BILLING_TRIAL_START_REFUSALS,
     formatMasterChannelAllowance,
     isSubscriptionEntitling,
     isTrialRunning,
     readBillingTiers,
+    resolveTrialEndsAt,
+    resolveTrialStartRefusal,
     resolveTrialTier
 } from "@vertix.gg/definitions/src/billing-definitions";
 
 import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { SubscriptionModel } from "@vertix.gg/data/src/models/subscription-model";
 
-import { API_ROUTES } from "@vertix.gg/api/src/server/constants";
+import { API_ROUTES, HTTP_STATUS } from "@vertix.gg/api/src/server/constants";
 
 import { requireGuildOwner } from "@vertix.gg/api/src/server/middleware/guild-access";
 
@@ -116,6 +119,57 @@ async function handleGetSubscription(
 }
 
 /**
+ * Function handleStartTrial() :: Start a server's free trial, for its owner, if it can have one.
+ *
+ * The owner asks for it from the dashboard; nothing the bot sees starts one. Refused with the
+ * reason, which the dashboard says back - and a refusal is a conflict rather than a failure, since
+ * asking again changes nothing. The write itself still refuses a second trial, so two presses at
+ * once start one.
+ */
+async function handleStartTrial(
+    request: FastifyRequest<{ Params: GuildParams }>,
+    reply: FastifyReply
+) {
+    const { guildId } = request.params;
+
+    if ( ! await requireGuildOwner( request, reply, guildId ) ) {
+        return reply;
+    }
+
+    try {
+        const [ subscription, guild ] = await Promise.all( [
+            SubscriptionModel.$.get( guildId ),
+            GuildModel.$.get( guildId )
+        ] );
+
+        const tiers = readBillingTiers( process.env );
+
+        const refusal = resolveTrialStartRefusal( {
+            tiers,
+            paidPriceIds: subscription && isSubscriptionEntitling( subscription ) ? [ subscription.priceId ] : [],
+            trialEndsAt: guild?.trialEndsAt ?? null,
+            isBotInServer: true === guild?.isInGuild
+        } );
+
+        const endsAt = resolveTrialEndsAt( { startedAt: new Date(), tiers } );
+
+        if ( refusal || ! endsAt ) {
+            return reply.status( HTTP_STATUS.CONFLICT ).send( { error: refusal ?? BILLING_TRIAL_START_REFUSALS.NOT_OFFERED } );
+        }
+
+        if ( ! await GuildModel.$.startTrial( guildId, endsAt ) ) {
+            return reply.status( HTTP_STATUS.CONFLICT ).send( { error: BILLING_TRIAL_START_REFUSALS.ALREADY_USED } );
+        }
+
+        request.log.info( `Guild '${ guildId }' - free trial started by its owner, runs until '${ endsAt.toISOString() }'` );
+
+        return { trial: toTrial( endsAt, tiers ) };
+    } catch( error ) {
+        handleError( handleStartTrial, error, reply, "Failed to start the trial" );
+    }
+}
+
+/**
  * What a server is paying for, and the free trial it is on or has had, for the server's owner.
  *
  * Read from our own row rather than from paddle, so the screen does not wait on somebody else's
@@ -127,6 +181,7 @@ async function handleGetSubscription(
  */
 const subscriptionRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
     fastify.get( API_ROUTES.SUBSCRIPTION, handleGetSubscription );
+    fastify.post( API_ROUTES.SUBSCRIPTION_TRIAL, handleStartTrial );
 };
 
 export default subscriptionRoutePlugin;

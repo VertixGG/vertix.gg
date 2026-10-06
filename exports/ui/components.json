@@ -2373,6 +2373,86 @@
         }
     },
     {
+        "name": "VertixBot/UI-General/TrialEndingComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-General/TrialEndingComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/TrialEndingBillingButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/TrialEndingBillingButton",
+                                "elementType": "button-url",
+                                "instanceType": "Dynamic",
+                                "label": "Open billing",
+                                "style": "link",
+                                "url": "https://dashboard.voicechannels.online/billing"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/TrialEndingComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/TrialEndingEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "⏳  Your free {planName} trial is ending",
+                            "description": "The free {planName} trial in **{guildName}** ends <t:{endsAt}:R>, on <t:{endsAt}:f>.\n\nWhen it ends:\n- **Custom bot look** - the name, avatar, banner and bio the bot wears in your server come off.\n- **Generators** - only your first {maxMasterChannels} keep making rooms.\n\nKeep {planName} for ${monthlyPriceUsd} a month on the dashboard.",
+                            "image": "https://i.imgur.com/sGjDVJ4.png",
+                            "color": 3369963,
+                            "vars": {
+                                "guildName": "{guildName}",
+                                "planName": "{planName}",
+                                "endsAt": "{endsAt}",
+                                "maxMasterChannels": "{maxMasterChannels}",
+                                "monthlyPriceUsd": "{monthlyPriceUsd}"
+                            },
+                            "defaultVars": {
+                                "guildName": "My Server",
+                                "planName": "Pro",
+                                "endsAt": 1791057600,
+                                "maxMasterChannels": 2,
+                                "monthlyPriceUsd": 4
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  return {\n    guildName: args.guildName,\n    planName: args.planName,\n    endsAt: args.endsAt,\n    maxMasterChannels: args.maxMasterChannels,\n    monthlyPriceUsd: args.monthlyPriceUsd\n  };\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "renderAsContainer": false,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/ClaimResultComponent",
         "type": "component",
         "instanceType": "Dynamic",

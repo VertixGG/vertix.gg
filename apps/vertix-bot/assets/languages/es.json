@@ -529,6 +529,12 @@
         "content": {
           "label": "Eventos"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "Abrir facturación"
+        }
       }
     ],
     "textInputs": [
@@ -4246,6 +4252,13 @@
             "{errorLogChannelForbidden}": "\n\n⚠️ El bot no puede publicar la copia de la asistencia. Necesita Ver canal, Enviar mensajes e Insertar enlaces en ese canal."
           }
         }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  Tu prueba gratuita de {planName} está terminando",
+        "description": "La prueba gratuita de {planName} en **{guildName}** termina <t:{endsAt}:R>, el <t:{endsAt}:f>.\n\nCuando termine:\n- **Aspecto propio del bot** - el nombre, el avatar, el banner y la biografía que el bot usa en tu servidor se quitan.\n- **Generadores** - solo tus primeros {maxMasterChannels} siguen creando salas.\n\nMantén {planName} por ${monthlyPriceUsd} al mes desde el dashboard."
       }
     }
   ],

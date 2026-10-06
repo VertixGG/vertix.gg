@@ -6,8 +6,6 @@ const GUILD_ID = "820000000000000001";
 
 const NOW = new Date( "2026-10-06T12:00:00.000Z" );
 
-const daysFromNow = ( days: number ) => new Date( NOW.getTime() + days * 24 * 60 * 60 * 1000 );
-
 async function makeService() {
     await TestWithServiceLocatorMock.withUIServiceMock();
 
@@ -49,8 +47,8 @@ describe( "VertixBot/Services/GuildActivation", () => {
         jest.useFakeTimers();
         jest.setSystemTime( NOW );
 
-        // The trial is of a tier this deployment sells, and one whose id is not in the environment
-        // is not sold - so without this the suite would be testing a deployment with nothing to try.
+        // A deployment that sells Pro, which has a trial to give - so a room starting none says the
+        // room does not start it, rather than that there was nothing to start.
         process.env.PADDLE_PRICE_PRO = "pri_pro";
     } );
 
@@ -102,41 +100,17 @@ describe( "VertixBot/Services/GuildActivation", () => {
     } );
 
     describe( "the free trial", () => {
-        it( "should start from a room a member made, for the fourteen days Pro offers", async() => {
+        it( "should leave starting it to the server's owner - no room or setup starts one", async() => {
             // Arrange.
-            const { service, guildModel } = await makeService();
-
-            // Act.
-            await service.record( GUILD_ID, "DYNAMIC_CHANNEL" );
-
-            // Assert - whether this is the server's first trial is the row's to say, not this.
-            expect( guildModel.startTrial ).toHaveBeenCalledWith( GUILD_ID, daysFromNow( 14 ) );
-        } );
-
-        it( "should not start from setting up, or from a room a pool opened", async() => {
-            // Arrange - neither is anybody using the bot yet, and a trial nobody sees is wasted.
-            const { service, guildModel } = await makeService();
-
-            // Act.
-            await service.record( GUILD_ID, "MASTER_CREATE_CHANNEL" );
-            await service.record( GUILD_ID, "MASTER_SCALING_CHANNEL" );
-            await service.record( GUILD_ID, "SCALING_CHANNEL" );
-
-            // Assert.
-            expect( guildModel.startTrial ).not.toHaveBeenCalled();
-        } );
-
-        it( "should start none on a deployment that cannot sell Pro", async() => {
-            // Arrange - a trial of a plan the bot would not honour is a trial of nothing.
-            delete process.env.PADDLE_PRICE_PRO;
-
             const { service, model, guildModel } = await makeService();
 
             // Act.
+            await service.record( GUILD_ID, "MASTER_CREATE_CHANNEL" );
             await service.record( GUILD_ID, "DYNAMIC_CHANNEL" );
+            await service.record( GUILD_ID, "SCALING_CHANNEL" );
 
-            // Assert - the room is still counted; only the trial is not given.
-            expect( model.markRoomCreated ).toHaveBeenCalled();
+            // Assert - the room is still counted; the trial is the owner's to start, from the dashboard.
+            expect( model.markRoomCreated ).toHaveBeenCalledTimes( 1 );
             expect( guildModel.startTrial ).not.toHaveBeenCalled();
         } );
     } );

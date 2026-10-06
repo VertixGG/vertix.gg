@@ -529,6 +529,12 @@
         "content": {
           "label": "Events"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "Abrechnung öffnen"
+        }
       }
     ],
     "textInputs": [
@@ -4246,6 +4252,13 @@
             "{errorLogChannelForbidden}": "\n\n⚠️ Der Bot kann die Kopie der Anwesenheit nicht posten. Er braucht in diesem Kanal Kanal ansehen, Nachrichten senden und Links einbetten."
           }
         }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  Deine kostenlose {planName}-Testphase endet bald",
+        "description": "Die kostenlose {planName}-Testphase auf **{guildName}** endet <t:{endsAt}:R>, am <t:{endsAt}:f>.\n\nDanach:\n- **Eigenes Bot-Aussehen** - Name, Avatar, Banner und Bio, die der Bot auf deinem Server trägt, werden entfernt.\n- **Generatoren** - nur deine ersten {maxMasterChannels} erstellen weiter Räume.\n\nBehalte {planName} für {monthlyPriceUsd} $ im Monat im Dashboard."
       }
     }
   ],

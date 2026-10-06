@@ -87,6 +87,9 @@ model Guild {
   /// made, and never moved again. The end rather than the start, so changing how long a trial
   /// lasts reaches new trials only, never one already given.
   trialEndsAt       DateTime?
+  /// When the owner was told the trial is about to run out - written once, by whichever bot claimed
+  /// the telling before sending it, so it is said once however many processes are looking.
+  trialWarnedAt     DateTime?
   // ---
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt

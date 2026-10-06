@@ -496,12 +496,18 @@ export abstract class UIAdapterBase<
         return result;
     }
 
+    /**
+     * Function sendToUser() :: Sends this interface as a direct message, answering whether it landed.
+     *
+     * A closed inbox is the member's own setting rather than a fault, so it is answered and logged
+     * rather than thrown - most callers have nothing else to say about it, and one that does can.
+     */
     public async sendToUser(
         guildId: string | "direct-message",
         userId: string,
         argsFromManager: UIArgs,
         client?: Client<true>
-    ) {
+    ): Promise<boolean> {
         this.$$.staticDebugger.log(
             this.sendToUser,
             this.getName() + ` - Sending to user: '${ userId }' from guild id: '${ guildId }'`
@@ -509,11 +515,14 @@ export abstract class UIAdapterBase<
 
         await this.build( argsFromManager, "send-to-user", guildId );
 
-        await ( await ( client ?? this.uiService.getClient() ).users.fetch( userId ) )
+        return ( await ( client ?? this.uiService.getClient() ).users.fetch( userId ) )
             .send( this.getMessage() )
-            .catch( () =>
-                this.$$.staticLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
-            );
+            .then( () => true )
+            .catch( () => {
+                this.$$.staticLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` );
+
+                return false;
+            } );
     }
 
     public async editReply( interaction: TInteraction, newArgs?: UIArgs ) {

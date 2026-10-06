@@ -16,7 +16,7 @@ const markdown = `
 # Refund Policy
 
 This policy covers the paid plans for VoiceChannels. Using the bot for free is not affected by
-anything here.
+anything here, and neither is the free trial: it takes no payment details and is never charged.
 
 ## 1. Who you are buying from
 
@@ -43,14 +43,14 @@ for the whole of it.
 
 ## 4. What happens to your server afterwards
 
-**Nothing is ever deleted.** When a plan ends, the server returns to the free allowance of
-${ BILLING_FREE_MAX_MASTER_CHANNELS } generators. The generators that were set up first keep
-working, and any beyond the free allowance stop making new rooms until you subscribe again, at
-which point they start again on their own. Rooms that already exist are left alone.
+**Nothing is ever deleted.** When a plan ends - or a server's free trial does - the server returns
+to the free allowance of ${ BILLING_FREE_MAX_MASTER_CHANNELS } generators. The generators that were
+set up first keep working, and any beyond the free allowance stop making new rooms until you
+subscribe, at which point they start again on their own. Rooms that already exist are left alone.
 
 If you gave the bot its own profile in the server - a name, avatar, banner or bio - it comes off,
 and the bot goes back to how it looked there before. The profile itself stays saved, and goes back
-on by itself if the server subscribes again. Nothing else changes.
+on by itself if the server subscribes. Nothing else changes.
 
 ## 5. Failed, duplicated or unrecognised charges
 

@@ -30,3 +30,14 @@ const DASHBOARD_URL = "https://dashboard.voicechannels.online";
 export function planCheckoutUrl( slug: string ): string {
     return `${ DASHBOARD_URL }/billing?plan=${ encodeURIComponent( slug ) }`;
 }
+
+/**
+ * Function trialStartUrl() :: The dashboard's billing page, where a server's free trial is started.
+ *
+ * No plan in the address, unlike `planCheckoutUrl()`: a plan there opens its checkout, and a trial
+ * buys nothing. The page has its own button for it, on whichever server is open - this site cannot
+ * say which.
+ */
+export function trialStartUrl(): string {
+    return `${ DASHBOARD_URL }/billing`;
+}

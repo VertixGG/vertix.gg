@@ -1,5 +1,17 @@
 import ReactMarkdown from "react-markdown";
 
+import { BILLING_TIER_DEFINITIONS, resolveTrialTier } from "@vertix.gg/definitions/src/billing-definitions";
+
+/**
+ * The plan a server may try for nothing, and for how long - read from the table the bot starts the
+ * trial from, so these terms cannot promise a different number of days than the bot gives.
+ */
+const TRIAL_TIER = resolveTrialTier( BILLING_TIER_DEFINITIONS );
+
+const TRIAL_TERMS = TRIAL_TIER
+    ? `Each server can use ${ TRIAL_TIER.name } free for ${ TRIAL_TIER.trialDays } days, once, from when its owner starts the trial on the dashboard. The trial asks for no payment details and is never charged; when it ends, the server returns to the free allowance unless a plan was bought.\n`
+    : "";
+
 const markdown = `
 # Terms of Service
 By using VoiceChannels, you agree to these terms of service. If you do not agree to these terms, please do not use the bot.
@@ -10,7 +22,7 @@ By using the bot, you agree to use it only for lawful purposes and in compliance
 2. Paid Plans
 VoiceChannels is free to use. Some limits, such as how many generators a server may run at once, can be raised by subscribing to a paid plan.
 A plan is billed monthly in advance and renews automatically until it is cancelled.
-Our order process is conducted by our online reseller Paddle.com, which is the Merchant of Record for all our orders. Paddle handles billing, customer service enquiries and returns; your receipt and your card or bank statement will show Paddle rather than VoiceChannels.
+${ TRIAL_TERMS }Our order process is conducted by our online reseller Paddle.com, which is the Merchant of Record for all our orders. Paddle handles billing, customer service enquiries and returns; your receipt and your card or bank statement will show Paddle rather than VoiceChannels.
 Prices are shown on the pricing page and may change. A change never affects a period that has already been paid for, and you will be told before the next payment is taken.
 Cancelling, refunds, and what happens to your server when a plan ends are set out in our [Refund Policy](/refund-policy).
 If a payment fails, the plan may be suspended. Nothing is deleted: the server returns to the free allowance, and any generators beyond it stop creating new rooms until payment succeeds.

@@ -43,11 +43,14 @@ export interface IBillingTier {
     includesBranding: boolean;
 
     /**
-     * How many days a server may hold this tier for nothing, once - counted from a room its members
-     * make. Zero for a tier with no trial.
+     * How many days a server may hold this tier for nothing, once - counted from when its owner
+     * starts the trial on the dashboard. Zero for a tier with no trial.
      *
      * On the tier for the same reason `includesBranding` is: a trial is something a tier offers, so
      * a tier that offered none is one field rather than a special case somewhere else.
+     *
+     * Quoted by hand, like the price, in the two places that cannot read this - the website's
+     * `site-meta.ts` and the dashboard's no-script `index.html` - so a change to it touches both.
      */
     trialDays: number;
 }
@@ -193,8 +196,11 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * The first tier offering one, in the order they are offered - there is one tier, so it is Pro.
  * Asked of the tiers this deployment can sell rather than of the table, so a deployment that cannot
  * sell Pro gives nobody a trial of it either.
+ *
+ * Any shape carrying `trialDays` will do, so a page quoting the trial off the table itself - which
+ * has no price ids, only the keys they are read from - asks the same question the bot does.
  */
-export function resolveTrialTier( tiers: readonly IBillingTier[] ): IBillingTier | null {
+export function resolveTrialTier<TTier extends Pick<IBillingTier, "trialDays">>( tiers: readonly TTier[] ): TTier | null {
     return tiers.find( ( tier ) => tier.trialDays > 0 ) ?? null;
 }
 
@@ -280,6 +286,110 @@ export function resolveMaxMasterChannels( options: IBillingHoldings & { granted:
  */
 export function resolveCanBrand( options: IBillingHoldings ): boolean {
     return resolveHeldTiers( options ).some( ( tier ) => tier.includesBranding );
+}
+
+/**
+ * Why a server's owner could not start its free trial - what the api answers and the dashboard reads.
+ *
+ * Literals because they cross the wire: the dashboard says something different for each, and a code
+ * renamed on one side only reads as a refusal nobody can explain.
+ */
+export const BILLING_TRIAL_START_REFUSALS = {
+    /** No plan this deployment sells offers a trial. */
+    NOT_OFFERED: "trial-not-offered",
+
+    /** The server had its trial already - one per server, ever. */
+    ALREADY_USED: "trial-already-used",
+
+    /** The server pays for the plan already, so a trial of it would give nothing. */
+    ALREADY_PAYING: "trial-already-paying",
+
+    /** The bot is not in the server, so the trial's days would run with nothing to spend them on. */
+    BOT_NOT_IN_SERVER: "trial-bot-not-in-server"
+} as const;
+
+export type TBillingTrialStartRefusal = typeof BILLING_TRIAL_START_REFUSALS[ keyof typeof BILLING_TRIAL_START_REFUSALS ];
+
+/**
+ * Function resolveTrialStartRefusal() :: Why this server cannot start its free trial now, or null when it can.
+ *
+ * A trial is started by the server's owner, from the dashboard, rather than by anything the bot
+ * sees - so it is asked once, at that moment, and every answer but null is said back to them.
+ * "Already used" is asked before "already paying": once means once, whatever happened since.
+ */
+export function resolveTrialStartRefusal( options: {
+    tiers: readonly IBillingTier[];
+    paidPriceIds: readonly string[];
+    trialEndsAt: Date | null;
+    isBotInServer: boolean;
+} ): TBillingTrialStartRefusal | null {
+    const tier = resolveTrialTier( options.tiers );
+
+    if ( ! tier ) {
+        return BILLING_TRIAL_START_REFUSALS.NOT_OFFERED;
+    }
+
+    if ( options.trialEndsAt ) {
+        return BILLING_TRIAL_START_REFUSALS.ALREADY_USED;
+    }
+
+    if ( options.paidPriceIds.includes( tier.priceId ) ) {
+        return BILLING_TRIAL_START_REFUSALS.ALREADY_PAYING;
+    }
+
+    if ( ! options.isBotInServer ) {
+        return BILLING_TRIAL_START_REFUSALS.BOT_NOT_IN_SERVER;
+    }
+
+    return null;
+}
+
+/**
+ * How many days before a free trial runs out its server's owner is told.
+ *
+ * Told ahead rather than when it ends, because the end takes things away - the bot's own profile,
+ * the generators past the free ones - and somebody who would have kept them should hear it first.
+ */
+export const BILLING_TRIAL_WARNING_DAYS = 2;
+
+/**
+ * How often the bot looks for trials to warn about.
+ *
+ * An hour is plenty for a warning given days ahead: one sent an hour later than it could have been
+ * is still days early.
+ */
+export const BILLING_TRIAL_WARNING_SWEEP_INTERVAL_MS = 60 * 60 * 1000;
+
+/**
+ * Function resolveTrialWarningCutoff() :: The latest a trial can run out and be warned about at this moment.
+ *
+ * What the sweep asks the database for and what `isTrialWarningDue()` holds a server to, so the two
+ * cannot draw the line in different places.
+ */
+export function resolveTrialWarningCutoff( now: Date = new Date() ): Date {
+    return new Date( now.getTime() + BILLING_TRIAL_WARNING_DAYS * DAY_MS );
+}
+
+/**
+ * Function isTrialWarningDue() :: Whether a server should be told now that its free trial is running out.
+ *
+ * In the trial's last days, and only while the trial is what holds its tier - a server that started
+ * paying for it meanwhile loses nothing when the date passes, so there is nothing to tell it.
+ */
+export function isTrialWarningDue( options: IBillingHoldings ): boolean {
+    const { paidPriceIds, tiers, trialEndsAt = null, now = new Date() } = options;
+
+    const trialTier = resolveTrialTier( tiers );
+
+    if ( ! trialTier || ! trialEndsAt || ! isTrialRunning( trialEndsAt, now ) ) {
+        return false;
+    }
+
+    if ( trialEndsAt.getTime() > resolveTrialWarningCutoff( now ).getTime() ) {
+        return false;
+    }
+
+    return ! paidPriceIds.includes( trialTier.priceId );
 }
 
 /**

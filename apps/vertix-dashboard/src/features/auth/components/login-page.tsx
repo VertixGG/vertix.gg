@@ -1,13 +1,15 @@
 import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 import {
     BILLING_FREE_MAX_MASTER_CHANNELS,
     BILLING_TIER_DEFINITIONS,
-    formatMasterChannelAllowance
+    formatMasterChannelAllowance,
+    resolveTrialTier
 } from "@vertix.gg/definitions/src/billing-definitions";
 
 import { getDiscordLoginUrl } from "@vertix.gg/dashboard/src/features/auth/api";
+import { readReturnPath } from "@vertix.gg/dashboard/src/features/auth/lib/return-path";
 
 import { LegalLinks } from "@vertix.gg/dashboard/src/components/legal-links";
 
@@ -32,6 +34,9 @@ const PLAN_SUMMARY = [
     } ) )
 ];
 
+/** The plan every server may try for nothing, read off the table the trial is started from. */
+const TRIAL_TIER = resolveTrialTier( BILLING_TIER_DEFINITIONS );
+
 const ERROR_MESSAGES: Record<string, string> = {
     no_code: "Authentication failed: No code received",
     invalid_state: "Authentication failed: Invalid state",
@@ -43,12 +48,14 @@ export function LoginPage() {
     const [ searchParams ] = useSearchParams();
     const error = searchParams.get( "error" );
 
+    const location = useLocation();
+
     useEffect( () => {
         document.title = "VoiceChannels Dashboard - manage your Discord voice channels";
     }, [] );
 
     const handleLogin = () => {
-        window.location.href = getDiscordLoginUrl();
+        window.location.href = getDiscordLoginUrl( readReturnPath( location.state ) );
     };
 
     return (
@@ -97,8 +104,11 @@ export function LoginPage() {
                         <p className="mb-0">
                             Every voice-channel control is in every plan, including the free one. A
                             paid plan raises how many generators a server may run at once, and lets
-                            that server give the bot its own name, avatar, banner and bio. Billing is
-                            handled by Paddle, our merchant of record.{ " " }
+                            that server give the bot its own name, avatar, banner and bio.
+                            { TRIAL_TIER
+                                ? ` Every server can try ${ TRIAL_TIER.name } free for ${ TRIAL_TIER.trialDays } days, once, with no card - started from its Subscription page.`
+                                : "" }
+                            { " " }Billing is handled by Paddle, our merchant of record.{ " " }
                             <a href="https://voicechannels.online"
                                 target="_blank"
                                 rel="noreferrer"

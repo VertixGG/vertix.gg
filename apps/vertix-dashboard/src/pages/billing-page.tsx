@@ -9,10 +9,12 @@ import { AlertTriangle, Check, CreditCard, Loader2, XCircle } from "lucide-react
 import {
     BILLING_FREE_MAX_MASTER_CHANNELS,
     BILLING_TIER_DEFINITIONS,
-    formatMasterChannelAllowance
+    BILLING_TRIAL_START_REFUSALS,
+    formatMasterChannelAllowance,
+    resolveTrialTier
 } from "@vertix.gg/definitions/src/billing-definitions";
 
-import { fetchBilling, startCheckout } from "@vertix.gg/dashboard/src/features/billing/api";
+import { fetchBilling, startCheckout, startTrial } from "@vertix.gg/dashboard/src/features/billing/api";
 
 import {
     getPurchasableTiers,
@@ -20,6 +22,7 @@ import {
 } from "@vertix.gg/dashboard/src/lib/paddle";
 
 import type { ISubscription, ITrial } from "@vertix.gg/dashboard/src/features/billing/api";
+import type { TBillingTrialStartRefusal } from "@vertix.gg/definitions/src/billing-definitions";
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
 /**
@@ -40,6 +43,21 @@ const FREE_TIER = {
  * The tier that includes the bot's own profile, found by what it includes rather than by its name.
  */
 const BRANDING_TIER = BILLING_TIER_DEFINITIONS.find( ( tier ) => tier.includesBranding );
+
+/** The plan a server may try for nothing, asked the way the api asks it when the trial is started. */
+const TRIAL_TIER = resolveTrialTier( BILLING_TIER_DEFINITIONS );
+
+/**
+ * What each refusal of "Start free trial" says back. Keyed by every refusal there is, so one added to
+ * the definitions without words here does not compile rather than showing nothing.
+ */
+const TRIAL_REFUSAL_MESSAGES: Record<TBillingTrialStartRefusal, string> = {
+    [ BILLING_TRIAL_START_REFUSALS.NOT_OFFERED ]: "There is no free trial on offer right now.",
+    [ BILLING_TRIAL_START_REFUSALS.ALREADY_USED ]: "This server has had its free trial already - there is one per server.",
+    [ BILLING_TRIAL_START_REFUSALS.ALREADY_PAYING ]: "This server already pays for the plan the trial would give.",
+    [ BILLING_TRIAL_START_REFUSALS.BOT_NOT_IN_SERVER ]:
+        "Add the bot to this server first - the trial's days would run with nothing to use them on."
+};
 
 function formatDate( iso: string ): string {
     return new Date( iso ).toLocaleDateString( undefined, { year: "numeric", month: "long", day: "numeric" } );
@@ -81,8 +99,8 @@ function tierFeatures( tier: { maxMasterChannels: number; includesBranding: bool
  * bought; this says what *is* bought, and it is the only thing here that can send somebody to
  * change a card or stop paying.
  */
-function CurrentPlan( props: { subscription: ISubscription } ) {
-    const { subscription } = props;
+function CurrentPlan( props: { subscription: ISubscription; isOnTrial: boolean } ) {
+    const { subscription, isOnTrial } = props;
 
     const isCancelling = null !== subscription.scheduledToCancelAt;
 
@@ -115,9 +133,13 @@ function CurrentPlan( props: { subscription: ISubscription } ) {
                         <p className="text-sm text-text-muted mb-0">Status: { subscription.status }.</p>
                     ) }
 
+                    { /* A trial still running is what the server is on then, not the free allowance -
+                         the panel under this one says so, with its date. */ }
                     { ! subscription.isEntitling && (
                         <p className="text-sm text-error mb-0 mt-1">
-                            This plan is not active, so the free allowance applies.
+                            { isOnTrial
+                                ? "This plan is not active, so the free trial below is what applies."
+                                : "This plan is not active, so the free allowance applies." }
                         </p>
                     ) }
                 </div>
@@ -186,6 +208,51 @@ function TrialPlan( props: { trial: ITrial } ) {
                 to { formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS ) } generators and the
                 bot's normal profile, unless you choose { trial.planName } below.
             </p>
+        </div>
+    );
+}
+
+/**
+ * The trial a server has not had yet, and the button that starts it.
+ *
+ * Its owner starts it here - nothing the bot sees does - so this is the one place it can be had.
+ * Shaped like `TrialPlan`, which replaces it once it runs. Only shown while it is known to be true:
+ * a page still loading, or one that could not ask, has no idea whether the server already had its
+ * trial, and offering one then would be a guess.
+ */
+function TrialOffer( props: {
+    tier: { name: string; trialDays: number };
+    isStarting: boolean;
+    onStart: () => void;
+} ) {
+    const { tier, isStarting, onStart } = props;
+
+    return (
+        <div className="mb-6 p-5 rounded-xl border border-border-accent bg-surface-elevated">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                    <div className="text-xs uppercase tracking-wide text-text-muted mb-1">Free trial</div>
+
+                    <h2 className="text-xl font-semibold text-text-primary mb-1">
+                        Try { tier.name } free for { tier.trialDays } days
+                    </h2>
+
+                    <p className="text-sm text-text-muted mb-0">
+                        Once per server, and no card. When it ends the server goes back
+                        to { formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS ) } generators and the
+                        bot's normal profile, unless you choose { tier.name } below.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    disabled={ isStarting }
+                    onClick={ onStart }
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-accent text-white
+                        disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
+                    { isStarting ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Start free trial" }
+                </button>
+            </div>
         </div>
     );
 }
@@ -262,6 +329,7 @@ export function BillingPage() {
     );
 
     const [ opening, setOpening ] = useState<string | null>( null );
+    const [ isStartingTrial, setStartingTrial ] = useState( false );
     const [ error, setError ] = useState<string | null>( null );
     const [ subscription, setSubscription ] = useState<ISubscription | null>( null );
     const [ trial, setTrial ] = useState<ITrial | null>( null );
@@ -323,6 +391,34 @@ export function BillingPage() {
             setOpening( null );
         }
     }, [ guildId ] );
+
+    /**
+     * Starts the trial, then asks again rather than drawing the answer - a refusal can mean the
+     * server's state moved under the page (a trial started from another tab), and the page should
+     * show what it is now rather than what it was.
+     */
+    const beginTrial = useCallback( async() => {
+        if ( ! guildId ) {
+            return;
+        }
+
+        setError( null );
+        setStartingTrial( true );
+
+        try {
+            const result = await startTrial( guildId );
+
+            if ( result.refusal ) {
+                setError( TRIAL_REFUSAL_MESSAGES[ result.refusal ] );
+            }
+
+            await load();
+        } catch {
+            setError( "Could not start the trial. Please try again in a moment." );
+        } finally {
+            setStartingTrial( false );
+        }
+    }, [ guildId, load ] );
 
     const currentSlug = subscription?.isEntitling ? subscription.planSlug : null;
 
@@ -395,15 +491,21 @@ export function BillingPage() {
                         </div>
                     ) }
 
-                    { subscription && <CurrentPlan subscription={ subscription } /> }
+                    { subscription && <CurrentPlan subscription={ subscription } isOnTrial={ isOnTrial } /> }
 
                     { trial && ! isPaying && <TrialPlan trial={ trial } /> }
+
+                    { TRIAL_TIER && isLoaded && ! loadFailed && ! trial && ! isPaying && (
+                        <TrialOffer tier={ TRIAL_TIER } isStarting={ isStartingTrial } onStart={ beginTrial } />
+                    ) }
 
                     { ! canBuy && (
                         <div className="mb-4 px-3 py-2 bg-warning/10 border border-warning/40 rounded-lg
                             text-sm text-text-muted">
-                            Plans are not on sale yet. Your server keeps
-                            its { BILLING_FREE_MAX_MASTER_CHANNELS } free generators in the meantime.
+                            Plans are not on sale yet.
+                            { isOnTrial
+                                ? null
+                                : ` Your server keeps its ${ BILLING_FREE_MAX_MASTER_CHANNELS } free generators in the meantime.` }
                         </div>
                     ) }
 
@@ -458,8 +560,8 @@ export function BillingPage() {
                         <span>
                             Nothing is ever deleted. Going over a plan pauses the newest generators; the ones
                             set up first keep working, and paying starts the rest again. The bot's own profile
-                            here comes off when a plan that includes it ends, stays saved, and goes back on
-                            when you pay again.
+                            here comes off when a plan that includes it ends - or the free trial does - stays
+                            saved, and goes back on when you pay.
                         </span>
                     </p>
                 </div>

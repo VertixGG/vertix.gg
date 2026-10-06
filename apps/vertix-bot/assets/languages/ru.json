@@ -529,6 +529,12 @@
         "content": {
           "label": "События"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "Открыть оплату"
+        }
       }
     ],
     "textInputs": [
@@ -4246,6 +4252,13 @@
             "{errorLogChannelForbidden}": "\n\n⚠️ Бот не может опубликовать копию посещаемости. Ему нужны права «Просматривать канал», «Отправлять сообщения» и «Встраивать ссылки» в этом канале."
           }
         }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  Бесплатный пробный период {planName} заканчивается",
+        "description": "Бесплатный пробный период {planName} на сервере **{guildName}** закончится <t:{endsAt}:R>, <t:{endsAt}:f>.\n\nПосле этого:\n- **Свой облик бота** - имя, аватар, баннер и описание, которые бот носит на вашем сервере, будут сняты.\n- **Генераторы** - создавать комнаты продолжат только первые {maxMasterChannels}.\n\nСохраните {planName} за ${monthlyPriceUsd} в месяц в дашборде."
       }
     }
   ],

@@ -1,6 +1,8 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import { useCommandState } from "@zenflux/react-commander/hooks";
+
+import { toReturnPathState } from "@vertix.gg/dashboard/src/features/auth/lib/return-path";
 
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
@@ -16,6 +18,8 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute( { children, requireGuild = true }: ProtectedRouteProps ) {
+    const location = useLocation();
+
     const [ state ] = useCommandState<AuthState, ProtectedRouteSelectedState>(
         "Dashboard/Auth",
         ( state: AuthState ): ProtectedRouteSelectedState => ( {
@@ -33,12 +37,14 @@ export function ProtectedRoute( { children, requireGuild = true }: ProtectedRout
         );
     }
 
+    // Both carry the page being turned away from, so signing in and picking a server end on it
+    // rather than on the front page - see `return-path.ts`.
     if ( !state.isAuthenticated ) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" replace state={ toReturnPathState( location ) } />;
     }
 
     if ( requireGuild && !state.selectedGuild ) {
-        return <Navigate to="/select-server" replace />;
+        return <Navigate to="/select-server" replace state={ toReturnPathState( location ) } />;
     }
 
     return <>{ children }</>;

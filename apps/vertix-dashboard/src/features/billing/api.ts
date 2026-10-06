@@ -1,5 +1,7 @@
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
+import type { TBillingTrialStartRefusal } from "@vertix.gg/definitions/src/billing-definitions";
+
 /**
  * What a server is paying for, as the api tells it.
  *
@@ -41,7 +43,7 @@ export interface IBilling {
     /** Null when it pays for nothing. */
     subscription: ISubscription | null;
 
-    /** Null when it never had a trial - one starts from the first room its members make. */
+    /** Null when it never had a trial - its owner starts one from the Subscription page. */
     trial: ITrial | null;
 }
 
@@ -62,6 +64,42 @@ export async function fetchBilling( guildId: string ): Promise<IBilling> {
     }
 
     return await response.json() as IBilling;
+}
+
+/**
+ * What pressing "Start free trial" came to - the trial it started, or why the api refused it.
+ */
+export type TStartTrialResult =
+    | { trial: ITrial; refusal: null }
+    | { trial: null; refusal: TBillingTrialStartRefusal };
+
+/**
+ * Function startTrial() :: Start this server's free trial, for its owner.
+ *
+ * A refusal is an answer rather than a failure - the server had its trial, pays already, or does
+ * not have the bot - so it comes back as one, and only "could not ask" is thrown.
+ */
+export async function startTrial( guildId: string ): Promise<TStartTrialResult> {
+    const response = await fetch( `${ API_CONFIG.BASE_URL }/subscription/${ guildId }/trial`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify( {} )
+    } );
+
+    if ( 409 === response.status ) {
+        const body = await response.json() as { error: TBillingTrialStartRefusal };
+
+        return { trial: null, refusal: body.error };
+    }
+
+    if ( ! response.ok ) {
+        throw new Error( `Failed to start the trial: ${ response.status }` );
+    }
+
+    const body = await response.json() as { trial: ITrial };
+
+    return { trial: body.trial, refusal: null };
 }
 
 /**

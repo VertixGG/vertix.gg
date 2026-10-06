@@ -3,6 +3,8 @@ import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
 import * as React from "react";
 
+import { BILLING_TIER_DEFINITIONS, resolveTrialTier } from "@vertix.gg/definitions/src/billing-definitions";
+
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
@@ -27,6 +29,9 @@ const DiscordDynamicChannelV3 = React.lazy(
 );
 
 const LANDING_CHAT_MEDIA = "(min-width: 1024px)";
+
+/** The plan every server may try for nothing, for the line under the hero's buttons. */
+const TRIAL_TIER = resolveTrialTier( BILLING_TIER_DEFINITIONS );
 
 function LandingChat() {
     const [ isDrawn, setDrawn ] = React.useState( false );
@@ -257,7 +262,9 @@ export default function Home() {
                         </div>
 
                         <p className="vc-eyebrow mt-6 mb-0">
-                            Free to add · Set up with one command
+                            Free to add
+                            { TRIAL_TIER ? ` · Try ${ TRIAL_TIER.name } free for ${ TRIAL_TIER.trialDays } days` : "" }
+                            { " · " }Set up with one command
                         </p>
                     </div>
 

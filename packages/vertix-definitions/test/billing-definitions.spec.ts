@@ -1,15 +1,20 @@
 import {
+    BILLING_TRIAL_START_REFUSALS,
+    BILLING_TRIAL_WARNING_DAYS,
     BILLING_UNLIMITED_MASTER_CHANNELS,
     formatMasterChannelAllowance,
     isSubscriptionEntitling,
     isTrialRunning,
+    isTrialWarningDue,
     isUnlimitedAllowance,
     shouldApplySubscriptionEvent,
     readBillingTiers,
     resolveCanBrand,
     resolveMaxMasterChannels,
     resolveTrialEndsAt,
-    resolveTrialTier
+    resolveTrialStartRefusal,
+    resolveTrialTier,
+    resolveTrialWarningCutoff
 } from "@vertix.gg/definitions/src/billing-definitions";
 
 import type { IBillingTier } from "@vertix.gg/definitions/src/billing-definitions";
@@ -359,6 +364,111 @@ describe( "VertixDefinitions/Billing", () => {
         it( "should not run for a server that never had one", () => {
             // Act & Assert.
             expect( isTrialRunning( null, NOW ) ).toBe( false );
+        } );
+    } );
+
+    describe( "resolveTrialStartRefusal()", () => {
+        const startable = { tiers: TIERS, paidPriceIds: [], trialEndsAt: null, isBotInServer: true };
+
+        it( "should let a server with the bot, no trial yet and nothing paid for start one", () => {
+            // Act & Assert.
+            expect( resolveTrialStartRefusal( startable ) ).toBeNull();
+        } );
+
+        it( "should refuse a server that had its trial, even one that has since run out", () => {
+            // Act & Assert - once means once.
+            expect( resolveTrialStartRefusal( { ... startable, trialEndsAt: laterThan( NOW, 3 ) } ) )
+                .toBe( BILLING_TRIAL_START_REFUSALS.ALREADY_USED );
+            expect( resolveTrialStartRefusal( { ... startable, trialEndsAt: laterThan( NOW, -30 ) } ) )
+                .toBe( BILLING_TRIAL_START_REFUSALS.ALREADY_USED );
+        } );
+
+        it( "should refuse a server already paying for the plan the trial gives", () => {
+            // Act & Assert.
+            expect( resolveTrialStartRefusal( { ... startable, paidPriceIds: [ "pri_large" ] } ) )
+                .toBe( BILLING_TRIAL_START_REFUSALS.ALREADY_PAYING );
+        } );
+
+        it( "should let a server paying for some other plan try this one", () => {
+            // Act & Assert - "Small" is not what the trial gives.
+            expect( resolveTrialStartRefusal( { ... startable, paidPriceIds: [ "pri_small" ] } ) ).toBeNull();
+        } );
+
+        it( "should refuse a server the bot is not in", () => {
+            // Act & Assert - its days would run with nothing to spend them on.
+            expect( resolveTrialStartRefusal( { ... startable, isBotInServer: false } ) )
+                .toBe( BILLING_TRIAL_START_REFUSALS.BOT_NOT_IN_SERVER );
+        } );
+
+        it( "should refuse everybody where no plan on sale offers a trial", () => {
+            // Act & Assert.
+            expect( resolveTrialStartRefusal( { ... startable, tiers: TIERS.filter( ( tier ) => 0 === tier.trialDays ) } ) )
+                .toBe( BILLING_TRIAL_START_REFUSALS.NOT_OFFERED );
+        } );
+    } );
+
+    describe( "resolveTrialWarningCutoff()", () => {
+        it( "should reach as far ahead as a warning is given", () => {
+            // Act & Assert.
+            expect( resolveTrialWarningCutoff( NOW ) ).toEqual( laterThan( NOW, BILLING_TRIAL_WARNING_DAYS ) );
+        } );
+    } );
+
+    describe( "isTrialWarningDue()", () => {
+        it( "should be due in a trial's last days", () => {
+            // Arrange.
+            const holdings = { paidPriceIds: [], tiers: TIERS, trialEndsAt: laterThan( NOW, BILLING_TRIAL_WARNING_DAYS ), now: NOW };
+
+            // Act & Assert - the edge itself counts, so a sweep landing on it does not wait an hour.
+            expect( isTrialWarningDue( holdings ) ).toBe( true );
+            expect( isTrialWarningDue( { ... holdings, trialEndsAt: laterThan( NOW, 1 ) } ) ).toBe( true );
+        } );
+
+        it( "should not be due earlier in the trial", () => {
+            // Act & Assert.
+            expect( isTrialWarningDue( {
+                paidPriceIds: [],
+                tiers: TIERS,
+                trialEndsAt: laterThan( NOW, BILLING_TRIAL_WARNING_DAYS + 1 ),
+                now: NOW
+            } ) ).toBe( false );
+        } );
+
+        it( "should not be due once the trial has ended", () => {
+            // Act & Assert - a warning after the fact warns of nothing.
+            expect( isTrialWarningDue( { paidPriceIds: [], tiers: TIERS, trialEndsAt: NOW, now: NOW } ) ).toBe( false );
+            expect( isTrialWarningDue( { paidPriceIds: [], tiers: TIERS, trialEndsAt: laterThan( NOW, -1 ), now: NOW } ) ).toBe( false );
+        } );
+
+        it( "should not be due for a server already paying for the trial's tier", () => {
+            // Act & Assert - it loses nothing when the date passes.
+            expect( isTrialWarningDue( {
+                paidPriceIds: [ "pri_large" ],
+                tiers: TIERS,
+                trialEndsAt: laterThan( NOW, 1 ),
+                now: NOW
+            } ) ).toBe( false );
+        } );
+
+        it( "should still be due for a server paying for some other tier", () => {
+            // Act & Assert - "Small" does not include what the trial gives, so the end still takes it away.
+            expect( isTrialWarningDue( {
+                paidPriceIds: [ "pri_small" ],
+                tiers: TIERS,
+                trialEndsAt: laterThan( NOW, 1 ),
+                now: NOW
+            } ) ).toBe( true );
+        } );
+
+        it( "should not be due where there is no trial to lose", () => {
+            // Act & Assert - none ever given, and none on sale to have given one.
+            expect( isTrialWarningDue( { paidPriceIds: [], tiers: TIERS, trialEndsAt: null, now: NOW } ) ).toBe( false );
+            expect( isTrialWarningDue( {
+                paidPriceIds: [],
+                tiers: TIERS.filter( ( tier ) => 0 === tier.trialDays ),
+                trialEndsAt: laterThan( NOW, 1 ),
+                now: NOW
+            } ) ).toBe( false );
         } );
     } );
 

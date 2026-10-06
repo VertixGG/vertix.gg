@@ -9,6 +9,7 @@ export const API_ROUTES = {
     BUTTON_CATALOGUE: "/tools/buttons.json",
     PADDLE_WEBHOOK: "/webhooks/paddle",
     SUBSCRIPTION: "/subscription/:guildId",
+    SUBSCRIPTION_TRIAL: "/subscription/:guildId/trial",
     CHECKOUT_INTENT_CREATE: "/checkout-intent/:guildId",
     CHECKOUT_INTENT_READ: "/checkout-intent",
     INSTALL_CALLBACK: "/install/callback"
@@ -27,6 +28,8 @@ export const ERROR_MESSAGES = {
 export const HTTP_STATUS = {
     BAD_REQUEST: 400,
     NOT_FOUND: 404,
+    /** Asked of something the way it is now cannot give - a trial for a server that had one. */
+    CONFLICT: 409,
     INTERNAL_SERVER_ERROR: 500,
     /** Collected on demand and momentarily uncollectable - the caller may usefully try again. */
     SERVICE_UNAVAILABLE: 503

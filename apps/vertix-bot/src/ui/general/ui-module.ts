@@ -22,6 +22,7 @@ import { CommandFailedAdapter } from "@vertix.gg/bot/src/ui/general/command-fail
 import { EventsAdapter } from "@vertix.gg/bot/src/ui/general/events/events-adapter";
 import { EventBoardAdapter } from "@vertix.gg/bot/src/ui/general/events/board/event-board-adapter";
 import { EventNeedSubAdapter } from "@vertix.gg/bot/src/ui/general/events/need-sub/event-need-sub-adapter";
+import { TrialEndingAdapter } from "@vertix.gg/bot/src/ui/general/trial-ending/trial-ending-adapter";
 import { CommandsFlow } from "@vertix.gg/bot/src/ui/general/flows/commands-flow";
 import { GuildFlow } from "@vertix.gg/bot/src/ui/general/flows/guild-flow";
 
@@ -54,7 +55,8 @@ export class UIModuleGeneral extends UIModuleBase {
             CommandFailedAdapter,
             EventsAdapter,
             EventBoardAdapter,
-            EventNeedSubAdapter
+            EventNeedSubAdapter,
+            TrialEndingAdapter
         ];
     }
 

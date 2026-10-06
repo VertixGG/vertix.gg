@@ -17,7 +17,7 @@ import { GeneratorsPanel } from "@vertix.gg/dashboard/src/features/home/componen
 import { QuickActions } from "@vertix.gg/dashboard/src/features/home/components/quick-actions";
 import { ActivitySection } from "@vertix.gg/dashboard/src/features/home/components/activity-section";
 import { EventsStatsSection } from "@vertix.gg/dashboard/src/features/home/components/events-stats-section";
-import { GrowthSection } from "@vertix.gg/dashboard/src/features/home/components/growth-section";
+import { SectionTitle } from "@vertix.gg/dashboard/src/components/section-title";
 import { formatCount, formatShare } from "@vertix.gg/dashboard/src/features/home/lib/format";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
@@ -27,7 +27,6 @@ import type { GlobalStats, GuildStats, GuildDetails } from "@vertix.gg/dashboard
 
 interface AuthSelectedState {
     selectedGuild: AuthState[ "selectedGuild" ];
-    isOwner: AuthState[ "isOwner" ];
 }
 
 function LoadingSkeleton( { count }: { count: number } ) {
@@ -49,15 +48,6 @@ function PanelSkeleton() {
             <div className="h-4 bg-surface-elevated rounded w-1/3 mb-3" />
             <div className="h-1.5 bg-surface-elevated rounded w-full mb-3" />
             <div className="h-3 bg-surface-elevated rounded w-2/3" />
-        </div>
-    );
-}
-
-function SectionTitle( { title, hint }: { title: string; hint?: string } ) {
-    return (
-        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
-            <h2 className="text-lg font-semibold text-text-secondary mb-0">{ title }</h2>
-            { hint && <span className="text-xs text-text-muted">{ hint }</span> }
         </div>
     );
 }
@@ -344,8 +334,7 @@ export function HomePage() {
     const [ authState ] = useCommandState<AuthState, AuthSelectedState>(
         "Dashboard/Auth",
         ( state: AuthState ): AuthSelectedState => ( {
-            selectedGuild: state.selectedGuild,
-            isOwner: state.isOwner
+            selectedGuild: state.selectedGuild
         } )
     );
 
@@ -384,22 +373,12 @@ export function HomePage() {
                 <QuickActions />
             </section>
 
-            <section className={ authState.isOwner ? "mb-8" : undefined }>
+            { /* The owner's own figures - installs, by the link they came through - are on the
+                 statistics page, which nobody else is shown. */ }
+            <section>
                 <SectionTitle title="Across every server" hint="How the bot is doing overall" />
                 <GlobalStatsSection />
             </section>
-
-            { /* Business figures - installs, by the link they came through - asked for only by the owner,
-                 and refused by the api to anybody else. */ }
-            { authState.isOwner && (
-                <section>
-                    <SectionTitle
-                        title="Growth"
-                        hint={ `Only you see this - installs from the last ${ DASHBOARD_STATS_WINDOWS.GROWTH_DAYS } days` }
-                    />
-                    <GrowthSection />
-                </section>
-            ) }
         </div>
     );
 }

@@ -13,7 +13,11 @@ import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/gu
 import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-details-query";
 import { GuildActivityQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-activity-query";
 import { GuildEventsStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-events-stats-query";
-import { GrowthStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/growth-stats-query";
+import { GrowthStatsQuery } from "@vertix.gg/dashboard/src/features/statistics/query/growth-stats-query";
+import { ActivationStatsQuery } from "@vertix.gg/dashboard/src/features/statistics/query/activation-stats-query";
+import { UsageStatsQuery } from "@vertix.gg/dashboard/src/features/statistics/query/usage-stats-query";
+import { RevenueStatsQuery } from "@vertix.gg/dashboard/src/features/statistics/query/revenue-stats-query";
+import { AdoptionStatsQuery } from "@vertix.gg/dashboard/src/features/statistics/query/adoption-stats-query";
 import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
 import { ServerConfigQuery } from "@vertix.gg/dashboard/src/features/server-config/query/server-config-query";
 import { BotPresenceQuery } from "@vertix.gg/dashboard/src/features/bot-presence/query/bot-presence-query";
@@ -30,6 +34,7 @@ import { ServerConfigPage } from "@vertix.gg/dashboard/src/pages/server-config-p
 import { BillingPage } from "@vertix.gg/dashboard/src/pages/billing-page";
 import { BrandingPage } from "@vertix.gg/dashboard/src/pages/branding-page";
 import { EventsPage } from "@vertix.gg/dashboard/src/pages/events-page";
+import { StatisticsPage } from "@vertix.gg/dashboard/src/pages/statistics-page";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -47,6 +52,10 @@ client.registerModule( GuildDetailsQuery );
 client.registerModule( GuildActivityQuery );
 client.registerModule( GuildEventsStatsQuery );
 client.registerModule( GrowthStatsQuery );
+client.registerModule( ActivationStatsQuery );
+client.registerModule( UsageStatsQuery );
+client.registerModule( RevenueStatsQuery );
+client.registerModule( AdoptionStatsQuery );
 client.registerModule( GuildGeneratorsQuery );
 client.registerModule( ServerConfigQuery );
 client.registerModule( BotPresenceQuery );
@@ -85,6 +94,7 @@ export function App() {
                             <Route path="/branding" element={ <BrandingPage /> } />
                             <Route path="/events" element={ <EventsPage /> } />
                             <Route path="/billing" element={ <BillingPage /> } />
+                            <Route path="/statistics" element={ <StatisticsPage /> } />
 
                             { /* The page was called Management until it was named after what it
                                  actually holds. */ }

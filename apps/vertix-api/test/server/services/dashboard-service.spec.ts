@@ -215,7 +215,7 @@ const NOW = new Date( "2026-12-01T22:00:00.000Z" );
 const midnightDaysAgo = ( days: number ) => new Date( Date.UTC( 2026, 11, 1 ) - days * DAY_MS );
 
 /**
- * The figures the home page reads off the counts the bot keeps - rooms per day, events, installs.
+ * The figures the home page reads off the counts the bot keeps - rooms per day, and events.
  */
 describe( "VertixAPI/DashboardService/stats", () => {
     beforeEach( () => {
@@ -309,30 +309,5 @@ describe( "VertixAPI/DashboardService/stats", () => {
 
         expect( await getGuildEventsStats( A_GUILD ) ).toMatchObject( { isEnabled: false, held: 0, regulars: [] } );
         expect( attendees ).not.toHaveBeenCalled();
-    } );
-
-    it( "should count the installs in the growth window, day by day, the way the activation report does", async() => {
-        const client = await getClient();
-
-        jest.spyOn( client.guild, "findMany" ).mockResolvedValue( [ {
-            guildId: A_GUILD,
-            name: "A guild",
-            isInGuild: true,
-            createdAt: midnightDaysAgo( 200 ),
-            joinedAt: new Date( midnightDaysAgo( 2 ).getTime() + 60 * 60 * 1000 ),
-            leftAt: null,
-            setupAt: null,
-            firstRoomAt: null
-        } ] as never );
-        jest.spyOn( client.guildInstall, "findMany" ).mockResolvedValue( [] as never );
-        jest.spyOn( client.guildActivityDay, "findMany" ).mockResolvedValue( [] as never );
-
-        const { getGrowthStats } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
-
-        const growth = await getGrowthStats();
-
-        expect( growth.total ).toMatchObject( { installs: 1, stillInstalled: 1 } );
-        expect( growth.installsPerDay.find( ( day ) => "2026-11-29" === day.day ) ).toEqual( { day: "2026-11-29", count: 1 } );
-        expect( growth.since ).toBe( "2026-09-03" );
     } );
 } );

@@ -139,6 +139,26 @@ model GuildActivityDay {
   @@index([day])
 }
 
+/// How many rooms a server's members made in one hour - UTC.
+///
+/// `GuildActivityDay` by the hour, for when in the day and the week the bot is used. A row of its own
+/// rather than fields on the day's, so the day stays one count and an hour is one row to add one to.
+/// Like the day, a count and nothing more: no member, no channel.
+model GuildActivityHour {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId      String
+  /// The start of the hour counted, UTC.
+  hour         DateTime
+  roomsCreated Int      @default(0)
+
+  // ---
+  updatedAt DateTime @updatedAt
+
+  @@unique([guildId, hour])
+  @@index([hour])
+}
+
 model GuildData {
   id        String       @id @default(auto()) @map("_id") @db.ObjectId
   // ---

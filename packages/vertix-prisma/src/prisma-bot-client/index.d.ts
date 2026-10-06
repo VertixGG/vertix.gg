@@ -50,6 +50,15 @@ export type GuildInstall = $Result.DefaultSelection<Prisma.$GuildInstallPayload>
  */
 export type GuildActivityDay = $Result.DefaultSelection<Prisma.$GuildActivityDayPayload>
 /**
+ * Model GuildActivityHour
+ * How many rooms a server's members made in one hour - UTC.
+ * 
+ * `GuildActivityDay` by the hour, for when in the day and the week the bot is used. A row of its own
+ * rather than fields on the day's, so the day stays one count and an hour is one row to add one to.
+ * Like the day, a count and nothing more: no member, no channel.
+ */
+export type GuildActivityHour = $Result.DefaultSelection<Prisma.$GuildActivityHourPayload>
+/**
  * Model GuildData
  * 
  */
@@ -342,6 +351,16 @@ export class PrismaClient<
     * ```
     */
   get guildActivityDay(): Prisma.GuildActivityDayDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildActivityHour`: Exposes CRUD operations for the **GuildActivityHour** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildActivityHours
+    * const guildActivityHours = await prisma.guildActivityHour.findMany()
+    * ```
+    */
+  get guildActivityHour(): Prisma.GuildActivityHourDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.guildData`: Exposes CRUD operations for the **GuildData** model.
@@ -938,6 +957,7 @@ export namespace Prisma {
     Guild: 'Guild',
     GuildInstall: 'GuildInstall',
     GuildActivityDay: 'GuildActivityDay',
+    GuildActivityHour: 'GuildActivityHour',
     GuildData: 'GuildData',
     GuildCustomization: 'GuildCustomization',
     Channel: 'Channel',
@@ -971,7 +991,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "config" | "category" | "guild" | "guildInstall" | "guildActivityDay" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription" | "guildBranding" | "guildBrandingState" | "guildEventSettings" | "guildEventRun" | "guildEventAttendee"
+      modelProps: "config" | "category" | "guild" | "guildInstall" | "guildActivityDay" | "guildActivityHour" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription" | "guildBranding" | "guildBrandingState" | "guildEventSettings" | "guildEventRun" | "guildEventAttendee"
       txIsolationLevel: never
     }
     model: {
@@ -1342,6 +1362,80 @@ export namespace Prisma {
           count: {
             args: Prisma.GuildActivityDayCountArgs<ExtArgs>
             result: $Utils.Optional<GuildActivityDayCountAggregateOutputType> | number
+          }
+        }
+      }
+      GuildActivityHour: {
+        payload: Prisma.$GuildActivityHourPayload<ExtArgs>
+        fields: Prisma.GuildActivityHourFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildActivityHourFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildActivityHourFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload>
+          }
+          findFirst: {
+            args: Prisma.GuildActivityHourFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildActivityHourFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload>
+          }
+          findMany: {
+            args: Prisma.GuildActivityHourFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload>[]
+          }
+          create: {
+            args: Prisma.GuildActivityHourCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload>
+          }
+          createMany: {
+            args: Prisma.GuildActivityHourCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildActivityHourDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload>
+          }
+          update: {
+            args: Prisma.GuildActivityHourUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildActivityHourDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildActivityHourUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildActivityHourUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildActivityHourPayload>
+          }
+          aggregate: {
+            args: Prisma.GuildActivityHourAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildActivityHour>
+          }
+          groupBy: {
+            args: Prisma.GuildActivityHourGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildActivityHourGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildActivityHourFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildActivityHourAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildActivityHourCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildActivityHourCountAggregateOutputType> | number
           }
         }
       }
@@ -2539,6 +2633,7 @@ export namespace Prisma {
     guild?: GuildOmit
     guildInstall?: GuildInstallOmit
     guildActivityDay?: GuildActivityDayOmit
+    guildActivityHour?: GuildActivityHourOmit
     guildData?: GuildDataOmit
     guildCustomization?: GuildCustomizationOmit
     channel?: ChannelOmit
@@ -7716,6 +7811,975 @@ export namespace Prisma {
      * Omit specific fields from the GuildActivityDay
      */
     omit?: GuildActivityDayOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GuildActivityHour
+   */
+
+  export type AggregateGuildActivityHour = {
+    _count: GuildActivityHourCountAggregateOutputType | null
+    _avg: GuildActivityHourAvgAggregateOutputType | null
+    _sum: GuildActivityHourSumAggregateOutputType | null
+    _min: GuildActivityHourMinAggregateOutputType | null
+    _max: GuildActivityHourMaxAggregateOutputType | null
+  }
+
+  export type GuildActivityHourAvgAggregateOutputType = {
+    roomsCreated: number | null
+  }
+
+  export type GuildActivityHourSumAggregateOutputType = {
+    roomsCreated: number | null
+  }
+
+  export type GuildActivityHourMinAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    hour: Date | null
+    roomsCreated: number | null
+    updatedAt: Date | null
+  }
+
+  export type GuildActivityHourMaxAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    hour: Date | null
+    roomsCreated: number | null
+    updatedAt: Date | null
+  }
+
+  export type GuildActivityHourCountAggregateOutputType = {
+    id: number
+    guildId: number
+    hour: number
+    roomsCreated: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildActivityHourAvgAggregateInputType = {
+    roomsCreated?: true
+  }
+
+  export type GuildActivityHourSumAggregateInputType = {
+    roomsCreated?: true
+  }
+
+  export type GuildActivityHourMinAggregateInputType = {
+    id?: true
+    guildId?: true
+    hour?: true
+    roomsCreated?: true
+    updatedAt?: true
+  }
+
+  export type GuildActivityHourMaxAggregateInputType = {
+    id?: true
+    guildId?: true
+    hour?: true
+    roomsCreated?: true
+    updatedAt?: true
+  }
+
+  export type GuildActivityHourCountAggregateInputType = {
+    id?: true
+    guildId?: true
+    hour?: true
+    roomsCreated?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildActivityHourAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildActivityHour to aggregate.
+     */
+    where?: GuildActivityHourWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildActivityHours to fetch.
+     */
+    orderBy?: GuildActivityHourOrderByWithRelationInput | GuildActivityHourOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildActivityHourWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildActivityHours from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildActivityHours.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildActivityHours
+    **/
+    _count?: true | GuildActivityHourCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GuildActivityHourAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GuildActivityHourSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildActivityHourMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildActivityHourMaxAggregateInputType
+  }
+
+  export type GetGuildActivityHourAggregateType<T extends GuildActivityHourAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildActivityHour]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildActivityHour[P]>
+      : GetScalarType<T[P], AggregateGuildActivityHour[P]>
+  }
+
+
+
+
+  export type GuildActivityHourGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildActivityHourWhereInput
+    orderBy?: GuildActivityHourOrderByWithAggregationInput | GuildActivityHourOrderByWithAggregationInput[]
+    by: GuildActivityHourScalarFieldEnum[] | GuildActivityHourScalarFieldEnum
+    having?: GuildActivityHourScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildActivityHourCountAggregateInputType | true
+    _avg?: GuildActivityHourAvgAggregateInputType
+    _sum?: GuildActivityHourSumAggregateInputType
+    _min?: GuildActivityHourMinAggregateInputType
+    _max?: GuildActivityHourMaxAggregateInputType
+  }
+
+  export type GuildActivityHourGroupByOutputType = {
+    id: string
+    guildId: string
+    hour: Date
+    roomsCreated: number
+    updatedAt: Date
+    _count: GuildActivityHourCountAggregateOutputType | null
+    _avg: GuildActivityHourAvgAggregateOutputType | null
+    _sum: GuildActivityHourSumAggregateOutputType | null
+    _min: GuildActivityHourMinAggregateOutputType | null
+    _max: GuildActivityHourMaxAggregateOutputType | null
+  }
+
+  type GetGuildActivityHourGroupByPayload<T extends GuildActivityHourGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildActivityHourGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildActivityHourGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildActivityHourGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildActivityHourGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildActivityHourSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    guildId?: boolean
+    hour?: boolean
+    roomsCreated?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildActivityHour"]>
+
+
+
+  export type GuildActivityHourSelectScalar = {
+    id?: boolean
+    guildId?: boolean
+    hour?: boolean
+    roomsCreated?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildActivityHourOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "hour" | "roomsCreated" | "updatedAt", ExtArgs["result"]["guildActivityHour"]>
+
+  export type $GuildActivityHourPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildActivityHour"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      guildId: string
+      /**
+       * The start of the hour counted, UTC.
+       */
+      hour: Date
+      roomsCreated: number
+      updatedAt: Date
+    }, ExtArgs["result"]["guildActivityHour"]>
+    composites: {}
+  }
+
+  type GuildActivityHourGetPayload<S extends boolean | null | undefined | GuildActivityHourDefaultArgs> = $Result.GetResult<Prisma.$GuildActivityHourPayload, S>
+
+  type GuildActivityHourCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildActivityHourFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildActivityHourCountAggregateInputType | true
+    }
+
+  export interface GuildActivityHourDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildActivityHour'], meta: { name: 'GuildActivityHour' } }
+    /**
+     * Find zero or one GuildActivityHour that matches the filter.
+     * @param {GuildActivityHourFindUniqueArgs} args - Arguments to find a GuildActivityHour
+     * @example
+     * // Get one GuildActivityHour
+     * const guildActivityHour = await prisma.guildActivityHour.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildActivityHourFindUniqueArgs>(args: SelectSubset<T, GuildActivityHourFindUniqueArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildActivityHour that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildActivityHourFindUniqueOrThrowArgs} args - Arguments to find a GuildActivityHour
+     * @example
+     * // Get one GuildActivityHour
+     * const guildActivityHour = await prisma.guildActivityHour.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildActivityHourFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildActivityHourFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildActivityHour that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildActivityHourFindFirstArgs} args - Arguments to find a GuildActivityHour
+     * @example
+     * // Get one GuildActivityHour
+     * const guildActivityHour = await prisma.guildActivityHour.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildActivityHourFindFirstArgs>(args?: SelectSubset<T, GuildActivityHourFindFirstArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildActivityHour that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildActivityHourFindFirstOrThrowArgs} args - Arguments to find a GuildActivityHour
+     * @example
+     * // Get one GuildActivityHour
+     * const guildActivityHour = await prisma.guildActivityHour.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildActivityHourFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildActivityHourFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildActivityHours that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildActivityHourFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildActivityHours
+     * const guildActivityHours = await prisma.guildActivityHour.findMany()
+     * 
+     * // Get first 10 GuildActivityHours
+     * const guildActivityHours = await prisma.guildActivityHour.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildActivityHourWithIdOnly = await prisma.guildActivityHour.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildActivityHourFindManyArgs>(args?: SelectSubset<T, GuildActivityHourFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildActivityHour.
+     * @param {GuildActivityHourCreateArgs} args - Arguments to create a GuildActivityHour.
+     * @example
+     * // Create one GuildActivityHour
+     * const GuildActivityHour = await prisma.guildActivityHour.create({
+     *   data: {
+     *     // ... data to create a GuildActivityHour
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildActivityHourCreateArgs>(args: SelectSubset<T, GuildActivityHourCreateArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildActivityHours.
+     * @param {GuildActivityHourCreateManyArgs} args - Arguments to create many GuildActivityHours.
+     * @example
+     * // Create many GuildActivityHours
+     * const guildActivityHour = await prisma.guildActivityHour.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildActivityHourCreateManyArgs>(args?: SelectSubset<T, GuildActivityHourCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildActivityHour.
+     * @param {GuildActivityHourDeleteArgs} args - Arguments to delete one GuildActivityHour.
+     * @example
+     * // Delete one GuildActivityHour
+     * const GuildActivityHour = await prisma.guildActivityHour.delete({
+     *   where: {
+     *     // ... filter to delete one GuildActivityHour
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildActivityHourDeleteArgs>(args: SelectSubset<T, GuildActivityHourDeleteArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildActivityHour.
+     * @param {GuildActivityHourUpdateArgs} args - Arguments to update one GuildActivityHour.
+     * @example
+     * // Update one GuildActivityHour
+     * const guildActivityHour = await prisma.guildActivityHour.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildActivityHourUpdateArgs>(args: SelectSubset<T, GuildActivityHourUpdateArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildActivityHours.
+     * @param {GuildActivityHourDeleteManyArgs} args - Arguments to filter GuildActivityHours to delete.
+     * @example
+     * // Delete a few GuildActivityHours
+     * const { count } = await prisma.guildActivityHour.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildActivityHourDeleteManyArgs>(args?: SelectSubset<T, GuildActivityHourDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildActivityHours.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildActivityHourUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildActivityHours
+     * const guildActivityHour = await prisma.guildActivityHour.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildActivityHourUpdateManyArgs>(args: SelectSubset<T, GuildActivityHourUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildActivityHour.
+     * @param {GuildActivityHourUpsertArgs} args - Arguments to update or create a GuildActivityHour.
+     * @example
+     * // Update or create a GuildActivityHour
+     * const guildActivityHour = await prisma.guildActivityHour.upsert({
+     *   create: {
+     *     // ... data to create a GuildActivityHour
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildActivityHour we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildActivityHourUpsertArgs>(args: SelectSubset<T, GuildActivityHourUpsertArgs<ExtArgs>>): Prisma__GuildActivityHourClient<$Result.GetResult<Prisma.$GuildActivityHourPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildActivityHours that matches the filter.
+     * @param {GuildActivityHourFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildActivityHour = await prisma.guildActivityHour.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildActivityHourFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildActivityHour.
+     * @param {GuildActivityHourAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildActivityHour = await prisma.guildActivityHour.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildActivityHourAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildActivityHours.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildActivityHourCountArgs} args - Arguments to filter GuildActivityHours to count.
+     * @example
+     * // Count the number of GuildActivityHours
+     * const count = await prisma.guildActivityHour.count({
+     *   where: {
+     *     // ... the filter for the GuildActivityHours we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildActivityHourCountArgs>(
+      args?: Subset<T, GuildActivityHourCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildActivityHourCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildActivityHour.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildActivityHourAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildActivityHourAggregateArgs>(args: Subset<T, GuildActivityHourAggregateArgs>): Prisma.PrismaPromise<GetGuildActivityHourAggregateType<T>>
+
+    /**
+     * Group by GuildActivityHour.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildActivityHourGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildActivityHourGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildActivityHourGroupByArgs['orderBy'] }
+        : { orderBy?: GuildActivityHourGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildActivityHourGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildActivityHourGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildActivityHour model
+   */
+  readonly fields: GuildActivityHourFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildActivityHour.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildActivityHourClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildActivityHour model
+   */
+  interface GuildActivityHourFieldRefs {
+    readonly id: FieldRef<"GuildActivityHour", 'String'>
+    readonly guildId: FieldRef<"GuildActivityHour", 'String'>
+    readonly hour: FieldRef<"GuildActivityHour", 'DateTime'>
+    readonly roomsCreated: FieldRef<"GuildActivityHour", 'Int'>
+    readonly updatedAt: FieldRef<"GuildActivityHour", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildActivityHour findUnique
+   */
+  export type GuildActivityHourFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildActivityHour to fetch.
+     */
+    where: GuildActivityHourWhereUniqueInput
+  }
+
+  /**
+   * GuildActivityHour findUniqueOrThrow
+   */
+  export type GuildActivityHourFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildActivityHour to fetch.
+     */
+    where: GuildActivityHourWhereUniqueInput
+  }
+
+  /**
+   * GuildActivityHour findFirst
+   */
+  export type GuildActivityHourFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildActivityHour to fetch.
+     */
+    where?: GuildActivityHourWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildActivityHours to fetch.
+     */
+    orderBy?: GuildActivityHourOrderByWithRelationInput | GuildActivityHourOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildActivityHours.
+     */
+    cursor?: GuildActivityHourWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildActivityHours from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildActivityHours.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildActivityHours.
+     */
+    distinct?: GuildActivityHourScalarFieldEnum | GuildActivityHourScalarFieldEnum[]
+  }
+
+  /**
+   * GuildActivityHour findFirstOrThrow
+   */
+  export type GuildActivityHourFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildActivityHour to fetch.
+     */
+    where?: GuildActivityHourWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildActivityHours to fetch.
+     */
+    orderBy?: GuildActivityHourOrderByWithRelationInput | GuildActivityHourOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildActivityHours.
+     */
+    cursor?: GuildActivityHourWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildActivityHours from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildActivityHours.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildActivityHours.
+     */
+    distinct?: GuildActivityHourScalarFieldEnum | GuildActivityHourScalarFieldEnum[]
+  }
+
+  /**
+   * GuildActivityHour findMany
+   */
+  export type GuildActivityHourFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildActivityHours to fetch.
+     */
+    where?: GuildActivityHourWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildActivityHours to fetch.
+     */
+    orderBy?: GuildActivityHourOrderByWithRelationInput | GuildActivityHourOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildActivityHours.
+     */
+    cursor?: GuildActivityHourWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildActivityHours from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildActivityHours.
+     */
+    skip?: number
+    distinct?: GuildActivityHourScalarFieldEnum | GuildActivityHourScalarFieldEnum[]
+  }
+
+  /**
+   * GuildActivityHour create
+   */
+  export type GuildActivityHourCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildActivityHour.
+     */
+    data: XOR<GuildActivityHourCreateInput, GuildActivityHourUncheckedCreateInput>
+  }
+
+  /**
+   * GuildActivityHour createMany
+   */
+  export type GuildActivityHourCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildActivityHours.
+     */
+    data: GuildActivityHourCreateManyInput | GuildActivityHourCreateManyInput[]
+  }
+
+  /**
+   * GuildActivityHour update
+   */
+  export type GuildActivityHourUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildActivityHour.
+     */
+    data: XOR<GuildActivityHourUpdateInput, GuildActivityHourUncheckedUpdateInput>
+    /**
+     * Choose, which GuildActivityHour to update.
+     */
+    where: GuildActivityHourWhereUniqueInput
+  }
+
+  /**
+   * GuildActivityHour updateMany
+   */
+  export type GuildActivityHourUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildActivityHours.
+     */
+    data: XOR<GuildActivityHourUpdateManyMutationInput, GuildActivityHourUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildActivityHours to update
+     */
+    where?: GuildActivityHourWhereInput
+    /**
+     * Limit how many GuildActivityHours to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildActivityHour upsert
+   */
+  export type GuildActivityHourUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildActivityHour to update in case it exists.
+     */
+    where: GuildActivityHourWhereUniqueInput
+    /**
+     * In case the GuildActivityHour found by the `where` argument doesn't exist, create a new GuildActivityHour with this data.
+     */
+    create: XOR<GuildActivityHourCreateInput, GuildActivityHourUncheckedCreateInput>
+    /**
+     * In case the GuildActivityHour was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildActivityHourUpdateInput, GuildActivityHourUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildActivityHour delete
+   */
+  export type GuildActivityHourDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
+    /**
+     * Filter which GuildActivityHour to delete.
+     */
+    where: GuildActivityHourWhereUniqueInput
+  }
+
+  /**
+   * GuildActivityHour deleteMany
+   */
+  export type GuildActivityHourDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildActivityHours to delete
+     */
+    where?: GuildActivityHourWhereInput
+    /**
+     * Limit how many GuildActivityHours to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildActivityHour findRaw
+   */
+  export type GuildActivityHourFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildActivityHour aggregateRaw
+   */
+  export type GuildActivityHourAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildActivityHour without action
+   */
+  export type GuildActivityHourDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildActivityHour
+     */
+    select?: GuildActivityHourSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildActivityHour
+     */
+    omit?: GuildActivityHourOmit<ExtArgs> | null
   }
 
 
@@ -23618,6 +24682,17 @@ export namespace Prisma {
   export type GuildActivityDayScalarFieldEnum = (typeof GuildActivityDayScalarFieldEnum)[keyof typeof GuildActivityDayScalarFieldEnum]
 
 
+  export const GuildActivityHourScalarFieldEnum: {
+    id: 'id',
+    guildId: 'guildId',
+    hour: 'hour',
+    roomsCreated: 'roomsCreated',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildActivityHourScalarFieldEnum = (typeof GuildActivityHourScalarFieldEnum)[keyof typeof GuildActivityHourScalarFieldEnum]
+
+
   export const GuildDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
@@ -24340,6 +25415,61 @@ export namespace Prisma {
     day?: DateTimeWithAggregatesFilter<"GuildActivityDay"> | Date | string
     roomsCreated?: IntWithAggregatesFilter<"GuildActivityDay"> | number
     updatedAt?: DateTimeWithAggregatesFilter<"GuildActivityDay"> | Date | string
+  }
+
+  export type GuildActivityHourWhereInput = {
+    AND?: GuildActivityHourWhereInput | GuildActivityHourWhereInput[]
+    OR?: GuildActivityHourWhereInput[]
+    NOT?: GuildActivityHourWhereInput | GuildActivityHourWhereInput[]
+    id?: StringFilter<"GuildActivityHour"> | string
+    guildId?: StringFilter<"GuildActivityHour"> | string
+    hour?: DateTimeFilter<"GuildActivityHour"> | Date | string
+    roomsCreated?: IntFilter<"GuildActivityHour"> | number
+    updatedAt?: DateTimeFilter<"GuildActivityHour"> | Date | string
+  }
+
+  export type GuildActivityHourOrderByWithRelationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    hour?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildActivityHourWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    guildId_hour?: GuildActivityHourGuildIdHourCompoundUniqueInput
+    AND?: GuildActivityHourWhereInput | GuildActivityHourWhereInput[]
+    OR?: GuildActivityHourWhereInput[]
+    NOT?: GuildActivityHourWhereInput | GuildActivityHourWhereInput[]
+    guildId?: StringFilter<"GuildActivityHour"> | string
+    hour?: DateTimeFilter<"GuildActivityHour"> | Date | string
+    roomsCreated?: IntFilter<"GuildActivityHour"> | number
+    updatedAt?: DateTimeFilter<"GuildActivityHour"> | Date | string
+  }, "id" | "guildId_hour">
+
+  export type GuildActivityHourOrderByWithAggregationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    hour?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildActivityHourCountOrderByAggregateInput
+    _avg?: GuildActivityHourAvgOrderByAggregateInput
+    _max?: GuildActivityHourMaxOrderByAggregateInput
+    _min?: GuildActivityHourMinOrderByAggregateInput
+    _sum?: GuildActivityHourSumOrderByAggregateInput
+  }
+
+  export type GuildActivityHourScalarWhereWithAggregatesInput = {
+    AND?: GuildActivityHourScalarWhereWithAggregatesInput | GuildActivityHourScalarWhereWithAggregatesInput[]
+    OR?: GuildActivityHourScalarWhereWithAggregatesInput[]
+    NOT?: GuildActivityHourScalarWhereWithAggregatesInput | GuildActivityHourScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildActivityHour"> | string
+    guildId?: StringWithAggregatesFilter<"GuildActivityHour"> | string
+    hour?: DateTimeWithAggregatesFilter<"GuildActivityHour"> | Date | string
+    roomsCreated?: IntWithAggregatesFilter<"GuildActivityHour"> | number
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildActivityHour"> | Date | string
   }
 
   export type GuildDataWhereInput = {
@@ -26020,6 +27150,58 @@ export namespace Prisma {
   export type GuildActivityDayUncheckedUpdateManyInput = {
     guildId?: StringFieldUpdateOperationsInput | string
     day?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildActivityHourCreateInput = {
+    id?: string
+    guildId: string
+    hour: Date | string
+    roomsCreated?: number
+    updatedAt?: Date | string
+  }
+
+  export type GuildActivityHourUncheckedCreateInput = {
+    id?: string
+    guildId: string
+    hour: Date | string
+    roomsCreated?: number
+    updatedAt?: Date | string
+  }
+
+  export type GuildActivityHourUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    hour?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildActivityHourUncheckedUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    hour?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildActivityHourCreateManyInput = {
+    id?: string
+    guildId: string
+    hour: Date | string
+    roomsCreated?: number
+    updatedAt?: Date | string
+  }
+
+  export type GuildActivityHourUpdateManyMutationInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    hour?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildActivityHourUncheckedUpdateManyInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    hour?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsCreated?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27904,6 +29086,43 @@ export namespace Prisma {
   }
 
   export type GuildActivityDaySumOrderByAggregateInput = {
+    roomsCreated?: SortOrder
+  }
+
+  export type GuildActivityHourGuildIdHourCompoundUniqueInput = {
+    guildId: string
+    hour: Date | string
+  }
+
+  export type GuildActivityHourCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    hour?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildActivityHourAvgOrderByAggregateInput = {
+    roomsCreated?: SortOrder
+  }
+
+  export type GuildActivityHourMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    hour?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildActivityHourMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    hour?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildActivityHourSumOrderByAggregateInput = {
     roomsCreated?: SortOrder
   }
 

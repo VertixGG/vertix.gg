@@ -4,42 +4,42 @@ import { QueryComponent } from "@zenflux/react-commander/query/component";
 
 import { CheckCircle2, Download, DoorOpen, HeartPulse, Wrench } from "lucide-react";
 
-import { GrowthStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/growth-stats-query";
+import { DASHBOARD_STATS_WINDOWS } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
+
+import { GrowthStatsQuery } from "@vertix.gg/dashboard/src/features/statistics/query/growth-stats-query";
 import { StatCard } from "@vertix.gg/dashboard/src/features/home/components/stat-card";
 import { DayBars } from "@vertix.gg/dashboard/src/features/home/components/day-bars";
+import {
+    StatisticsFailure,
+    StatisticsSection,
+    StatisticsSkeleton
+} from "@vertix.gg/dashboard/src/features/statistics/components/statistics-section";
 import { formatCount, formatDay, formatShare } from "@vertix.gg/dashboard/src/features/home/lib/format";
+import { formatPartOf } from "@vertix.gg/dashboard/src/features/statistics/lib/format";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
 import type { IGrowthStats, IGrowthSummary } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
+import type { GrowthDisplayState } from "@vertix.gg/dashboard/src/features/statistics/types";
 
 interface GrowthDisplayProps {}
-
-interface GrowthDisplayState {
-    growthStats: IGrowthStats | null;
-}
 
 const GROWTH_INITIAL_STATE: GrowthDisplayState = {
     growthStats: null
 };
 
-/**
- * Function share() :: A part of the installs as `3 · 60%`, or a dash when there is nothing to share.
- */
-function share( part: number, whole: number ) {
-    return whole ? `${ formatCount( part ) } · ${ formatShare( part, whole ) }%` : "-";
-}
+const GROWTH_HINT = `Installs from the last ${ DASHBOARD_STATS_WINDOWS.GROWTH_DAYS } days`;
 
 function SourceRow( { summary, judgedDay }: { summary: IGrowthSummary; judgedDay: number } ) {
     return (
         <tr className="border-t border-border-muted">
             <td className="px-4 py-2 text-text-primary">{ summary.source }</td>
             <td className="px-4 py-2 text-text-primary tabular-nums">{ formatCount( summary.installs ) }</td>
-            <td className="px-4 py-2 text-text-secondary tabular-nums">{ share( summary.setUpAtOnce, summary.installs ) }</td>
-            <td className="px-4 py-2 text-text-secondary tabular-nums">{ share( summary.firstRoomEarly, summary.installs ) }</td>
-            <td className="px-4 py-2 text-text-secondary tabular-nums">{ share( summary.activeRecently, summary.installs ) }</td>
-            <td className="px-4 py-2 text-text-secondary tabular-nums">{ share( summary.stillInstalled, summary.installs ) }</td>
+            <td className="px-4 py-2 text-text-secondary tabular-nums">{ formatPartOf( summary.setUpAtOnce, summary.installs ) }</td>
+            <td className="px-4 py-2 text-text-secondary tabular-nums">{ formatPartOf( summary.firstRoomEarly, summary.installs ) }</td>
+            <td className="px-4 py-2 text-text-secondary tabular-nums">{ formatPartOf( summary.activeRecently, summary.installs ) }</td>
+            <td className="px-4 py-2 text-text-secondary tabular-nums">{ formatPartOf( summary.stillInstalled, summary.installs ) }</td>
             <td className="px-4 py-2 text-text-secondary tabular-nums" title={ `${ summary.judged } old enough to reach day ${ judgedDay }` }>
-                { share( summary.aliveAtJudgedDay, summary.judged ) }
+                { formatPartOf( summary.aliveAtJudgedDay, summary.judged ) }
             </td>
         </tr>
     );
@@ -47,20 +47,24 @@ function SourceRow( { summary, judgedDay }: { summary: IGrowthSummary; judgedDay
 
 const GrowthDisplayComponent: DCommandFunctionComponent<GrowthDisplayProps, GrowthDisplayState> = () => {
     const [ state ] = useCommandState<GrowthDisplayState, GrowthDisplayState>(
-        "Home/GrowthStats",
+        "Statistics/GrowthStats",
         ( state: GrowthDisplayState ): GrowthDisplayState => ( { growthStats: state.growthStats } )
     );
 
     const growth = state.growthStats;
 
     if ( ! growth ) {
-        return <div className="text-text-muted text-center py-8">Failed to load the growth figures</div>;
+        return (
+            <StatisticsSection title="Growth" hint={ GROWTH_HINT }>
+                <StatisticsFailure text="Failed to load the growth figures" />
+            </StatisticsSection>
+        );
     }
 
     const { total, judgedDay } = growth;
 
     return (
-        <>
+        <StatisticsSection title="Growth" hint={ GROWTH_HINT }>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
                 <StatCard
                     title="Installs"
@@ -121,29 +125,25 @@ const GrowthDisplayComponent: DCommandFunctionComponent<GrowthDisplayProps, Grow
                         <tr className="border-t border-border font-medium">
                             <td className="px-4 py-2 text-text-primary">All</td>
                             <td className="px-4 py-2 text-text-primary tabular-nums">{ formatCount( total.installs ) }</td>
-                            <td className="px-4 py-2 text-text-primary tabular-nums">{ share( total.setUpAtOnce, total.installs ) }</td>
-                            <td className="px-4 py-2 text-text-primary tabular-nums">{ share( total.firstRoomEarly, total.installs ) }</td>
-                            <td className="px-4 py-2 text-text-primary tabular-nums">{ share( total.activeRecently, total.installs ) }</td>
-                            <td className="px-4 py-2 text-text-primary tabular-nums">{ share( total.stillInstalled, total.installs ) }</td>
-                            <td className="px-4 py-2 text-text-primary tabular-nums">{ share( total.aliveAtJudgedDay, total.judged ) }</td>
+                            <td className="px-4 py-2 text-text-primary tabular-nums">{ formatPartOf( total.setUpAtOnce, total.installs ) }</td>
+                            <td className="px-4 py-2 text-text-primary tabular-nums">{ formatPartOf( total.firstRoomEarly, total.installs ) }</td>
+                            <td className="px-4 py-2 text-text-primary tabular-nums">{ formatPartOf( total.activeRecently, total.installs ) }</td>
+                            <td className="px-4 py-2 text-text-primary tabular-nums">{ formatPartOf( total.stillInstalled, total.installs ) }</td>
+                            <td className="px-4 py-2 text-text-primary tabular-nums">{ formatPartOf( total.aliveAtJudgedDay, total.judged ) }</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </>
+        </StatisticsSection>
     );
 };
 
 const GrowthDisplay = withCommands<GrowthDisplayProps, GrowthDisplayState>(
-    "Home/GrowthStats",
+    "Statistics/GrowthStats",
     GrowthDisplayComponent,
     GROWTH_INITIAL_STATE,
     []
 );
-
-function GrowthSkeleton() {
-    return <div className="bg-surface border border-border rounded-lg h-56 animate-pulse" />;
-}
 
 /**
  * What becomes of every install, by the link it came through - the owner's figures, the same ones
@@ -152,7 +152,7 @@ function GrowthSkeleton() {
 export function GrowthSection() {
     return (
         <QueryComponent<IGrowthStats, GrowthDisplayProps, IGrowthStats, GrowthDisplayState>
-            fallback={ <GrowthSkeleton /> }
+            fallback={ <StatisticsSkeleton /> }
             module={ GrowthStatsQuery }
             component={ GrowthDisplay }
             props={ {} }

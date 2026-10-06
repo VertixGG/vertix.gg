@@ -9,7 +9,7 @@ import { DASHBOARD_STATS_WINDOWS } from "@vertix.gg/definitions/src/dashboard-st
 import { GuildActivityQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-activity-query";
 import { StatCard } from "@vertix.gg/dashboard/src/features/home/components/stat-card";
 import { DayBars } from "@vertix.gg/dashboard/src/features/home/components/day-bars";
-import { formatCount, formatDay } from "@vertix.gg/dashboard/src/features/home/lib/format";
+import { describeWeekChange, formatCount, formatDay } from "@vertix.gg/dashboard/src/features/home/lib/format";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
 import type { IGuildActivityStats } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
@@ -25,23 +25,6 @@ interface ActivityDisplayState {
 const ACTIVITY_INITIAL_STATE: ActivityDisplayState = {
     guildActivity: null
 };
-
-/**
- * Function describeWeek() :: This week against the one before it, in a line.
- */
-function describeWeek( activity: IGuildActivityStats ) {
-    const difference = activity.roomsThisWeek - activity.roomsLastWeek;
-
-    if ( ! activity.roomsLastWeek ) {
-        return activity.roomsThisWeek ? "None the week before" : "None the week before either";
-    }
-
-    if ( ! difference ) {
-        return "The same as the week before";
-    }
-
-    return `${ difference > 0 ? "▲" : "▼" } ${ formatCount( Math.abs( difference ) ) } against the week before`;
-}
 
 const ActivityDisplayComponent: DCommandFunctionComponent<ActivityDisplayProps, ActivityDisplayState> = () => {
     const [ state ] = useCommandState<ActivityDisplayState, ActivityDisplayState>(
@@ -66,7 +49,7 @@ const ActivityDisplayComponent: DCommandFunctionComponent<ActivityDisplayProps, 
                     title="Rooms This Week"
                     value={ formatCount( activity.roomsThisWeek ) }
                     icon={ TrendingUp }
-                    description={ describeWeek( activity ) }
+                    description={ describeWeekChange( activity.roomsThisWeek, activity.roomsLastWeek ) }
                 />
                 <StatCard
                     title={ `Rooms in ${ DASHBOARD_STATS_WINDOWS.ACTIVITY_DAYS } Days` }

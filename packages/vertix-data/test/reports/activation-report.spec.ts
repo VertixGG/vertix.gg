@@ -1,7 +1,8 @@
 import {
     ACTIVATION_JUDGED_DAY,
     ACTIVATION_UNATTRIBUTED_SOURCE,
-    buildActivationReport
+    buildActivationReport,
+    buildActivationTimings
 } from "@vertix.gg/data/src/reports/activation-report";
 
 import type {
@@ -10,7 +11,9 @@ import type {
     IActivationInstallRow
 } from "@vertix.gg/data/src/reports/activation-report";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+const HOUR_MS = 60 * 60 * 1000;
+
+const DAY_MS = 24 * HOUR_MS;
 
 const NOW = new Date( "2026-12-01T12:00:00.000Z" );
 
@@ -199,5 +202,93 @@ describe( "VertixData/Reports/Activation", () => {
 
         // Assert.
         expect( result.installs.map( ( install ) => install.guildId ) ).toEqual( [ "new" ] );
+    } );
+
+    it( "should count a first room however long after the join it came, apart from an early one", () => {
+        // Arrange - a room on day 3, a room on day 20, and a server never used.
+        const joinedAt = daysBefore( 30 );
+
+        const guilds = [
+            makeGuild( { guildId: "a", joinedAt, firstRoomAt: new Date( joinedAt.getTime() + 3 * DAY_MS ) } ),
+            makeGuild( { guildId: "b", joinedAt, firstRoomAt: new Date( joinedAt.getTime() + 20 * DAY_MS ) } ),
+            makeGuild( { guildId: "c", joinedAt } )
+        ];
+
+        // Act & Assert.
+        expect( report( guilds ).total ).toMatchObject( { firstRoomEarly: 1, firstRoomEver: 2 } );
+    } );
+
+    describe( "buildActivationTimings()", () => {
+        const joinedAt = daysBefore( 20 ),
+            hoursAfterJoin = ( hours: number ) => new Date( joinedAt.getTime() + hours * HOUR_MS );
+
+        it( "should take the middle of the times from the join to a first generator and to a first room", () => {
+            // Arrange - set up after 1, 3 and 5 hours; rooms after 2 and 4 days.
+            const guilds = [
+                makeGuild( { guildId: "a", joinedAt, setupAt: hoursAfterJoin( 1 ), firstRoomAt: hoursAfterJoin( 48 ) } ),
+                makeGuild( { guildId: "b", joinedAt, setupAt: hoursAfterJoin( 5 ), firstRoomAt: hoursAfterJoin( 96 ) } ),
+                makeGuild( { guildId: "c", joinedAt, setupAt: hoursAfterJoin( 3 ) } )
+            ];
+
+            // Act.
+            const timings = buildActivationTimings( report( guilds ).installs );
+
+            // Assert - two first rooms have no one middle, so it is the mean of both.
+            expect( timings.medianToSetUpMs ).toBe( 3 * HOUR_MS );
+            expect( timings.medianToFirstRoomMs ).toBe( 72 * HOUR_MS );
+        } );
+
+        it( "should not time a milestone from an earlier install of the same server", () => {
+            // Arrange - set up 200 days ago, added back 3 days ago, nothing since.
+            const guild = makeGuild( { guildId: "a", joinedAt: daysBefore( 3 ), setupAt: daysBefore( 200 ) } );
+
+            // Act & Assert.
+            expect( buildActivationTimings( report( [ guild ] ).installs ).medianToSetUpMs ).toBeNull();
+        } );
+
+        it( "should count the removals, the ones never set up, and the ones gone within a day", () => {
+            // Arrange.
+            const guilds = [
+                makeGuild( { guildId: "quick", joinedAt, isInGuild: false, leftAt: hoursAfterJoin( 2 ) } ),
+                makeGuild( { guildId: "tried", joinedAt, isInGuild: false, leftAt: hoursAfterJoin( 240 ), setupAt: hoursAfterJoin( 1 ) } ),
+                makeGuild( { guildId: "kept", joinedAt, setupAt: hoursAfterJoin( 1 ) } )
+            ];
+
+            // Act.
+            const timings = buildActivationTimings( report( guilds ).installs );
+
+            // Assert.
+            expect( timings ).toMatchObject( { removed: 2, removedWithoutSetUp: 1, removedWithinDay: 1 } );
+            expect( timings.medianLifetimeMs ).toBe( ( 2 + 240 ) / 2 * HOUR_MS );
+        } );
+
+        it( "should count a removal whose leave was never recorded, without timing it", () => {
+            // Arrange - added and removed before joins and leaves were written down.
+            const guild = makeGuild( {
+                guildId: "a",
+                createdAt: daysBefore( 40 ),
+                joinedAt: null,
+                isInGuild: false,
+                leftAt: null
+            } );
+
+            // Act.
+            const timings = buildActivationTimings( report( [ guild ] ).installs );
+
+            // Assert.
+            expect( timings ).toMatchObject( { removed: 1, removedWithinDay: 0, medianLifetimeMs: null } );
+        } );
+
+        it( "should time nothing when there is nothing to time", () => {
+            // Act & Assert.
+            expect( buildActivationTimings( [] ) ).toEqual( {
+                medianToSetUpMs: null,
+                medianToFirstRoomMs: null,
+                removed: 0,
+                removedWithoutSetUp: 0,
+                removedWithinDay: 0,
+                medianLifetimeMs: null
+            } );
+        } );
     } );
 } );

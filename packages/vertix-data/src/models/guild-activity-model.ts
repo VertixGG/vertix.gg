@@ -15,11 +15,18 @@ export function toUtcDay( at: Date ): Date {
 }
 
 /**
+ * Function toUtcHour() :: The start of the UTC hour a moment falls in - what an hour's count is filed under.
+ */
+export function toUtcHour( at: Date ): Date {
+    return new Date( Date.UTC( at.getUTCFullYear(), at.getUTCMonth(), at.getUTCDate(), at.getUTCHours() ) );
+}
+
+/**
  * What a server has done with the bot since adding it: set it up, and had rooms made from it.
  *
  * The milestones are firsts, written once and never moved - they answer whether an install turned
  * into a server that runs on the bot, which is what the owner is trying to grow. The day counts are
- * how much it is used now. None of it names a member.
+ * how much it is used now, and the hour counts when in the day and the week. None of it names a member.
  */
 export class GuildActivityModel extends ModelBase<PrismaBot.PrismaClient> {
     private static instance: GuildActivityModel;
@@ -63,21 +70,41 @@ export class GuildActivityModel extends ModelBase<PrismaBot.PrismaClient> {
         } );
 
         await this.countRoom( guildId, toUtcDay( at ) );
+
+        await this.countRoomHour( guildId, toUtcHour( at ) );
     }
 
     /**
      * Function countRoom() :: Add one to a server's rooms for a day.
-     *
-     * Two rooms made in the same moment can both find the day's row missing and both try to create it;
-     * the loser of that race is retried once, when the row exists and the increment lands on it.
      */
-    private async countRoom( guildId: string, day: Date, isRetry = false ): Promise<void> {
+    private async countRoom( guildId: string, day: Date ) {
+        await this.retryLostCreate( () => this.prisma.guildActivityDay.upsert( {
+            where: { guildId_day: { guildId, day } },
+            create: { guildId, day, roomsCreated: 1 },
+            update: { roomsCreated: { increment: 1 } }
+        } ) );
+    }
+
+    /**
+     * Function countRoomHour() :: Add one to a server's rooms for an hour.
+     */
+    private async countRoomHour( guildId: string, hour: Date ) {
+        await this.retryLostCreate( () => this.prisma.guildActivityHour.upsert( {
+            where: { guildId_hour: { guildId, hour } },
+            create: { guildId, hour, roomsCreated: 1 },
+            update: { roomsCreated: { increment: 1 } }
+        } ) );
+    }
+
+    /**
+     * Function retryLostCreate() :: Write a count, and write it again if it lost the race to create its row.
+     *
+     * Two rooms made in the same moment can both find the row missing and both try to create it; the loser
+     * of that race is retried once, when the row exists and the increment lands on it.
+     */
+    private async retryLostCreate<TResult>( write: () => Promise<TResult>, isRetry = false ): Promise<TResult> {
         try {
-            await this.prisma.guildActivityDay.upsert( {
-                where: { guildId_day: { guildId, day } },
-                create: { guildId, day, roomsCreated: 1 },
-                update: { roomsCreated: { increment: 1 } }
-            } );
+            return await write();
         } catch( error ) {
             const code = error && "object" === typeof error && "code" in error ? error.code : null;
 
@@ -85,7 +112,7 @@ export class GuildActivityModel extends ModelBase<PrismaBot.PrismaClient> {
                 throw error;
             }
 
-            await this.countRoom( guildId, day, true );
+            return await this.retryLostCreate( write, true );
         }
     }
 

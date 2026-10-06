@@ -168,6 +168,14 @@ exports.Prisma.GuildActivityDayScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GuildActivityHourScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  hour: 'hour',
+  roomsCreated: 'roomsCreated',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.GuildDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
@@ -417,6 +425,7 @@ exports.Prisma.ModelName = {
   Guild: 'Guild',
   GuildInstall: 'GuildInstall',
   GuildActivityDay: 'GuildActivityDay',
+  GuildActivityHour: 'GuildActivityHour',
   GuildData: 'GuildData',
   GuildCustomization: 'GuildCustomization',
   Channel: 'Channel',

@@ -70,6 +70,23 @@ export function formatCount( value: number ): string {
 }
 
 /**
+ * Function describeWeekChange() :: This week against the one before it, in a line.
+ */
+export function describeWeekChange( thisWeek: number, lastWeek: number ): string {
+    const difference = thisWeek - lastWeek;
+
+    if ( ! lastWeek ) {
+        return thisWeek ? "None the week before" : "None the week before either";
+    }
+
+    if ( ! difference ) {
+        return "The same as the week before";
+    }
+
+    return `${ difference > 0 ? "▲" : "▼" } ${ formatCount( Math.abs( difference ) ) } against the week before`;
+}
+
+/**
  * Function formatShare() :: One value's share of a total, as a rounded percentage.
  *
  * A total of zero has no shares to give, so it reads as zero rather than as a division by nothing.

@@ -1,12 +1,18 @@
 import {
     getGlobalStats,
-    getGrowthStats,
     getGuildActivity,
     getGuildEventsStats,
     getGuildStats,
     getGuildDetails,
     getGuildBotPresence
 } from "@vertix.gg/api/src/server/services/dashboard-service";
+import {
+    getActivationStats,
+    getAdoptionStats,
+    getGrowthStats,
+    getRevenueStats,
+    getUsageStats
+} from "@vertix.gg/api/src/server/services/statistics-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
@@ -39,6 +45,15 @@ export function isOwnerRequest( request: FastifyRequest ): boolean {
     const ownerId = process.env.OWNERD_ID;
 
     return !! ownerId && request.session.userId === ownerId;
+}
+
+/**
+ * Middleware to keep the owner's statistics to the owner.
+ */
+async function requireOwner( request: FastifyRequest, reply: FastifyReply ) {
+    if ( ! isOwnerRequest( request ) ) {
+        return reply.status( 403 ).send( { error: "Access denied" } );
+    }
 }
 
 async function handleGetGlobalStats( _request: FastifyRequest, reply: FastifyReply ) {
@@ -111,15 +126,43 @@ async function handleGetGuildEventsStats(
 /**
  * What became of every install, by the link it came through - business figures, for the owner only.
  */
-async function handleGetGrowthStats( request: FastifyRequest, reply: FastifyReply ) {
-    if ( ! isOwnerRequest( request ) ) {
-        return reply.status( 403 ).send( { error: "Access denied" } );
-    }
-
+async function handleGetGrowthStats( _request: FastifyRequest, reply: FastifyReply ) {
     try {
         return await getGrowthStats();
     } catch( error ) {
         handleError( handleGetGrowthStats, error, reply, "Failed to fetch growth stats" );
+    }
+}
+
+async function handleGetActivationStats( _request: FastifyRequest, reply: FastifyReply ) {
+    try {
+        return await getActivationStats();
+    } catch( error ) {
+        handleError( handleGetActivationStats, error, reply, "Failed to fetch activation stats" );
+    }
+}
+
+async function handleGetUsageStats( _request: FastifyRequest, reply: FastifyReply ) {
+    try {
+        return await getUsageStats();
+    } catch( error ) {
+        handleError( handleGetUsageStats, error, reply, "Failed to fetch usage stats" );
+    }
+}
+
+async function handleGetRevenueStats( _request: FastifyRequest, reply: FastifyReply ) {
+    try {
+        return await getRevenueStats();
+    } catch( error ) {
+        handleError( handleGetRevenueStats, error, reply, "Failed to fetch revenue stats" );
+    }
+}
+
+async function handleGetAdoptionStats( _request: FastifyRequest, reply: FastifyReply ) {
+    try {
+        return await getAdoptionStats();
+    } catch( error ) {
+        handleError( handleGetAdoptionStats, error, reply, "Failed to fetch adoption stats" );
     }
 }
 
@@ -140,7 +183,16 @@ const dashboardRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance
     // Global stats doesn't need guild access check
     fastify.get( "/dashboard/stats/global", handleGetGlobalStats );
 
-    fastify.get( "/dashboard/stats/growth", handleGetGrowthStats );
+    // The owner's statistics page - business figures across every server, refused to anybody else.
+    fastify.register( async( ownerRoutes ) => {
+        ownerRoutes.addHook( "preHandler", requireOwner );
+
+        ownerRoutes.get( "/dashboard/stats/growth", handleGetGrowthStats );
+        ownerRoutes.get( "/dashboard/stats/activation", handleGetActivationStats );
+        ownerRoutes.get( "/dashboard/stats/usage", handleGetUsageStats );
+        ownerRoutes.get( "/dashboard/stats/revenue", handleGetRevenueStats );
+        ownerRoutes.get( "/dashboard/stats/adoption", handleGetAdoptionStats );
+    } );
 
     // Guild-specific routes need access check
     fastify.register( async( guildRoutes ) => {

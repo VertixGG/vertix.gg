@@ -5,6 +5,8 @@
  * it - the script that prints this reads the database, and nothing here does.
  */
 
+import type { IActivationTimings } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
+
 const HOUR_MS = 60 * 60 * 1000,
     DAY_MS = 24 * HOUR_MS;
 
@@ -16,6 +18,9 @@ export const ACTIVATION_SETUP_WINDOW_MS = DAY_MS;
 
 /** A first room "early": within a week of adding the bot. */
 export const ACTIVATION_FIRST_ROOM_WINDOW_MS = 7 * DAY_MS;
+
+/** Removed "at once": within a day of adding the bot - tried and dropped rather than run and given up. */
+export const ACTIVATION_QUICK_REMOVAL_WINDOW_MS = DAY_MS;
 
 /** What "in use now" looks back over. */
 export const ACTIVATION_RECENT_WINDOW_MS = 7 * DAY_MS;
@@ -78,6 +83,7 @@ export interface IActivationSummary {
     setUpAtOnce: number;
     setUpEver: number;
     firstRoomEarly: number;
+    firstRoomEver: number;
     activeRecently: number;
     stillInstalled: number;
     /** Installs old enough to be judged at day 45, and how many of them were alive then. */
@@ -125,6 +131,7 @@ function summarise( source: string, installs: IActivationInstall[] ): IActivatio
         setUpAtOnce: installs.filter( ( install ) => install.isSetUpAtOnce ).length,
         setUpEver: installs.filter( ( install ) => null !== install.setupAt ).length,
         firstRoomEarly: installs.filter( ( install ) => install.hasFirstRoomEarly ).length,
+        firstRoomEver: installs.filter( ( install ) => null !== install.firstRoomAt ).length,
         activeRecently: installs.filter( ( install ) => install.roomsRecently > 0 ).length,
         stillInstalled: installs.filter( ( install ) => install.isInGuild ).length,
         judged: judged.length,
@@ -186,5 +193,55 @@ export function buildActivationReport( options: {
         installs,
         bySource: sources.map( ( source ) => summarise( source, installs.filter( ( install ) => install.source === source ) ) ),
         total: summarise( "all", installs )
+    };
+}
+
+/**
+ * Function median() :: The middle of some durations - the mean of the middle two when there is no one middle.
+ */
+function median( durations: number[] ): number | null {
+    if ( ! durations.length ) {
+        return null;
+    }
+
+    const sorted = [ ... durations ].sort( ( a, b ) => a - b ),
+        middle = Math.floor( sorted.length / 2 );
+
+    return sorted.length % 2 ? sorted[ middle ] : ( sorted[ middle - 1 ] + sorted[ middle ] ) / 2;
+}
+
+/**
+ * Function sinceInstall() :: How long after the install a moment came, or null when it did not come after it.
+ *
+ * A milestone is written once and never moved, so a server that set up during an earlier install still
+ * carries that date - which says nothing about how long this one took.
+ */
+function sinceInstall( install: IActivationInstall, at: Date | null ): number | null {
+    if ( ! at || at.getTime() < install.installedAt.getTime() ) {
+        return null;
+    }
+
+    return at.getTime() - install.installedAt.getTime();
+}
+
+function isDuration( duration: number | null ): duration is number {
+    return null !== duration;
+}
+
+/**
+ * Function buildActivationTimings() :: How long the installs took to set up and to be used, and what
+ * became of the ones the bot was removed from.
+ */
+export function buildActivationTimings( installs: IActivationInstall[] ): IActivationTimings {
+    const removed = installs.filter( ( install ) => ! install.isInGuild ),
+        lifetimes = removed.map( ( install ) => sinceInstall( install, install.leftAt ) ).filter( isDuration );
+
+    return {
+        medianToSetUpMs: median( installs.map( ( install ) => sinceInstall( install, install.setupAt ) ).filter( isDuration ) ),
+        medianToFirstRoomMs: median( installs.map( ( install ) => sinceInstall( install, install.firstRoomAt ) ).filter( isDuration ) ),
+        removed: removed.length,
+        removedWithoutSetUp: removed.filter( ( install ) => null === install.setupAt ).length,
+        removedWithinDay: lifetimes.filter( ( lifetime ) => lifetime <= ACTIVATION_QUICK_REMOVAL_WINDOW_MS ).length,
+        medianLifetimeMs: median( lifetimes )
     };
 }

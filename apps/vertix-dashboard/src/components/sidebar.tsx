@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
-import { Home, Boxes, CalendarCheck, CreditCard, Palette, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
+import { Home, Boxes, CalendarCheck, ChartColumn, CreditCard, Palette, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
 
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
@@ -17,11 +17,14 @@ interface NavItem {
     path: string;
     icon: React.ReactNode;
     hideForDefault?: boolean;
+    /** Shown to the owner of the bot alone. */
+    ownerOnly?: boolean;
 }
 
 interface SidebarSelectedState {
     user: AuthState[ "user" ];
     selectedGuild: AuthState[ "selectedGuild" ];
+    isOwner: AuthState[ "isOwner" ];
 }
 
 const navItems: NavItem[] = [
@@ -69,6 +72,14 @@ const navItems: NavItem[] = [
         path: "/billing",
         icon: <CreditCard className="w-5 h-5" />,
         hideForDefault: true
+    },
+    {
+        // Figures across every server rather than about the one picked, so the customization guild
+        // shows it as well - and the api refuses every one of them to anybody but the owner.
+        label: "Statistics",
+        path: "/statistics",
+        icon: <ChartColumn className="w-5 h-5" />,
+        ownerOnly: true
     }
 ];
 
@@ -79,7 +90,8 @@ export function Sidebar() {
         "Dashboard/Auth",
         ( state: AuthState ): SidebarSelectedState => ( {
             user: state.user,
-            selectedGuild: state.selectedGuild
+            selectedGuild: state.selectedGuild,
+            isOwner: state.isOwner
         } )
     );
 
@@ -105,9 +117,9 @@ export function Sidebar() {
     const selectedGuild = state.selectedGuild;
     const isDefaultGuild = selectedGuild?.id === DEFAULT_CUSTOMIZATION_GUILD_ID;
 
-    const visibleNavItems = isDefaultGuild
-        ? navItems.filter( ( item ) => !item.hideForDefault )
-        : navItems;
+    const visibleNavItems = navItems.filter( ( item ) =>
+        ( ! isDefaultGuild || ! item.hideForDefault ) && ( ! item.ownerOnly || state.isOwner )
+    );
 
     return (
         <aside className="w-55 h-full bg-surface border-r border-border flex flex-col">

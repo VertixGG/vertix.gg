@@ -3,13 +3,7 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { ACTIVATION_JUDGED_DAY, buildActivationReport } from "@vertix.gg/data/src/reports/activation-report";
-import {
-    buildDaySeries,
-    buildGuildActivityStats,
-    getWindowStart,
-    toISODay
-} from "@vertix.gg/data/src/reports/guild-activity-report";
+import { buildGuildActivityStats, getWindowStart } from "@vertix.gg/data/src/reports/guild-activity-report";
 import { buildGuildEventsStats } from "@vertix.gg/data/src/reports/guild-events-report";
 
 import { DASHBOARD_STATS_WINDOWS } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
@@ -18,11 +12,7 @@ import { GUILD_EVENT_RUN_PHASES } from "@vertix.gg/definitions/src/guild-events-
 import type { DiscordService } from "@vertix.gg/api/src/server/services/discord-service";
 import type { ManagementService } from "@vertix.gg/api/src/server/services/management-service";
 
-import type {
-    IGrowthStats,
-    IGuildActivityStats,
-    IGuildEventsStats
-} from "@vertix.gg/definitions/src/dashboard-stats-definitions";
+import type { IGuildActivityStats, IGuildEventsStats } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
 
 const client = PrismaBotClient.$.getClient();
 
@@ -266,48 +256,6 @@ export async function getGuildEventsStats( guildId: string ): Promise<IGuildEven
     } ) : [];
 
     return buildGuildEventsStats( { runs, attendees, isEnabled: !! settings?.enabled } );
-}
-
-/**
- * Function getGrowthStats() :: What became of every install in the growth window - for the owner.
- *
- * The same report `scripts/report-activation.ts` prints, over the same rows, so the page and the
- * script never disagree.
- */
-export async function getGrowthStats(): Promise<IGrowthStats> {
-    const now = new Date(),
-        since = getWindowStart( now, DASHBOARD_STATS_WINDOWS.GROWTH_DAYS );
-
-    const [ guilds, installs, days ] = await Promise.all( [
-        client.guild.findMany( {
-            select: {
-                guildId: true,
-                name: true,
-                isInGuild: true,
-                createdAt: true,
-                joinedAt: true,
-                leftAt: true,
-                setupAt: true,
-                firstRoomAt: true
-            }
-        } ),
-        client.guildInstall.findMany( { where: { createdAt: { gte: since } }, select: { guildId: true, source: true, createdAt: true } } ),
-        client.guildActivityDay.findMany( { where: { day: { gte: since } }, select: { guildId: true, day: true, roomsCreated: true } } )
-    ] );
-
-    const report = buildActivationReport( { guilds, installs, days, now, since } );
-
-    return {
-        since: toISODay( since ),
-        judgedDay: ACTIVATION_JUDGED_DAY,
-        installsPerDay: buildDaySeries(
-            report.installs.map( ( install ) => ( { day: install.installedAt, count: 1 } ) ),
-            now,
-            DASHBOARD_STATS_WINDOWS.GROWTH_DAYS
-        ),
-        total: report.total,
-        bySource: report.bySource
-    };
 }
 
 /**

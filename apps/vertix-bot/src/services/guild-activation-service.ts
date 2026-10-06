@@ -5,6 +5,11 @@ import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { GuildActivityModel, toUtcDay } from "@vertix.gg/data/src/models/guild-activity-model";
 import { GuildVoiceMemberModel } from "@vertix.gg/data/src/models/guild-voice-member-model";
 
+import {
+    GUILD_VOICE_MEMBERS_KEEP_DAYS,
+    GUILD_VOICE_MEMBERS_SWEEP_INTERVAL_MS
+} from "@vertix.gg/definitions/src/dashboard-stats-definitions";
+
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 import type { IChannelEnterGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
@@ -27,9 +32,9 @@ const ROOM_CHANNEL_TYPES: readonly string[] = [ "DYNAMIC_CHANNEL" ];
  * Its first generator, its first room, how many rooms a day its members make and from which generator,
  * and how many of its members are in its rooms - which is what tells an install that became a server
  * running on the bot from one that was added and forgotten. The owner measures growth by it and the
- * server's own home page and weekly summary are drawn from it, so it listens rather than being called:
- * nothing that creates a channel or moves a member has to know it exists, and a failure here never
- * delays either.
+ * server's own home page is drawn from it, so it listens rather than being called: nothing that creates
+ * a channel or moves a member has to know it exists, and a failure here never delays either. It also
+ * deletes the members' days once nothing counts back over them.
  *
  * A room no longer starts the server's free trial - its owner does, from the dashboard's
  * Subscription page. Nothing here gives one.
@@ -70,6 +75,14 @@ export class GuildActivationService extends ServiceWithDependenciesBase<{
                 this.logger.error( this.initialize, `Guild id: '${ guildId }' - Could not record '${ internalType }'`, error );
             } );
         } );
+
+        // Every process deletes the same old days; deleting what is already gone costs nothing.
+        const forget = () => this.forgetOldMembers().catch( ( error ) => {
+            this.logger.error( this.initialize, "Could not delete the members' old days in rooms", error );
+        } );
+
+        setInterval( forget, GUILD_VOICE_MEMBERS_SWEEP_INTERVAL_MS );
+        void forget();
 
         EventBus.$.on( "VertixBot/Services/Channel", "onJoin", ( args: IChannelEnterGenericArgs ) => {
             this.notePresence( args ).catch( ( error ) => {
@@ -132,6 +145,15 @@ export class GuildActivationService extends ServiceWithDependenciesBase<{
         }
 
         await this.noteMember( newState.guild.id, newState.id, new Date() );
+    }
+
+    /**
+     * Function forgetOldMembers() :: Delete the members' days in rooms that nothing counts back over any more.
+     */
+    public async forgetOldMembers( now: Date = new Date() ) {
+        await GuildVoiceMemberModel.$.deleteBefore(
+            new Date( toUtcDay( now ).getTime() - GUILD_VOICE_MEMBERS_KEEP_DAYS * 24 * 60 * 60 * 1000 )
+        );
     }
 
     /**

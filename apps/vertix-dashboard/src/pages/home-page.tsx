@@ -17,7 +17,6 @@ import { GeneratorsPanel } from "@vertix.gg/dashboard/src/features/home/componen
 import { QuickActions } from "@vertix.gg/dashboard/src/features/home/components/quick-actions";
 import { ActivitySection } from "@vertix.gg/dashboard/src/features/home/components/activity-section";
 import { EventsStatsSection } from "@vertix.gg/dashboard/src/features/home/components/events-stats-section";
-import { WeeklyReportCard } from "@vertix.gg/dashboard/src/features/home/components/weekly-report-card";
 import { SectionTitle } from "@vertix.gg/dashboard/src/components/section-title";
 import { formatCount, formatShare } from "@vertix.gg/dashboard/src/features/home/lib/format";
 
@@ -355,11 +354,6 @@ export function HomePage() {
                             hint={ `Rooms members made, the last ${ DASHBOARD_STATS_WINDOWS.ACTIVITY_DAYS } days` }
                         />
                         <ActivitySection guildId={ authState.selectedGuild.id } />
-                    </section>
-
-                    <section className="mb-8">
-                        <SectionTitle title="Weekly summary" hint="Posted in Discord every Monday" />
-                        <WeeklyReportCard guildId={ authState.selectedGuild.id } />
                     </section>
 
                     <section className="mb-8">

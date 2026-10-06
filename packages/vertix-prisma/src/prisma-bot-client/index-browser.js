@@ -193,17 +193,6 @@ exports.Prisma.GuildVoiceMemberDayScalarFieldEnum = {
   userId: 'userId'
 };
 
-exports.Prisma.GuildWeeklyReportScalarFieldEnum = {
-  id: 'id',
-  guildId: 'guildId',
-  channelId: 'channelId',
-  applicationId: 'applicationId',
-  lastWeekStart: 'lastWeekStart',
-  lastError: 'lastError',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.GuildDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
@@ -456,7 +445,6 @@ exports.Prisma.ModelName = {
   GuildActivityHour: 'GuildActivityHour',
   GuildGeneratorActivityDay: 'GuildGeneratorActivityDay',
   GuildVoiceMemberDay: 'GuildVoiceMemberDay',
-  GuildWeeklyReport: 'GuildWeeklyReport',
   GuildData: 'GuildData',
   GuildCustomization: 'GuildCustomization',
   Channel: 'Channel',

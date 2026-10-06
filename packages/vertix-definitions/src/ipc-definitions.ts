@@ -16,8 +16,7 @@ export const IPC_REQUEST_ACTIONS = {
     GET_GENERATOR_DEFAULTS: "get_generator_defaults",
     GET_GUILD_BRANDING_STATUS: "get_guild_branding_status",
     APPLY_GUILD_BRANDING: "apply_guild_branding",
-    GET_GUILD_EVENTS_STATUS: "get_guild_events_status",
-    GET_GUILD_POST_STATUS: "get_guild_post_status"
+    GET_GUILD_EVENTS_STATUS: "get_guild_events_status"
 } as const;
 
 /**
@@ -265,18 +264,6 @@ export interface GetGuildEventsStatusResponse {
     roles: Record<string, IGuildEventsRoleStatus | null>;
 }
 
-/**
- * Whether the bot can post a weekly summary in a channel, asked before the dashboard points it there.
- *
- * Its own question rather than Events' one, though both ask after a channel: what a summary needs there
- * should not change because what Events needs did. The answer is `IGuildPostStatus`.
- */
-export interface GetGuildPostStatusRequest {
-    action: typeof IPC_REQUEST_ACTIONS.GET_GUILD_POST_STATUS;
-    guildId: string;
-    channelId: string;
-}
-
 export interface IPCDiscordChannelInfo {
     id: string;
     name: string;
@@ -299,5 +286,4 @@ export type IPCManagementRequestPayload =
     | GetGeneratorDefaultsRequest
     | GetGuildBrandingStatusRequest
     | ApplyGuildBrandingRequest
-    | GetGuildEventsStatusRequest
-    | GetGuildPostStatusRequest;
+    | GetGuildEventsStatusRequest;

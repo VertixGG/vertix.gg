@@ -36,7 +36,8 @@ async function makeService() {
     };
 
     const members = {
-        markPresent: jest.fn( async( _guildId: string, _userId: string, _day: Date ) => undefined )
+        markPresent: jest.fn( async( _guildId: string, _userId: string, _day: Date ) => undefined ),
+        deleteBefore: jest.fn( async( _day: Date ) => 0 )
     };
 
     const asInstance = <T>( fake: object ): T => fake as T;
@@ -218,6 +219,17 @@ describe( "VertixBot/Services/GuildActivation", () => {
             // Assert.
             expect( members.markPresent ).toHaveBeenCalledTimes( 2 );
             expect( members.markPresent ).toHaveBeenLastCalledWith( GUILD_ID, MEMBER_ID, new Date( "2026-10-07T00:00:00.000Z" ) );
+        } );
+
+        it( "should delete the members' days that nothing counts back over any more", async() => {
+            // Arrange.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.forgetOldMembers( NOW );
+
+            // Assert - sixty days before today, as the privacy policy says.
+            expect( members.deleteBefore ).toHaveBeenCalledWith( new Date( "2026-08-07T00:00:00.000Z" ) );
         } );
 
         it( "should try again at the next join when noting a member failed", async() => {

@@ -200,28 +200,6 @@ model GuildVoiceMemberDay {
   @@index([day])
 }
 
-/// Where a server's weekly summary goes, and the last week that went out.
-///
-/// One row per server. Its `applicationId` is the bot that checked the channel when it was saved, and
-/// only that bot posts - TestVC and production read this same database.
-model GuildWeeklyReport {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  // ---
-  guildId       String    @unique
-  /// The text channel it is posted in, or null when the server turned it off.
-  channelId     String?
-  applicationId String
-  // ---
-  /// Monday 00:00 UTC of the last week posted - claimed before posting, so a week goes out once.
-  lastWeekStart DateTime?
-  /// Why the last week did not go out - a `GUILD_WEEKLY_REPORT_ERRORS` code - or null when it did.
-  lastError     String?
-
-  // ---
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-}
-
 model GuildData {
   id        String       @id @default(auto()) @map("_id") @db.ObjectId
   // ---

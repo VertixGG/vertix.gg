@@ -499,33 +499,6 @@
         ]
     },
     {
-        "name": "VertixBot/UI-General/WeeklyReportAdapter",
-        "adapterKind": "execution",
-        "component": "VertixBot/UI-General/WeeklyReportComponent",
-        "module": "VertixBot/UI-General/Module",
-        "instanceType": "Dynamic",
-        "channelTypes": [
-            "GuildText"
-        ],
-        "permissions": "0",
-        "executionSteps": [
-            {
-                "key": "default",
-                "elementsGroup": null,
-                "embedsGroup": null,
-                "markdownGroup": null,
-                "hooks": []
-            }
-        ],
-        "bindings": [],
-        "hooks": [
-            {
-                "hook": "getStartArgs",
-                "handler": "VertixBot/UI-General/WeeklyReportAdapter/Hooks/GetStartArgs"
-            }
-        ]
-    },
-    {
         "name": "VertixBot/UI-V2/ClaimResultAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V2/ClaimResultComponent",

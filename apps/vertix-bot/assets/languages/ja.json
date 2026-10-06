@@ -535,12 +535,6 @@
         "content": {
           "label": "お支払いを開く"
         }
-      },
-      {
-        "name": "VertixBot/UI-General/WeeklyReportDashboardButton",
-        "content": {
-          "label": "ダッシュボードを開く"
-        }
       }
     ],
     "textInputs": [
@@ -4265,13 +4259,6 @@
       "content": {
         "title": "⏳  {planName} の無料トライアルがまもなく終了します",
         "description": "**{guildName}** の {planName} 無料トライアルは <t:{endsAt}:R>（<t:{endsAt}:f>）に終了します。\n\n終了すると:\n- **ボットのカスタム外観** - サーバー内でボットが使っている名前、アバター、バナー、自己紹介が外れます。\n- **ジェネレーター** - ルームを作り続けるのは最初の {maxMasterChannels} 個だけになります。\n\nダッシュボードから月額 ${monthlyPriceUsd} で {planName} を続けられます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/WeeklyReportEmbed",
-      "content": {
-        "title": "📊  ボイスの1週間",
-        "description": "**{weekRange}**\n\n🎙️ **作成されたルーム:** {rooms} - 前の週: {roomsBefore}\n👥 **ルームにいたメンバー:** {members} - 前の週: {membersBefore}\n⏰ **最も活発な時間:** {busiestHour}\n🏆 **最も活発なジェネレーター:** {topGenerator}"
       }
     }
   ],

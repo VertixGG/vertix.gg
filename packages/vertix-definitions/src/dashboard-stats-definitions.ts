@@ -31,6 +31,15 @@ export const DASHBOARD_STATS_WINDOWS = {
     HOURS_DAYS: 28
 } as const;
 
+/**
+ * How long a member's days in a server's rooms are kept, then deleted - longer than the home page counts
+ * back over, and no longer, since they name who was in voice. The privacy policy says it.
+ */
+export const GUILD_VOICE_MEMBERS_KEEP_DAYS = 60;
+
+/** How often each bot process deletes the members' days older than that. */
+export const GUILD_VOICE_MEMBERS_SWEEP_INTERVAL_MS = 6 * 60 * 60 * 1000;
+
 export const DASHBOARD_STATS_LIMITS = {
     /** The members listed as a server's regulars at its events. */
     REGULARS_MAX: 5,

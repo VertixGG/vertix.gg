@@ -71,8 +71,8 @@ export const ROUTE_META: readonly RouteMeta[] = [
         title: "Temporary Voice Channel Features | VoiceChannels",
         description:
             "Every control a VoiceChannels channel gives its owner, in the v3 and v2 interfaces, "
-            + "the auto-scaling pools that open and close channels as people arrive, and check-ins "
-            + "for your scheduled events.",
+            + "the auto-scaling pools that open and close channels as people arrive, check-ins "
+            + "for your scheduled events, and the server's voice, verified and staff roles.",
         priority: 0.9,
     },
     {
@@ -110,6 +110,34 @@ export const ROUTE_META: readonly RouteMeta[] = [
             "Check-in boards for Discord scheduled events: members check in by joining voice, "
             + "no-shows are marked, a post asks for subs, and the board ends as the attendance. Free.",
         priority: 0.9,
+    },
+    {
+        path: "/features/voice-role",
+        sourcePath: "src/vertix/pages/features/voice-role.tsx",
+        title: "Voice Role for Temporary Voice Channels | VoiceChannels",
+        description:
+            "Give members a role while they are in one of your temporary voice channels and take it "
+            + "back when they leave - open a text channel to whoever is talking. Server-wide or per "
+            + "generator. Free.",
+        priority: 0.8,
+    },
+    {
+        path: "/features/verified-roles",
+        sourcePath: "src/vertix/pages/features/verified-roles.tsx",
+        title: "Verified Roles — Who Your Voice Channels Are For | VoiceChannels",
+        description:
+            "Keep temporary voice channels to the roles your members earn: everyone else sees neither "
+            + "the generator nor its rooms, and room privacy works on those roles. Free.",
+        priority: 0.8,
+    },
+    {
+        path: "/features/staff-roles",
+        sourcePath: "src/vertix/pages/features/staff-roles.tsx",
+        title: "Staff Roles — Moderators No Voice Channel Locks Out | VoiceChannels",
+        description:
+            "Roles no private or hidden voice channel can shut out, whose holders a room's owner "
+            + "cannot block or kick - so your moderators reach every room. Free.",
+        priority: 0.8,
     },
     {
         path: "/docs",

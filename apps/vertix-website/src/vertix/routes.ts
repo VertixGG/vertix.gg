@@ -43,6 +43,18 @@ const routes = [
         path: "/features/events",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/events" ) ),
     },
+    {
+        path: "/features/voice-role",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/voice-role" ) ),
+    },
+    {
+        path: "/features/verified-roles",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/verified-roles" ) ),
+    },
+    {
+        path: "/features/staff-roles",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/staff-roles" ) ),
+    },
     // ---
     {
         path: "/pricing",

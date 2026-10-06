@@ -43,6 +43,28 @@ export const SERVER_TOOLS: readonly FeatureProduct[] = [
     },
 ];
 
+/**
+ * The three role settings, which the bot keeps together too - `/manage roles` opens them and
+ * nothing else. Titled the way `/setup` heads them, since that is where an admin meets them.
+ */
+export const SERVER_ROLES: readonly FeatureProduct[] = [
+    {
+        title: "Server Voice Role",
+        href: "/features/voice-role",
+        features: [],
+    },
+    {
+        title: "Server Verified Roles",
+        href: "/features/verified-roles",
+        features: [],
+    },
+    {
+        title: "Server Staff Roles",
+        href: "/features/staff-roles",
+        features: [],
+    },
+];
+
 function toDocsPage( product: FeatureProduct ): DocsPage {
     if ( ! product.features.length ) {
         return { title: product.title, href: product.href };
@@ -69,6 +91,10 @@ export const FEATURES_NAVIGATION: DocsNavigation = {
         {
             title: "Server tools",
             pages: SERVER_TOOLS.map( toDocsPage ),
+        },
+        {
+            title: "Server roles",
+            pages: SERVER_ROLES.map( toDocsPage ),
         },
     ],
 };

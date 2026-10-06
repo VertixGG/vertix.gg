@@ -323,11 +323,17 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             }
 
             if ( settings.dynamicChannelVoiceRoleId !== undefined ) {
+                // The api has already written the new role, so what this generator gave until now
+                // comes with the message - its own role, or the guild wide one it deferred to.
+                const previousRoleId = data.previousVoiceRoleId || await GuildDataManager.$.getVoiceRoleId( guildId );
+
                 await MasterChannelDataManager.$.setChannelVoiceRoleId(
                     masterChannelDB,
                     guildId,
                     settings.dynamicChannelVoiceRoleId
                 );
+
+                await this.resyncVoiceRole( guildId, previousRoleId );
             }
 
             if ( settings.dynamicChannelLogsChannelId !== undefined ) {
@@ -1310,7 +1316,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         try {
             if ( settings.voiceRoleId !== undefined ) {
-                await GuildDataManager.$.setVoiceRoleId( guildId, settings.voiceRoleId );
+                const { previousRoleId } = await GuildDataManager.$.setVoiceRoleId( guildId, settings.voiceRoleId );
+
+                await this.resyncVoiceRole( guildId, previousRoleId );
             }
 
             if ( settings.verifiedRoleIds !== undefined ) {
@@ -1335,6 +1343,20 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } catch( error ) {
             this.logger.error( this.handleUpdateGuildSettings, `Failed to update guild settings for ${ guildId }`, error );
         }
+    }
+
+    /**
+     * Function resyncVoiceRole() :: Moves the people sitting in a guild's dynamic channels off the
+     * voice role a dashboard save just replaced, and onto the one that applies now.
+     */
+    private async resyncVoiceRole( guildId: string, previousRoleId: string | null ) {
+        const guild = this.services.appService.getClient().guilds.cache.get( guildId );
+
+        if ( ! guild ) {
+            return;
+        }
+
+        await VoiceRoleManager.$.resyncGuild( guild, [ previousRoleId ] );
     }
 
     /**

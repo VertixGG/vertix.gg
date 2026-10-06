@@ -11,6 +11,8 @@ import { ROLE_UNASSIGNABLE_REASONS } from "@vertix.gg/definitions/src/ipc-defini
 
 import type { TRoleUnassignableReason } from "@vertix.gg/definitions/src/ipc-definitions";
 
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
+
 import type { Guild, GuildMember, Role, Snowflake, VoiceState } from "discord.js";
 
 export class VoiceRoleManager extends InitializeBase {
@@ -156,6 +158,50 @@ export class VoiceRoleManager extends InitializeBase {
     }
 
     /**
+     * Function resyncGuild() :: Moves everybody sitting in a dynamic channel onto the voice role
+     * that applies to it now, after the setting changed under them.
+     *
+     * Leaving takes off the role the channel gives *now*, and the reconcile reclaims only roles that
+     * are still configured - so a role changed or cleared while people sat in channels stayed on them
+     * for good, and the new one reached them only once they moved. By the time this runs the stored
+     * setting already names the new role, which is why the caller says what applied before.
+     *
+     * Only the people in a dynamic channel are visited: anybody else lost the role when they left,
+     * back when it was still the one their channel gave.
+     */
+    public async resyncGuild( guild: Guild, previousRoleIds: ReadonlyArray<string | null> ) {
+        const previous = new Set( previousRoleIds.filter( ( roleId ): roleId is string => !! roleId ) );
+
+        try {
+            for ( const voiceState of guild.voiceStates.cache.values() ) {
+                const { member, channelId } = voiceState;
+
+                if ( ! member || ! channelId || ! ( await ChannelModel.$.isDynamic( channelId ) ) ) {
+                    continue;
+                }
+
+                const targetRoleId = await this.resolveRoleId( guild, channelId );
+
+                for ( const roleId of previous ) {
+                    if ( roleId !== targetRoleId ) {
+                        await this.removeRole( member, roleId );
+                    }
+                }
+
+                if ( targetRoleId ) {
+                    await this.addRole( member, targetRoleId );
+                }
+            }
+        } catch( error ) {
+            this.logger.error(
+                this.resyncGuild,
+                `Guild id: '${ guild.id }' - Failed to move members onto the changed voice role`,
+                error
+            );
+        }
+    }
+
+    /**
      * Function isRoleAssignable() :: Whether the bot can actually hand this role out.
      *
      * Used by the pickers so an admin is told at the moment they choose, rather than the feature
@@ -188,10 +234,20 @@ export class VoiceRoleManager extends InitializeBase {
     }
 
     /**
+     * Function resolveMasterRoleId() :: The voice role a master channel's dynamic channels give.
+     *
+     * Its own setting wins, and the guild wide default is the fallback - which is also what a
+     * change to its own setting has to be measured from, since that is what was handed out before.
+     */
+    public async resolveMasterRoleId( masterChannelDB: ChannelExtended, guildId: string ): Promise<string | null> {
+        return await MasterChannelDataManager.$.getChannelVoiceRoleId( masterChannelDB )
+            || GuildDataManager.$.getVoiceRoleId( guildId );
+    }
+
+    /**
      * Function resolveRoleId() :: The voice role that applies to a channel.
      *
-     * A master channel's own setting wins, the guild wide default is the fallback, and a channel
-     * that is not dynamic has none at all.
+     * Its master channel's, and a channel that is not dynamic has none at all.
      */
     private async resolveRoleId( guild: Guild, channelId: Snowflake | null ): Promise<string | null> {
         if ( ! channelId || ! ( await ChannelModel.$.isDynamic( channelId ) ) ) {
@@ -201,11 +257,7 @@ export class VoiceRoleManager extends InitializeBase {
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channelId );
 
         if ( masterChannelDB ) {
-            const masterRoleId = await MasterChannelDataManager.$.getChannelVoiceRoleId( masterChannelDB );
-
-            if ( masterRoleId ) {
-                return masterRoleId;
-            }
+            return this.resolveMasterRoleId( masterChannelDB, guild.id );
         }
 
         return GuildDataManager.$.getVoiceRoleId( guild.id );

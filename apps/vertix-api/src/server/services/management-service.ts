@@ -1281,6 +1281,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             }
         } );
 
+        const previousVoiceRoleId = currentSettings.dynamicChannelVoiceRoleId;
+
         // Send IPC message to bot so it can apply any necessary changes
         try {
             await this.publishManagementMessage( {
@@ -1288,7 +1290,9 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 data: {
                     guildId,
                     masterChannelId,
-                    settings
+                    settings,
+                    // Read off the row before the write above, which the bot can no longer do.
+                    previousVoiceRoleId: "string" === typeof previousVoiceRoleId ? previousVoiceRoleId : null
                 }
             } );
         } catch {

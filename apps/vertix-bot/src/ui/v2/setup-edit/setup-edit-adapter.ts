@@ -39,6 +39,7 @@ import { SCOPE_DEFAULT_VALUE } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-bu
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-component";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 
 import type { TDynamicChannelLfmTimingsField }
     from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
@@ -731,7 +732,13 @@ async function onVoiceRoleSelected(
         version: VERSION_UI_V2
     } as ChannelExtended;
 
+    // Read before the write: once it lands, this generator's channels resolve to the new role, and
+    // the old one is what the people in them still hold.
+    const previousRoleId = await VoiceRoleManager.$.resolveMasterRoleId( masterChannelDB, interaction.guildId );
+
     await MasterChannelDataManager.$.setChannelVoiceRoleId( masterChannelDB, interaction.guildId, roleId );
+
+    void VoiceRoleManager.$.resyncGuild( interaction.guild, [ previousRoleId ] );
 
     context.setArgs( interaction, args );
 

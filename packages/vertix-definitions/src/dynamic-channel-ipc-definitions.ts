@@ -55,6 +55,15 @@ export interface UpdateDynamicSettingsPayload {
         /** Where the button set is divided into rows; empty returns it to rows of five. */
         dynamicChannelButtonsRowBreaks?: number[];
     };
+    /**
+     * The generator's own voice role as it stood before this save, null when it had none and gave
+     * the guild wide one.
+     *
+     * The api writes the row before it tells the bot, so by the time the bot hears of a change the
+     * stored role is already the new one - and the old one is what the members sitting in this
+     * generator's channels still hold, so it is the only way to find them and take it back.
+     */
+    previousVoiceRoleId?: string | null;
 }
 
 export interface UpdateGuildSettingsPayload {

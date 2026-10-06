@@ -44,6 +44,7 @@ import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/e
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup-elements/setup-max-master-channels-embed";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
@@ -464,7 +465,11 @@ async function onVoiceRoleSelected(
 ) {
     const roleId = interaction.values.at( 0 ) ?? null;
 
-    await GuildDataManager.$.setVoiceRoleId( interaction.guildId, roleId );
+    const { previousRoleId } = await GuildDataManager.$.setVoiceRoleId( interaction.guildId, roleId );
+
+    // Not awaited: the screen should not wait on every member sitting in a channel being moved over,
+    // and the move ends in the same place whatever order it meets their own joins and leaves in.
+    void VoiceRoleManager.$.resyncGuild( interaction.guild, [ previousRoleId ] );
 
     if ( roleId ) {
         await warnOnUnassignableVoiceRole( interaction, roleId );
@@ -532,7 +537,9 @@ async function onVoiceRoleClearClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    await GuildDataManager.$.setVoiceRoleId( interaction.guildId, null );
+    const { previousRoleId } = await GuildDataManager.$.setVoiceRoleId( interaction.guildId, null );
+
+    void VoiceRoleManager.$.resyncGuild( interaction.guild, [ previousRoleId ] );
 
     await context.editReplyWithStep( interaction, SETUP_VOICE_ROLE_STEP );
 }

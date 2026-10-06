@@ -7,6 +7,11 @@ import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
+import type {
+    UpdateDynamicSettingsPayload,
+    UpdateGuildSettingsPayload
+} from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
+
 /**
  * Which channel an interaction is about.
  *
@@ -194,6 +199,61 @@ async function createDynamicChannel( options: { movesWhileCreating: boolean } ) 
     return recorded;
 }
 
+type VoiceRoleSaver = {
+    handleUpdateDynamicSettings( data: UpdateDynamicSettingsPayload ): Promise<void>;
+    handleUpdateGuildSettings( data: UpdateGuildSettingsPayload ): Promise<void>;
+};
+
+/**
+ * Stands up what a dashboard save of a voice role reaches: the two stores it lands in, the guild it
+ * is for - or none, on a shard that does not hold it - and the move of the members sitting in its
+ * channels, which is recorded rather than made.
+ *
+ * `guildRoleId` is the guild wide role as it stood before the save.
+ */
+async function aVoiceRoleSave( options: { guildRoleId: string | null; holdsGuild: boolean } ) {
+    await TestWithServiceLocatorMock.withUIServiceMock();
+
+    const { DynamicChannelService } = await import( "@vertix.gg/bot/src/services/dynamic-channel-service" );
+    const { ChannelModel } = await import( "@vertix.gg/data/src/models/channel/channel-model" );
+    const { MasterChannelDataManager } = await import( "@vertix.gg/data/src/managers/master-channel-data-manager" );
+    const { GuildDataManager } = await import( "@vertix.gg/data/src/managers/guild-data-manager" );
+    const { VoiceRoleManager } = await import( "@vertix.gg/bot/src/managers/voice-role-manager" );
+
+    const generatorDB = { id: "generator-db-id", channelId: GENERATOR_ID, version: "0.0.0.2" };
+
+    jest.spyOn( ChannelModel, "$", "get" ).mockReturnValue( { getById: async() => generatorDB } as never );
+
+    const setChannelVoiceRoleId = jest.fn( async() => undefined );
+
+    jest.spyOn( MasterChannelDataManager, "$", "get" ).mockReturnValue( { setChannelVoiceRoleId } as never );
+
+    jest.spyOn( GuildDataManager, "$", "get" ).mockReturnValue( {
+        getVoiceRoleId: async() => options.guildRoleId,
+        setVoiceRoleId: async( _guildId: string, roleId: string | null ) => ( { previousRoleId: options.guildRoleId, roleId } )
+    } as never );
+
+    const resyncGuild = jest.spyOn( VoiceRoleManager.$, "resyncGuild" ).mockResolvedValue( undefined );
+
+    const guild = { id: GUILD_ID };
+
+    const prototype = DynamicChannelService.prototype as unknown as Record<string, Function>;
+
+    const state = {
+        handleUpdateDynamicSettings: prototype.handleUpdateDynamicSettings,
+        handleUpdateGuildSettings: prototype.handleUpdateGuildSettings,
+        resyncVoiceRole: prototype.resyncVoiceRole,
+        logger: { log: () => undefined, error: () => undefined },
+        services: {
+            appService: {
+                getClient: () => ( { guilds: { cache: new Map( options.holdsGuild ? [ [ GUILD_ID, guild ] ] : [] ) } } )
+            }
+        }
+    };
+
+    return { saver: state as unknown as VoiceRoleSaver, guild, setChannelVoiceRoleId, resyncGuild };
+}
+
 describe( "VertixBot/Services/DynamicChannel", () => {
     describe( "resolveTargetChannel()", () => {
         it( "should answer with the voice channel the interaction is already in", async() => {
@@ -363,6 +423,79 @@ describe( "VertixBot/Services/DynamicChannel", () => {
             // Assert.
             expect( errors ).toEqual( [] );
             expect( filedUnder ).toEqual( [ GENERATOR_ID ] );
+        } );
+    } );
+
+    /**
+     * A voice role saved on the dashboard, and the people already sitting in channels.
+     *
+     * The guild wide role is written by the bot, so it can read what it replaces. A generator's own
+     * is written by the api before the bot hears of it - so what it replaced has to come with the
+     * message, or the members still holding it are never found.
+     */
+    describe( "voice role saves from the dashboard", () => {
+        afterEach( () => {
+            jest.restoreAllMocks();
+        } );
+
+        it( "should move members off the role a generator gave, as the api sent it", async() => {
+            // Arrange.
+            const { saver, guild, setChannelVoiceRoleId, resyncGuild } =
+                await aVoiceRoleSave( { guildRoleId: "role-guild", holdsGuild: true } );
+
+            // Act.
+            await saver.handleUpdateDynamicSettings( {
+                guildId: GUILD_ID,
+                masterChannelId: "generator-db-id",
+                settings: { dynamicChannelVoiceRoleId: "role-talking" },
+                previousVoiceRoleId: "role-voice"
+            } );
+
+            // Assert.
+            expect( setChannelVoiceRoleId ).toHaveBeenCalledWith(
+                expect.objectContaining( { id: "generator-db-id" } ), GUILD_ID, "role-talking"
+            );
+            expect( resyncGuild ).toHaveBeenCalledWith( guild, [ "role-voice" ] );
+        } );
+
+        // Its own role was empty, so what its channels handed out was the guild wide one.
+        it( "should measure a generator that had no role of its own from the guild wide one", async() => {
+            // Arrange.
+            const { saver, guild, resyncGuild } = await aVoiceRoleSave( { guildRoleId: "role-guild", holdsGuild: true } );
+
+            // Act.
+            await saver.handleUpdateDynamicSettings( {
+                guildId: GUILD_ID,
+                masterChannelId: "generator-db-id",
+                settings: { dynamicChannelVoiceRoleId: "role-talking" },
+                previousVoiceRoleId: null
+            } );
+
+            // Assert.
+            expect( resyncGuild ).toHaveBeenCalledWith( guild, [ "role-guild" ] );
+        } );
+
+        it( "should move members off the guild wide role it replaced", async() => {
+            // Arrange.
+            const { saver, guild, resyncGuild } = await aVoiceRoleSave( { guildRoleId: "role-voice", holdsGuild: true } );
+
+            // Act.
+            await saver.handleUpdateGuildSettings( { guildId: GUILD_ID, settings: { voiceRoleId: "role-talking" } } );
+
+            // Assert.
+            expect( resyncGuild ).toHaveBeenCalledWith( guild, [ "role-voice" ] );
+        } );
+
+        // Discord gives a guild to one shard, and only that one can see who sits in its channels.
+        it( "should not move anybody on a shard that does not hold the guild", async() => {
+            // Arrange.
+            const { saver, resyncGuild } = await aVoiceRoleSave( { guildRoleId: "role-voice", holdsGuild: false } );
+
+            // Act.
+            await saver.handleUpdateGuildSettings( { guildId: GUILD_ID, settings: { voiceRoleId: "role-talking" } } );
+
+            // Assert.
+            expect( resyncGuild ).not.toHaveBeenCalled();
         } );
     } );
 } );

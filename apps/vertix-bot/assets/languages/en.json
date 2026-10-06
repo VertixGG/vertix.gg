@@ -535,6 +535,12 @@
         "content": {
           "label": "Open billing"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/WeeklyReportDashboardButton",
+        "content": {
+          "label": "Open dashboard"
+        }
       }
     ],
     "textInputs": [
@@ -4286,6 +4292,13 @@
       "content": {
         "title": "⏳  Your free {planName} trial is ending",
         "description": "The free {planName} trial in **{guildName}** ends <t:{endsAt}:R>, on <t:{endsAt}:f>.\n\nWhen it ends:\n- **Custom bot look** - the name, avatar, banner and bio the bot wears in your server come off.\n- **Generators** - only your first {maxMasterChannels} keep making rooms.\n\nKeep {planName} for ${monthlyPriceUsd} a month on the dashboard."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WeeklyReportEmbed",
+      "content": {
+        "title": "📊  Your week in voice",
+        "description": "**{weekRange}**\n\n🎙️ **Rooms made:** {rooms} - the week before: {roomsBefore}\n👥 **Members in rooms:** {members} - the week before: {membersBefore}\n⏰ **Busiest hour:** {busiestHour}\n🏆 **Busiest generator:** {topGenerator}"
       }
     }
   ],

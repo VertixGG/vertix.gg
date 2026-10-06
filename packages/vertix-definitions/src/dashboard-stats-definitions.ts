@@ -89,6 +89,21 @@ export interface IGuildActivityStats {
     busiestDay: IDashboardDayCount | null;
     /** Days in the window with at least one room. */
     activeDays: number;
+    /**
+     * The server's rooms made in each hour of the hours window that had any, oldest first - what its
+     * busiest-hours grid is drawn from. Absent from an API older than it, as are the fields below.
+     */
+    roomsPerHour?: IDashboardHourCount[];
+    /** The first hour rooms were counted by the hour at all, anywhere - null while none has been. */
+    hoursCountedSince?: string | null;
+    /** Members who were in the server's rooms in the last seven days, today included. */
+    membersThisWeek?: number;
+    /** And in the seven days before those. */
+    membersLastWeek?: number;
+    /** Members who were in the server's rooms over the activity window. */
+    membersInWindow?: number;
+    /** The first day members in rooms were counted at all, anywhere - null while none has been. */
+    membersCountedSince?: string | null;
 }
 
 /** A member who keeps coming to a server's events. */

@@ -61,9 +61,10 @@ export class GuildActivityModel extends ModelBase<PrismaBot.PrismaClient> {
     }
 
     /**
-     * Function markRoomCreated() :: Count a room a member made, and record the first one ever.
+     * Function markRoomCreated() :: Count a room a member made - in its day, its hour and, given the generator
+     * that made it, that generator's day - and record the first one ever.
      */
-    public async markRoomCreated( guildId: string, at: Date ) {
+    public async markRoomCreated( guildId: string, at: Date, generatorId: string | null = null ) {
         await this.prisma.guild.updateMany( {
             where: { guildId, OR: [ { firstRoomAt: { isSet: false } }, { firstRoomAt: null } ] },
             data: { firstRoomAt: at }
@@ -72,6 +73,40 @@ export class GuildActivityModel extends ModelBase<PrismaBot.PrismaClient> {
         await this.countRoom( guildId, toUtcDay( at ) );
 
         await this.countRoomHour( guildId, toUtcHour( at ) );
+
+        if ( generatorId ) {
+            await this.countGeneratorRoom( guildId, generatorId, toUtcDay( at ) );
+        }
+    }
+
+    /**
+     * Function getDays() :: A server's rooms per day, from one day up to, not including, another.
+     */
+    public async getDays( guildId: string, from: Date, to: Date ) {
+        return this.prisma.guildActivityDay.findMany( {
+            where: { guildId, day: { gte: from, lt: to } },
+            select: { day: true, roomsCreated: true }
+        } );
+    }
+
+    /**
+     * Function getHours() :: A server's rooms per hour, from one hour up to, not including, another.
+     */
+    public async getHours( guildId: string, from: Date, to: Date ) {
+        return this.prisma.guildActivityHour.findMany( {
+            where: { guildId, hour: { gte: from, lt: to } },
+            select: { hour: true, roomsCreated: true }
+        } );
+    }
+
+    /**
+     * Function getGeneratorDays() :: A server's rooms per generator per day, from one day up to, not including, another.
+     */
+    public async getGeneratorDays( guildId: string, from: Date, to: Date ) {
+        return this.prisma.guildGeneratorActivityDay.findMany( {
+            where: { guildId, day: { gte: from, lt: to } },
+            select: { generatorId: true, day: true, roomsCreated: true }
+        } );
     }
 
     /**
@@ -92,6 +127,17 @@ export class GuildActivityModel extends ModelBase<PrismaBot.PrismaClient> {
         await this.retryLostCreate( () => this.prisma.guildActivityHour.upsert( {
             where: { guildId_hour: { guildId, hour } },
             create: { guildId, hour, roomsCreated: 1 },
+            update: { roomsCreated: { increment: 1 } }
+        } ) );
+    }
+
+    /**
+     * Function countGeneratorRoom() :: Add one to a generator's rooms for a day.
+     */
+    private async countGeneratorRoom( guildId: string, generatorId: string, day: Date ) {
+        await this.retryLostCreate( () => this.prisma.guildGeneratorActivityDay.upsert( {
+            where: { generatorId_day: { generatorId, day } },
+            create: { guildId, generatorId, day, roomsCreated: 1 },
             update: { roomsCreated: { increment: 1 } }
         } ) );
     }

@@ -123,6 +123,11 @@ async function makeGuildDetails( world: Partial<IBotWorld> = {} ) {
         { channelId: A_GENERATOR, categoryId: CATEGORY_CREATED_IN, createdAt: new Date() }
     ] as never );
 
+    const generatorRooms = jest.spyOn( client.guildGeneratorActivityDay, "groupBy" ).mockResolvedValue( [
+        { generatorId: A_GENERATOR, _sum: { roomsCreated: 9 } },
+        { generatorId: "840000000000000099", _sum: { roomsCreated: 4 } }
+    ] as never );
+
     const asked: [ string, string, string[] ][] = [];
 
     const managementService = {
@@ -140,7 +145,7 @@ async function makeGuildDetails( world: Partial<IBotWorld> = {} ) {
 
     const { getGuildDetails } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
 
-    return { asked, read: async() => ( await getGuildDetails( A_GUILD ) )! };
+    return { asked, generatorRooms, read: async() => ( await getGuildDetails( A_GUILD ) )! };
 }
 
 /**
@@ -205,6 +210,24 @@ describe( "VertixAPI/DashboardService/getGuildDetails", () => {
 
         expect( ( await read() ).masterChannels[ 0 ].name ).toBeNull();
     } );
+
+    it( "should give each generator the rooms it made over the activity window, by its discord id", async() => {
+        const { read, generatorRooms } = await makeGuildDetails();
+
+        const [ generator ] = ( await read() ).masterChannels;
+
+        // The other generator's count belongs to a channel this server no longer has - nothing to put it on.
+        expect( generator.roomsInWindow ).toBe( 9 );
+        expect( generatorRooms.mock.calls[ 0 ][ 0 ] ).toMatchObject( { by: [ "generatorId" ], where: { guildId: A_GUILD } } );
+    } );
+
+    it( "should read a generator with no rooms in the window as none, not as unknown", async() => {
+        const { read, generatorRooms } = await makeGuildDetails();
+
+        generatorRooms.mockResolvedValue( [] as never );
+
+        expect( ( await read() ).masterChannels[ 0 ].roomsInWindow ).toBe( 0 );
+    } );
 } );
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -258,22 +281,99 @@ describe( "VertixAPI/DashboardService/stats", () => {
         } );
     } );
 
-    it( "should read a server's rooms per day over the window, with the day counting began", async() => {
+    /**
+     * A server's activity, with what the rest of its tests do not care about answered as nothing - its
+     * hours and its members - unless a test says otherwise.
+     */
+    async function stubGuildActivity( members: { thisWeek: number; lastWeek: number; inWindow: number; countedSince: Date | null } = {
+        thisWeek: 0,
+        lastWeek: 0,
+        inWindow: 0,
+        countedSince: null
+    } ) {
         const client = await getClient();
 
-        const findMany = jest.spyOn( client.guildActivityDay, "findMany" ).mockResolvedValue( [
-            { day: midnightDaysAgo( 0 ), roomsCreated: 3 }
-        ] as never );
+        const { GuildVoiceMemberModel } = await import( "@vertix.gg/data/src/models/guild-voice-member-model" );
 
-        jest.spyOn( client.guildActivityDay, "findFirst" ).mockResolvedValue( { day: midnightDaysAgo( 12 ) } as never );
+        const days = jest.spyOn( client.guildActivityDay, "findMany" ).mockResolvedValue( [] as never ),
+            hours = jest.spyOn( client.guildActivityHour, "findMany" ).mockResolvedValue( [] as never );
+
+        jest.spyOn( client.guildActivityDay, "findFirst" ).mockResolvedValue( null as never );
+        jest.spyOn( client.guildActivityHour, "findFirst" ).mockResolvedValue( null as never );
+
+        const countMembers = jest.fn( async( _guildId: string, from: Date, _to: Date ) => {
+            // Told apart by where each count starts: the week, the week before, and the month.
+            if ( from.getTime() === midnightDaysAgo( 6 ).getTime() ) {
+                return members.thisWeek;
+            }
+
+            return from.getTime() === midnightDaysAgo( 13 ).getTime() ? members.lastWeek : members.inWindow;
+        } );
+
+        jest.spyOn( GuildVoiceMemberModel, "$", "get" ).mockReturnValue( {
+            countMembers,
+            getCountedSince: async() => members.countedSince
+        } as never );
 
         const { getGuildActivity } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
 
-        const activity = await getGuildActivity( A_GUILD );
+        return { client, days, hours, countMembers, read: () => getGuildActivity( A_GUILD ) };
+    }
+
+    it( "should read a server's rooms per day over the window, with the day counting began", async() => {
+        const { client, days, read } = await stubGuildActivity();
+
+        days.mockResolvedValue( [ { day: midnightDaysAgo( 0 ), roomsCreated: 3 } ] as never );
+
+        jest.spyOn( client.guildActivityDay, "findFirst" ).mockResolvedValue( { day: midnightDaysAgo( 12 ) } as never );
+
+        const activity = await read();
 
         expect( activity ).toMatchObject( { roomsThisWeek: 3, countedSince: "2026-11-19" } );
         expect( activity.days.at( -1 ) ).toEqual( { day: "2026-12-01", count: 3 } );
-        expect( findMany.mock.calls[ 0 ][ 0 ] ).toMatchObject( { where: { guildId: A_GUILD, day: { gte: midnightDaysAgo( 29 ) } } } );
+        expect( days.mock.calls[ 0 ][ 0 ] ).toMatchObject( { where: { guildId: A_GUILD, day: { gte: midnightDaysAgo( 29 ) } } } );
+    } );
+
+    it( "should read a server's own rooms by the hour over the hours window, with the hour counting began", async() => {
+        const { client, hours, read } = await stubGuildActivity();
+
+        hours.mockResolvedValue( [
+            { hour: new Date( "2026-12-01T20:00:00.000Z" ), roomsCreated: 2 },
+            { hour: new Date( "2026-11-30T09:00:00.000Z" ), roomsCreated: 1 }
+        ] as never );
+
+        jest.spyOn( client.guildActivityHour, "findFirst" ).mockResolvedValue( { hour: new Date( "2026-11-20T10:00:00.000Z" ) } as never );
+
+        const activity = await read();
+
+        expect( activity.roomsPerHour ).toEqual( [
+            { hour: "2026-11-30T09:00:00.000Z", count: 1 },
+            { hour: "2026-12-01T20:00:00.000Z", count: 2 }
+        ] );
+        expect( activity.hoursCountedSince ).toBe( "2026-11-20T10:00:00.000Z" );
+        expect( hours.mock.calls[ 0 ][ 0 ] ).toMatchObject( { where: { guildId: A_GUILD } } );
+    } );
+
+    it( "should count the members in the server's rooms this week, the week before and over the window", async() => {
+        const { countMembers, read } = await stubGuildActivity( {
+            thisWeek: 12,
+            lastWeek: 9,
+            inWindow: 30,
+            countedSince: midnightDaysAgo( 40 )
+        } );
+
+        const activity = await read();
+
+        expect( activity ).toMatchObject( {
+            membersThisWeek: 12,
+            membersLastWeek: 9,
+            membersInWindow: 30,
+            membersCountedSince: "2026-10-22"
+        } );
+
+        // Today included - up to the start of tomorrow.
+        expect( countMembers ).toHaveBeenCalledWith( A_GUILD, midnightDaysAgo( 6 ), midnightDaysAgo( -1 ) );
+        expect( countMembers ).toHaveBeenCalledWith( A_GUILD, midnightDaysAgo( 13 ), midnightDaysAgo( 6 ) );
     } );
 
     it( "should read the attendance of the ended runs only", async() => {

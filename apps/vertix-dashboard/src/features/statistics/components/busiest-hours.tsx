@@ -16,6 +16,8 @@ import {
     findQuietestStretch
 } from "@vertix.gg/dashboard/src/features/statistics/lib/hours-grid";
 
+import type { IDashboardHourCount } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
+
 import type { IHoursGridSpot } from "@vertix.gg/dashboard/src/features/statistics/lib/hours-grid";
 import type { UsageDisplayState } from "@vertix.gg/dashboard/src/features/statistics/types";
 
@@ -35,23 +37,22 @@ function describeSpot( spot: IHoursGridSpot ) {
     return `${ HOURS_GRID_WEEKDAY_LABELS[ spot.row ] } ${ formatHour( spot.hour ) }`;
 }
 
+interface HoursGridProps {
+    /** Rooms per UTC hour - only the hours that had any. */
+    hours: IDashboardHourCount[];
+    /** The first hour anything was counted by the hour, or null while nothing has been. */
+    hoursCountedSince: string | null;
+    /** Whether to name the quietest stretch as well - where a restart is felt least, which only the owner deploys. */
+    showQuietest: boolean;
+}
+
 /**
- * When in the week rooms are made, across every server - a row per weekday, a cell per hour, in the
- * viewer's own time zone. The quietest stretch is where a restart is felt least.
+ * When in the week rooms are made - a row per weekday, a cell per hour, in the viewer's own time zone.
+ *
+ * Drawn the same for every server on the owner's statistics and for one server on its home page.
  */
-export function BusiestHours() {
-    const [ state ] = useCommandState<UsageDisplayState, UsageDisplayState>(
-        "Statistics/UsageStats",
-        ( state: UsageDisplayState ): UsageDisplayState => ( { usageStats: state.usageStats } )
-    );
-
-    const usage = state.usageStats;
-
-    if ( ! usage ) {
-        return null;
-    }
-
-    const grid = buildHoursGrid( usage.roomsPerHour ),
+export function HoursGrid( { hours, hoursCountedSince, showQuietest }: HoursGridProps ) {
+    const grid = buildHoursGrid( hours ),
         max = Math.max( 0, ... grid.flat() ),
         busiest = findBusiestHour( grid ),
         quietest = findQuietestStretch( grid, HOURS_GRID_QUIET_STRETCH_HOURS ),
@@ -86,26 +87,46 @@ export function BusiestHours() {
                 ) ) }
             </div>
 
-            { usage.hoursCountedSince && max > 0 && (
+            { hoursCountedSince && max > 0 && (
                 <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm mt-3">
                     <span className="text-text-secondary">
                         Busiest: <span className="text-text-primary">{ describeSpot( busiest ) }</span>, { formatCountOf( busiest.count, "room" ) }
                     </span>
-                    <span className="text-text-secondary">
-                        Quietest { HOURS_GRID_QUIET_STRETCH_HOURS } hours: <span className="text-text-primary">
-                            { describeSpot( quietest ) } - { formatHour( quietest.hour + HOURS_GRID_QUIET_STRETCH_HOURS ) }
-                        </span>, { formatCountOf( quietest.count, "room" ) }
-                    </span>
+                    { showQuietest && (
+                        <span className="text-text-secondary">
+                            Quietest { HOURS_GRID_QUIET_STRETCH_HOURS } hours: <span className="text-text-primary">
+                                { describeSpot( quietest ) } - { formatHour( quietest.hour + HOURS_GRID_QUIET_STRETCH_HOURS ) }
+                            </span>, { formatCountOf( quietest.count, "room" ) }
+                        </span>
+                    ) }
                 </div>
             ) }
 
             <p className="text-xs text-text-muted mt-2 mb-0">
-                { usage.hoursCountedSince
-                    ? `Rooms made over the last ${ DASHBOARD_STATS_WINDOWS.HOURS_DAYS } days, in your time zone (${ timeZone }) - counted by the hour since ${ formatDate( usage.hoursCountedSince ) }.`
+                { hoursCountedSince
+                    ? `Rooms made over the last ${ DASHBOARD_STATS_WINDOWS.HOURS_DAYS } days, in your time zone (${ timeZone }) - counted by the hour since ${ formatDate( hoursCountedSince ) }.`
                     : "Nothing has been counted by the hour yet." }
             </p>
         </div>
     );
+}
+
+/**
+ * When in the week rooms are made, across every server. The quietest stretch is where a restart is felt least.
+ */
+export function BusiestHours() {
+    const [ state ] = useCommandState<UsageDisplayState, UsageDisplayState>(
+        "Statistics/UsageStats",
+        ( state: UsageDisplayState ): UsageDisplayState => ( { usageStats: state.usageStats } )
+    );
+
+    const usage = state.usageStats;
+
+    if ( ! usage ) {
+        return null;
+    }
+
+    return <HoursGrid hours={ usage.roomsPerHour } hoursCountedSince={ usage.hoursCountedSince } showQuietest />;
 }
 
 export default BusiestHours;

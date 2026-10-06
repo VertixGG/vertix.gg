@@ -327,6 +327,7 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/channel-service" ),
         import( "@vertix.gg/bot/src/services/guild-activation-service" ),
         import( "@vertix.gg/bot/src/services/guild-trial-warning-service" ),
+        import( "@vertix.gg/bot/src/services/guild-weekly-report-service" ),
         import( "@vertix.gg/bot/src/services/guild-events-service" ),
         import( "@vertix.gg/bot/src/services/channel-cleanup-service" ),
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),

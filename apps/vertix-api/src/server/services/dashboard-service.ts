@@ -3,8 +3,11 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { buildGuildActivityStats, getWindowStart } from "@vertix.gg/data/src/reports/guild-activity-report";
+import { buildGuildActivityStats, getWindowStart, toISODay } from "@vertix.gg/data/src/reports/guild-activity-report";
 import { buildGuildEventsStats } from "@vertix.gg/data/src/reports/guild-events-report";
+import { buildHourCounts, getHoursWindowStart } from "@vertix.gg/data/src/reports/usage-report";
+
+import { GuildVoiceMemberModel } from "@vertix.gg/data/src/models/guild-voice-member-model";
 
 import { DASHBOARD_STATS_WINDOWS } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
 import { GUILD_EVENT_RUN_PHASES } from "@vertix.gg/definitions/src/guild-events-definitions";
@@ -17,6 +20,8 @@ import type { IGuildActivityStats, IGuildEventsStats } from "@vertix.gg/definiti
 const client = PrismaBotClient.$.getClient();
 
 const logger = new Logger( "VertixAPI/DashboardService" );
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export interface GlobalStats {
     totalGuilds: number;
@@ -77,6 +82,8 @@ export interface MasterChannelInfo {
      * category the generator was created in.
      */
     category: MasterChannelCategory | null;
+    /** Rooms the generator made over the activity window. */
+    roomsInWindow: number;
 }
 
 export interface GuildBotPresence {
@@ -209,21 +216,42 @@ export async function getGuildStats( guildId: string ): Promise<GuildStats | nul
  * from a quiet one.
  */
 export async function getGuildActivity( guildId: string ): Promise<IGuildActivityStats> {
-    const now = new Date();
+    const now = new Date(),
+        { ACTIVITY_DAYS, WEEK_DAYS } = DASHBOARD_STATS_WINDOWS,
+        weekStart = getWindowStart( now, WEEK_DAYS ),
+        // The day after today - the end the member counts run up to, today included.
+        tomorrow = new Date( getWindowStart( now, 1 ).getTime() + DAY_MS );
 
-    const [ rows, first ] = await Promise.all( [
+    const [ rows, first, hours, firstHour, membersThisWeek, membersLastWeek, membersInWindow, membersCountedSince ] = await Promise.all( [
         client.guildActivityDay.findMany( {
-            where: { guildId, day: { gte: getWindowStart( now, DASHBOARD_STATS_WINDOWS.ACTIVITY_DAYS ) } },
+            where: { guildId, day: { gte: getWindowStart( now, ACTIVITY_DAYS ) } },
             select: { day: true, roomsCreated: true }
         } ),
-        client.guildActivityDay.findFirst( { orderBy: { day: "asc" }, select: { day: true } } )
+        client.guildActivityDay.findFirst( { orderBy: { day: "asc" }, select: { day: true } } ),
+        client.guildActivityHour.findMany( {
+            where: { guildId, hour: { gte: getHoursWindowStart( now ) } },
+            select: { hour: true, roomsCreated: true }
+        } ),
+        client.guildActivityHour.findFirst( { orderBy: { hour: "asc" }, select: { hour: true } } ),
+        GuildVoiceMemberModel.$.countMembers( guildId, weekStart, tomorrow ),
+        GuildVoiceMemberModel.$.countMembers( guildId, getWindowStart( now, WEEK_DAYS * 2 ), weekStart ),
+        GuildVoiceMemberModel.$.countMembers( guildId, getWindowStart( now, ACTIVITY_DAYS ), tomorrow ),
+        GuildVoiceMemberModel.$.getCountedSince()
     ] );
 
-    return buildGuildActivityStats( {
-        days: rows.map( ( row ) => ( { day: row.day, count: row.roomsCreated } ) ),
-        now,
-        countedSince: first?.day ?? null
-    } );
+    return {
+        ... buildGuildActivityStats( {
+            days: rows.map( ( row ) => ( { day: row.day, count: row.roomsCreated } ) ),
+            now,
+            countedSince: first?.day ?? null
+        } ),
+        roomsPerHour: buildHourCounts( hours, now ),
+        hoursCountedSince: firstHour?.hour.toISOString() ?? null,
+        membersThisWeek,
+        membersLastWeek,
+        membersInWindow,
+        membersCountedSince: membersCountedSince ? toISODay( membersCountedSince ) : null
+    };
 }
 
 /**
@@ -295,7 +323,7 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
         logger.warn( getGuildDetails, `Management service not registered - no limit or categories for guild ${ guildId }` );
     }
 
-    const [ masterChannels, limits ] = await Promise.all( [
+    const [ masterChannels, limits, generatorRooms ] = await Promise.all( [
         client.channel.findMany( {
             where: {
                 guildId,
@@ -307,8 +335,15 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
                 createdAt: true
             }
         } ),
-        managementService?.getConfigLimits( guildId ) ?? null
+        managementService?.getConfigLimits( guildId ) ?? null,
+        client.guildGeneratorActivityDay.groupBy( {
+            by: [ "generatorId" ],
+            where: { guildId, day: { gte: getWindowStart( new Date(), DASHBOARD_STATS_WINDOWS.ACTIVITY_DAYS ) } },
+            _sum: { roomsCreated: true }
+        } )
     ] );
+
+    const roomsByGenerator = new Map( generatorRooms.map( ( row ) => [ row.generatorId, row._sum.roomsCreated ?? 0 ] ) );
 
     const masterChannelInfos: MasterChannelInfo[] = await Promise.all(
         masterChannels.map( async( mc ) => {
@@ -331,7 +366,8 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
                 categoryId: mc.categoryId,
                 createdAt: mc.createdAt,
                 dynamicChannelsCount,
-                category: live?.category ?? null
+                category: live?.category ?? null,
+                roomsInWindow: roomsByGenerator.get( mc.channelId ) ?? 0
             };
         } )
     );

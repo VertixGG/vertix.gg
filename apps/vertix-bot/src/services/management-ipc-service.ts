@@ -39,6 +39,8 @@ import type {
     GetGuildEventsStatusResponse
 } from "@vertix.gg/definitions/src/ipc-definitions";
 
+import type { IGuildPostStatus } from "@vertix.gg/definitions/src/guild-weekly-report-definitions";
+
 import type {
     MasterChannelConfigInterface,
     MasterChannelConfigInterfaceV3
@@ -56,6 +58,7 @@ import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 import type { GuildBrandingService } from "@vertix.gg/bot/src/services/guild-branding-service";
 import type { GuildEventsService } from "@vertix.gg/bot/src/services/guild-events-service";
+import type { GuildWeeklyReportService } from "@vertix.gg/bot/src/services/guild-weekly-report-service";
 
 /**
  * Central IPC handler service that routes management messages to the appropriate service.
@@ -71,6 +74,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
     dynamicChannelService: DynamicChannelService;
     guildBrandingService: GuildBrandingService;
     guildEventsService: GuildEventsService;
+    guildWeeklyReportService: GuildWeeklyReportService;
 }> {
     private readonly debugger: Debugger;
 
@@ -91,7 +95,8 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             scalingChannelService: "VertixBot/Services/ScalingChannel",
             dynamicChannelService: "VertixBot/Services/DynamicChannel",
             guildBrandingService: "VertixBot/Services/GuildBranding",
-            guildEventsService: "VertixBot/Services/GuildEvents"
+            guildEventsService: "VertixBot/Services/GuildEvents",
+            guildWeeklyReportService: "VertixBot/Services/GuildWeeklyReport"
         };
     }
 
@@ -123,6 +128,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
                 | GetConfigLimitsResponse | GetGeneratorDefaultsResponse
                 | GetGuildBrandingStatusResponse | ApplyGuildBrandingResponse | GetGuildEventsStatusResponse
+                | IGuildPostStatus
             >(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
@@ -337,6 +343,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
         | GetConfigLimitsResponse | GetGeneratorDefaultsResponse
         | GetGuildBrandingStatusResponse | ApplyGuildBrandingResponse | GetGuildEventsStatusResponse
+        | IGuildPostStatus
         | typeof IPC_NO_RESPONSE
     > {
         const { payload } = request;
@@ -390,6 +397,9 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
 
             case IPC_REQUEST_ACTIONS.GET_GUILD_EVENTS_STATUS:
                 return this.services.guildEventsService.getStatus( payload.guildId, payload.channelIds, payload.roleIds );
+
+            case IPC_REQUEST_ACTIONS.GET_GUILD_POST_STATUS:
+                return this.services.guildWeeklyReportService.getPostStatus( payload.guildId, payload.channelId );
 
             default:
                 throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );

@@ -71,10 +71,12 @@ function countServers( rows: IUsageDayRow[] ) {
 }
 
 /**
- * Function buildHourCounts() :: Rooms per hour across every server - the hours in the window that had
- * any, oldest first.
+ * Function buildHourCounts() :: Rooms per hour - the hours in the window that had any, oldest first.
+ *
+ * Across every server for the owner's figures, or one server's own rows for its home page - the window
+ * and the grid drawn from it are the same either way.
  */
-function buildHourCounts( rows: IUsageHourRow[], now: Date ): IDashboardHourCount[] {
+export function buildHourCounts( rows: IUsageHourRow[], now: Date ): IDashboardHourCount[] {
     const start = getHoursWindowStart( now ).getTime(),
         end = toUTCHourStart( now ).getTime(),
         byHour = new Map<number, number>();

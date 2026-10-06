@@ -59,6 +59,31 @@ export type GuildActivityDay = $Result.DefaultSelection<Prisma.$GuildActivityDay
  */
 export type GuildActivityHour = $Result.DefaultSelection<Prisma.$GuildActivityHourPayload>
 /**
+ * Model GuildGeneratorActivityDay
+ * How many rooms one generator made on one day - UTC.
+ * 
+ * `GuildActivityDay` split by generator, so a server can see which of its generators get used. A
+ * collection of its own rather than a field on the day's row, so the server's count stays one number
+ * that nothing here can change.
+ */
+export type GuildGeneratorActivityDay = $Result.DefaultSelection<Prisma.$GuildGeneratorActivityDayPayload>
+/**
+ * Model GuildVoiceMemberDay
+ * A member who was in one of a server's rooms on one day - UTC. One row however often they came.
+ * 
+ * Only ever counted, never listed: it is what "members in rooms" is counted from. Kept for
+ * `GUILD_VOICE_MEMBERS_KEEP_DAYS`, then deleted.
+ */
+export type GuildVoiceMemberDay = $Result.DefaultSelection<Prisma.$GuildVoiceMemberDayPayload>
+/**
+ * Model GuildWeeklyReport
+ * Where a server's weekly summary goes, and the last week that went out.
+ * 
+ * One row per server. Its `applicationId` is the bot that checked the channel when it was saved, and
+ * only that bot posts - TestVC and production read this same database.
+ */
+export type GuildWeeklyReport = $Result.DefaultSelection<Prisma.$GuildWeeklyReportPayload>
+/**
  * Model GuildData
  * 
  */
@@ -361,6 +386,36 @@ export class PrismaClient<
     * ```
     */
   get guildActivityHour(): Prisma.GuildActivityHourDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildGeneratorActivityDay`: Exposes CRUD operations for the **GuildGeneratorActivityDay** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildGeneratorActivityDays
+    * const guildGeneratorActivityDays = await prisma.guildGeneratorActivityDay.findMany()
+    * ```
+    */
+  get guildGeneratorActivityDay(): Prisma.GuildGeneratorActivityDayDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildVoiceMemberDay`: Exposes CRUD operations for the **GuildVoiceMemberDay** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildVoiceMemberDays
+    * const guildVoiceMemberDays = await prisma.guildVoiceMemberDay.findMany()
+    * ```
+    */
+  get guildVoiceMemberDay(): Prisma.GuildVoiceMemberDayDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildWeeklyReport`: Exposes CRUD operations for the **GuildWeeklyReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildWeeklyReports
+    * const guildWeeklyReports = await prisma.guildWeeklyReport.findMany()
+    * ```
+    */
+  get guildWeeklyReport(): Prisma.GuildWeeklyReportDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.guildData`: Exposes CRUD operations for the **GuildData** model.
@@ -958,6 +1013,9 @@ export namespace Prisma {
     GuildInstall: 'GuildInstall',
     GuildActivityDay: 'GuildActivityDay',
     GuildActivityHour: 'GuildActivityHour',
+    GuildGeneratorActivityDay: 'GuildGeneratorActivityDay',
+    GuildVoiceMemberDay: 'GuildVoiceMemberDay',
+    GuildWeeklyReport: 'GuildWeeklyReport',
     GuildData: 'GuildData',
     GuildCustomization: 'GuildCustomization',
     Channel: 'Channel',
@@ -991,7 +1049,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "config" | "category" | "guild" | "guildInstall" | "guildActivityDay" | "guildActivityHour" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription" | "guildBranding" | "guildBrandingState" | "guildEventSettings" | "guildEventRun" | "guildEventAttendee"
+      modelProps: "config" | "category" | "guild" | "guildInstall" | "guildActivityDay" | "guildActivityHour" | "guildGeneratorActivityDay" | "guildVoiceMemberDay" | "guildWeeklyReport" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription" | "guildBranding" | "guildBrandingState" | "guildEventSettings" | "guildEventRun" | "guildEventAttendee"
       txIsolationLevel: never
     }
     model: {
@@ -1436,6 +1494,228 @@ export namespace Prisma {
           count: {
             args: Prisma.GuildActivityHourCountArgs<ExtArgs>
             result: $Utils.Optional<GuildActivityHourCountAggregateOutputType> | number
+          }
+        }
+      }
+      GuildGeneratorActivityDay: {
+        payload: Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>
+        fields: Prisma.GuildGeneratorActivityDayFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildGeneratorActivityDayFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildGeneratorActivityDayFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload>
+          }
+          findFirst: {
+            args: Prisma.GuildGeneratorActivityDayFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildGeneratorActivityDayFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload>
+          }
+          findMany: {
+            args: Prisma.GuildGeneratorActivityDayFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload>[]
+          }
+          create: {
+            args: Prisma.GuildGeneratorActivityDayCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload>
+          }
+          createMany: {
+            args: Prisma.GuildGeneratorActivityDayCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildGeneratorActivityDayDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload>
+          }
+          update: {
+            args: Prisma.GuildGeneratorActivityDayUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildGeneratorActivityDayDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildGeneratorActivityDayUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildGeneratorActivityDayUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildGeneratorActivityDayPayload>
+          }
+          aggregate: {
+            args: Prisma.GuildGeneratorActivityDayAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildGeneratorActivityDay>
+          }
+          groupBy: {
+            args: Prisma.GuildGeneratorActivityDayGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildGeneratorActivityDayGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildGeneratorActivityDayFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildGeneratorActivityDayAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildGeneratorActivityDayCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildGeneratorActivityDayCountAggregateOutputType> | number
+          }
+        }
+      }
+      GuildVoiceMemberDay: {
+        payload: Prisma.$GuildVoiceMemberDayPayload<ExtArgs>
+        fields: Prisma.GuildVoiceMemberDayFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildVoiceMemberDayFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildVoiceMemberDayFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload>
+          }
+          findFirst: {
+            args: Prisma.GuildVoiceMemberDayFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildVoiceMemberDayFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload>
+          }
+          findMany: {
+            args: Prisma.GuildVoiceMemberDayFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload>[]
+          }
+          create: {
+            args: Prisma.GuildVoiceMemberDayCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload>
+          }
+          createMany: {
+            args: Prisma.GuildVoiceMemberDayCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildVoiceMemberDayDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload>
+          }
+          update: {
+            args: Prisma.GuildVoiceMemberDayUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildVoiceMemberDayDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildVoiceMemberDayUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildVoiceMemberDayUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildVoiceMemberDayPayload>
+          }
+          aggregate: {
+            args: Prisma.GuildVoiceMemberDayAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildVoiceMemberDay>
+          }
+          groupBy: {
+            args: Prisma.GuildVoiceMemberDayGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildVoiceMemberDayGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildVoiceMemberDayFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildVoiceMemberDayAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildVoiceMemberDayCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildVoiceMemberDayCountAggregateOutputType> | number
+          }
+        }
+      }
+      GuildWeeklyReport: {
+        payload: Prisma.$GuildWeeklyReportPayload<ExtArgs>
+        fields: Prisma.GuildWeeklyReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildWeeklyReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildWeeklyReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload>
+          }
+          findFirst: {
+            args: Prisma.GuildWeeklyReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildWeeklyReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload>
+          }
+          findMany: {
+            args: Prisma.GuildWeeklyReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload>[]
+          }
+          create: {
+            args: Prisma.GuildWeeklyReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload>
+          }
+          createMany: {
+            args: Prisma.GuildWeeklyReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildWeeklyReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload>
+          }
+          update: {
+            args: Prisma.GuildWeeklyReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildWeeklyReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildWeeklyReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildWeeklyReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildWeeklyReportPayload>
+          }
+          aggregate: {
+            args: Prisma.GuildWeeklyReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildWeeklyReport>
+          }
+          groupBy: {
+            args: Prisma.GuildWeeklyReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildWeeklyReportGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildWeeklyReportFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildWeeklyReportAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildWeeklyReportCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildWeeklyReportCountAggregateOutputType> | number
           }
         }
       }
@@ -2634,6 +2914,9 @@ export namespace Prisma {
     guildInstall?: GuildInstallOmit
     guildActivityDay?: GuildActivityDayOmit
     guildActivityHour?: GuildActivityHourOmit
+    guildGeneratorActivityDay?: GuildGeneratorActivityDayOmit
+    guildVoiceMemberDay?: GuildVoiceMemberDayOmit
+    guildWeeklyReport?: GuildWeeklyReportOmit
     guildData?: GuildDataOmit
     guildCustomization?: GuildCustomizationOmit
     channel?: ChannelOmit
@@ -8795,6 +9078,2887 @@ export namespace Prisma {
      * Omit specific fields from the GuildActivityHour
      */
     omit?: GuildActivityHourOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GuildGeneratorActivityDay
+   */
+
+  export type AggregateGuildGeneratorActivityDay = {
+    _count: GuildGeneratorActivityDayCountAggregateOutputType | null
+    _avg: GuildGeneratorActivityDayAvgAggregateOutputType | null
+    _sum: GuildGeneratorActivityDaySumAggregateOutputType | null
+    _min: GuildGeneratorActivityDayMinAggregateOutputType | null
+    _max: GuildGeneratorActivityDayMaxAggregateOutputType | null
+  }
+
+  export type GuildGeneratorActivityDayAvgAggregateOutputType = {
+    roomsCreated: number | null
+  }
+
+  export type GuildGeneratorActivityDaySumAggregateOutputType = {
+    roomsCreated: number | null
+  }
+
+  export type GuildGeneratorActivityDayMinAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    generatorId: string | null
+    day: Date | null
+    roomsCreated: number | null
+    updatedAt: Date | null
+  }
+
+  export type GuildGeneratorActivityDayMaxAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    generatorId: string | null
+    day: Date | null
+    roomsCreated: number | null
+    updatedAt: Date | null
+  }
+
+  export type GuildGeneratorActivityDayCountAggregateOutputType = {
+    id: number
+    guildId: number
+    generatorId: number
+    day: number
+    roomsCreated: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildGeneratorActivityDayAvgAggregateInputType = {
+    roomsCreated?: true
+  }
+
+  export type GuildGeneratorActivityDaySumAggregateInputType = {
+    roomsCreated?: true
+  }
+
+  export type GuildGeneratorActivityDayMinAggregateInputType = {
+    id?: true
+    guildId?: true
+    generatorId?: true
+    day?: true
+    roomsCreated?: true
+    updatedAt?: true
+  }
+
+  export type GuildGeneratorActivityDayMaxAggregateInputType = {
+    id?: true
+    guildId?: true
+    generatorId?: true
+    day?: true
+    roomsCreated?: true
+    updatedAt?: true
+  }
+
+  export type GuildGeneratorActivityDayCountAggregateInputType = {
+    id?: true
+    guildId?: true
+    generatorId?: true
+    day?: true
+    roomsCreated?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildGeneratorActivityDayAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildGeneratorActivityDay to aggregate.
+     */
+    where?: GuildGeneratorActivityDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildGeneratorActivityDays to fetch.
+     */
+    orderBy?: GuildGeneratorActivityDayOrderByWithRelationInput | GuildGeneratorActivityDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildGeneratorActivityDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildGeneratorActivityDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildGeneratorActivityDays.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildGeneratorActivityDays
+    **/
+    _count?: true | GuildGeneratorActivityDayCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GuildGeneratorActivityDayAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GuildGeneratorActivityDaySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildGeneratorActivityDayMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildGeneratorActivityDayMaxAggregateInputType
+  }
+
+  export type GetGuildGeneratorActivityDayAggregateType<T extends GuildGeneratorActivityDayAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildGeneratorActivityDay]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildGeneratorActivityDay[P]>
+      : GetScalarType<T[P], AggregateGuildGeneratorActivityDay[P]>
+  }
+
+
+
+
+  export type GuildGeneratorActivityDayGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildGeneratorActivityDayWhereInput
+    orderBy?: GuildGeneratorActivityDayOrderByWithAggregationInput | GuildGeneratorActivityDayOrderByWithAggregationInput[]
+    by: GuildGeneratorActivityDayScalarFieldEnum[] | GuildGeneratorActivityDayScalarFieldEnum
+    having?: GuildGeneratorActivityDayScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildGeneratorActivityDayCountAggregateInputType | true
+    _avg?: GuildGeneratorActivityDayAvgAggregateInputType
+    _sum?: GuildGeneratorActivityDaySumAggregateInputType
+    _min?: GuildGeneratorActivityDayMinAggregateInputType
+    _max?: GuildGeneratorActivityDayMaxAggregateInputType
+  }
+
+  export type GuildGeneratorActivityDayGroupByOutputType = {
+    id: string
+    guildId: string
+    generatorId: string
+    day: Date
+    roomsCreated: number
+    updatedAt: Date
+    _count: GuildGeneratorActivityDayCountAggregateOutputType | null
+    _avg: GuildGeneratorActivityDayAvgAggregateOutputType | null
+    _sum: GuildGeneratorActivityDaySumAggregateOutputType | null
+    _min: GuildGeneratorActivityDayMinAggregateOutputType | null
+    _max: GuildGeneratorActivityDayMaxAggregateOutputType | null
+  }
+
+  type GetGuildGeneratorActivityDayGroupByPayload<T extends GuildGeneratorActivityDayGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildGeneratorActivityDayGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildGeneratorActivityDayGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildGeneratorActivityDayGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildGeneratorActivityDayGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildGeneratorActivityDaySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    guildId?: boolean
+    generatorId?: boolean
+    day?: boolean
+    roomsCreated?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildGeneratorActivityDay"]>
+
+
+
+  export type GuildGeneratorActivityDaySelectScalar = {
+    id?: boolean
+    guildId?: boolean
+    generatorId?: boolean
+    day?: boolean
+    roomsCreated?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildGeneratorActivityDayOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "generatorId" | "day" | "roomsCreated" | "updatedAt", ExtArgs["result"]["guildGeneratorActivityDay"]>
+
+  export type $GuildGeneratorActivityDayPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildGeneratorActivityDay"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      guildId: string
+      /**
+       * The generator's discord channel id - what a room it made holds as `ownerChannelId`.
+       */
+      generatorId: string
+      /**
+       * Midnight UTC of the day counted.
+       */
+      day: Date
+      roomsCreated: number
+      updatedAt: Date
+    }, ExtArgs["result"]["guildGeneratorActivityDay"]>
+    composites: {}
+  }
+
+  type GuildGeneratorActivityDayGetPayload<S extends boolean | null | undefined | GuildGeneratorActivityDayDefaultArgs> = $Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload, S>
+
+  type GuildGeneratorActivityDayCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildGeneratorActivityDayFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildGeneratorActivityDayCountAggregateInputType | true
+    }
+
+  export interface GuildGeneratorActivityDayDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildGeneratorActivityDay'], meta: { name: 'GuildGeneratorActivityDay' } }
+    /**
+     * Find zero or one GuildGeneratorActivityDay that matches the filter.
+     * @param {GuildGeneratorActivityDayFindUniqueArgs} args - Arguments to find a GuildGeneratorActivityDay
+     * @example
+     * // Get one GuildGeneratorActivityDay
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildGeneratorActivityDayFindUniqueArgs>(args: SelectSubset<T, GuildGeneratorActivityDayFindUniqueArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildGeneratorActivityDay that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildGeneratorActivityDayFindUniqueOrThrowArgs} args - Arguments to find a GuildGeneratorActivityDay
+     * @example
+     * // Get one GuildGeneratorActivityDay
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildGeneratorActivityDayFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildGeneratorActivityDayFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildGeneratorActivityDay that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildGeneratorActivityDayFindFirstArgs} args - Arguments to find a GuildGeneratorActivityDay
+     * @example
+     * // Get one GuildGeneratorActivityDay
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildGeneratorActivityDayFindFirstArgs>(args?: SelectSubset<T, GuildGeneratorActivityDayFindFirstArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildGeneratorActivityDay that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildGeneratorActivityDayFindFirstOrThrowArgs} args - Arguments to find a GuildGeneratorActivityDay
+     * @example
+     * // Get one GuildGeneratorActivityDay
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildGeneratorActivityDayFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildGeneratorActivityDayFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildGeneratorActivityDays that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildGeneratorActivityDayFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildGeneratorActivityDays
+     * const guildGeneratorActivityDays = await prisma.guildGeneratorActivityDay.findMany()
+     * 
+     * // Get first 10 GuildGeneratorActivityDays
+     * const guildGeneratorActivityDays = await prisma.guildGeneratorActivityDay.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildGeneratorActivityDayWithIdOnly = await prisma.guildGeneratorActivityDay.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildGeneratorActivityDayFindManyArgs>(args?: SelectSubset<T, GuildGeneratorActivityDayFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildGeneratorActivityDay.
+     * @param {GuildGeneratorActivityDayCreateArgs} args - Arguments to create a GuildGeneratorActivityDay.
+     * @example
+     * // Create one GuildGeneratorActivityDay
+     * const GuildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.create({
+     *   data: {
+     *     // ... data to create a GuildGeneratorActivityDay
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildGeneratorActivityDayCreateArgs>(args: SelectSubset<T, GuildGeneratorActivityDayCreateArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildGeneratorActivityDays.
+     * @param {GuildGeneratorActivityDayCreateManyArgs} args - Arguments to create many GuildGeneratorActivityDays.
+     * @example
+     * // Create many GuildGeneratorActivityDays
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildGeneratorActivityDayCreateManyArgs>(args?: SelectSubset<T, GuildGeneratorActivityDayCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildGeneratorActivityDay.
+     * @param {GuildGeneratorActivityDayDeleteArgs} args - Arguments to delete one GuildGeneratorActivityDay.
+     * @example
+     * // Delete one GuildGeneratorActivityDay
+     * const GuildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.delete({
+     *   where: {
+     *     // ... filter to delete one GuildGeneratorActivityDay
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildGeneratorActivityDayDeleteArgs>(args: SelectSubset<T, GuildGeneratorActivityDayDeleteArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildGeneratorActivityDay.
+     * @param {GuildGeneratorActivityDayUpdateArgs} args - Arguments to update one GuildGeneratorActivityDay.
+     * @example
+     * // Update one GuildGeneratorActivityDay
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildGeneratorActivityDayUpdateArgs>(args: SelectSubset<T, GuildGeneratorActivityDayUpdateArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildGeneratorActivityDays.
+     * @param {GuildGeneratorActivityDayDeleteManyArgs} args - Arguments to filter GuildGeneratorActivityDays to delete.
+     * @example
+     * // Delete a few GuildGeneratorActivityDays
+     * const { count } = await prisma.guildGeneratorActivityDay.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildGeneratorActivityDayDeleteManyArgs>(args?: SelectSubset<T, GuildGeneratorActivityDayDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildGeneratorActivityDays.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildGeneratorActivityDayUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildGeneratorActivityDays
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildGeneratorActivityDayUpdateManyArgs>(args: SelectSubset<T, GuildGeneratorActivityDayUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildGeneratorActivityDay.
+     * @param {GuildGeneratorActivityDayUpsertArgs} args - Arguments to update or create a GuildGeneratorActivityDay.
+     * @example
+     * // Update or create a GuildGeneratorActivityDay
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.upsert({
+     *   create: {
+     *     // ... data to create a GuildGeneratorActivityDay
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildGeneratorActivityDay we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildGeneratorActivityDayUpsertArgs>(args: SelectSubset<T, GuildGeneratorActivityDayUpsertArgs<ExtArgs>>): Prisma__GuildGeneratorActivityDayClient<$Result.GetResult<Prisma.$GuildGeneratorActivityDayPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildGeneratorActivityDays that matches the filter.
+     * @param {GuildGeneratorActivityDayFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildGeneratorActivityDayFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildGeneratorActivityDay.
+     * @param {GuildGeneratorActivityDayAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildGeneratorActivityDay = await prisma.guildGeneratorActivityDay.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildGeneratorActivityDayAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildGeneratorActivityDays.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildGeneratorActivityDayCountArgs} args - Arguments to filter GuildGeneratorActivityDays to count.
+     * @example
+     * // Count the number of GuildGeneratorActivityDays
+     * const count = await prisma.guildGeneratorActivityDay.count({
+     *   where: {
+     *     // ... the filter for the GuildGeneratorActivityDays we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildGeneratorActivityDayCountArgs>(
+      args?: Subset<T, GuildGeneratorActivityDayCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildGeneratorActivityDayCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildGeneratorActivityDay.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildGeneratorActivityDayAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildGeneratorActivityDayAggregateArgs>(args: Subset<T, GuildGeneratorActivityDayAggregateArgs>): Prisma.PrismaPromise<GetGuildGeneratorActivityDayAggregateType<T>>
+
+    /**
+     * Group by GuildGeneratorActivityDay.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildGeneratorActivityDayGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildGeneratorActivityDayGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildGeneratorActivityDayGroupByArgs['orderBy'] }
+        : { orderBy?: GuildGeneratorActivityDayGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildGeneratorActivityDayGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildGeneratorActivityDayGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildGeneratorActivityDay model
+   */
+  readonly fields: GuildGeneratorActivityDayFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildGeneratorActivityDay.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildGeneratorActivityDayClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildGeneratorActivityDay model
+   */
+  interface GuildGeneratorActivityDayFieldRefs {
+    readonly id: FieldRef<"GuildGeneratorActivityDay", 'String'>
+    readonly guildId: FieldRef<"GuildGeneratorActivityDay", 'String'>
+    readonly generatorId: FieldRef<"GuildGeneratorActivityDay", 'String'>
+    readonly day: FieldRef<"GuildGeneratorActivityDay", 'DateTime'>
+    readonly roomsCreated: FieldRef<"GuildGeneratorActivityDay", 'Int'>
+    readonly updatedAt: FieldRef<"GuildGeneratorActivityDay", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildGeneratorActivityDay findUnique
+   */
+  export type GuildGeneratorActivityDayFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildGeneratorActivityDay to fetch.
+     */
+    where: GuildGeneratorActivityDayWhereUniqueInput
+  }
+
+  /**
+   * GuildGeneratorActivityDay findUniqueOrThrow
+   */
+  export type GuildGeneratorActivityDayFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildGeneratorActivityDay to fetch.
+     */
+    where: GuildGeneratorActivityDayWhereUniqueInput
+  }
+
+  /**
+   * GuildGeneratorActivityDay findFirst
+   */
+  export type GuildGeneratorActivityDayFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildGeneratorActivityDay to fetch.
+     */
+    where?: GuildGeneratorActivityDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildGeneratorActivityDays to fetch.
+     */
+    orderBy?: GuildGeneratorActivityDayOrderByWithRelationInput | GuildGeneratorActivityDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildGeneratorActivityDays.
+     */
+    cursor?: GuildGeneratorActivityDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildGeneratorActivityDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildGeneratorActivityDays.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildGeneratorActivityDays.
+     */
+    distinct?: GuildGeneratorActivityDayScalarFieldEnum | GuildGeneratorActivityDayScalarFieldEnum[]
+  }
+
+  /**
+   * GuildGeneratorActivityDay findFirstOrThrow
+   */
+  export type GuildGeneratorActivityDayFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildGeneratorActivityDay to fetch.
+     */
+    where?: GuildGeneratorActivityDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildGeneratorActivityDays to fetch.
+     */
+    orderBy?: GuildGeneratorActivityDayOrderByWithRelationInput | GuildGeneratorActivityDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildGeneratorActivityDays.
+     */
+    cursor?: GuildGeneratorActivityDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildGeneratorActivityDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildGeneratorActivityDays.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildGeneratorActivityDays.
+     */
+    distinct?: GuildGeneratorActivityDayScalarFieldEnum | GuildGeneratorActivityDayScalarFieldEnum[]
+  }
+
+  /**
+   * GuildGeneratorActivityDay findMany
+   */
+  export type GuildGeneratorActivityDayFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildGeneratorActivityDays to fetch.
+     */
+    where?: GuildGeneratorActivityDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildGeneratorActivityDays to fetch.
+     */
+    orderBy?: GuildGeneratorActivityDayOrderByWithRelationInput | GuildGeneratorActivityDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildGeneratorActivityDays.
+     */
+    cursor?: GuildGeneratorActivityDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildGeneratorActivityDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildGeneratorActivityDays.
+     */
+    skip?: number
+    distinct?: GuildGeneratorActivityDayScalarFieldEnum | GuildGeneratorActivityDayScalarFieldEnum[]
+  }
+
+  /**
+   * GuildGeneratorActivityDay create
+   */
+  export type GuildGeneratorActivityDayCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildGeneratorActivityDay.
+     */
+    data: XOR<GuildGeneratorActivityDayCreateInput, GuildGeneratorActivityDayUncheckedCreateInput>
+  }
+
+  /**
+   * GuildGeneratorActivityDay createMany
+   */
+  export type GuildGeneratorActivityDayCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildGeneratorActivityDays.
+     */
+    data: GuildGeneratorActivityDayCreateManyInput | GuildGeneratorActivityDayCreateManyInput[]
+  }
+
+  /**
+   * GuildGeneratorActivityDay update
+   */
+  export type GuildGeneratorActivityDayUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildGeneratorActivityDay.
+     */
+    data: XOR<GuildGeneratorActivityDayUpdateInput, GuildGeneratorActivityDayUncheckedUpdateInput>
+    /**
+     * Choose, which GuildGeneratorActivityDay to update.
+     */
+    where: GuildGeneratorActivityDayWhereUniqueInput
+  }
+
+  /**
+   * GuildGeneratorActivityDay updateMany
+   */
+  export type GuildGeneratorActivityDayUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildGeneratorActivityDays.
+     */
+    data: XOR<GuildGeneratorActivityDayUpdateManyMutationInput, GuildGeneratorActivityDayUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildGeneratorActivityDays to update
+     */
+    where?: GuildGeneratorActivityDayWhereInput
+    /**
+     * Limit how many GuildGeneratorActivityDays to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildGeneratorActivityDay upsert
+   */
+  export type GuildGeneratorActivityDayUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildGeneratorActivityDay to update in case it exists.
+     */
+    where: GuildGeneratorActivityDayWhereUniqueInput
+    /**
+     * In case the GuildGeneratorActivityDay found by the `where` argument doesn't exist, create a new GuildGeneratorActivityDay with this data.
+     */
+    create: XOR<GuildGeneratorActivityDayCreateInput, GuildGeneratorActivityDayUncheckedCreateInput>
+    /**
+     * In case the GuildGeneratorActivityDay was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildGeneratorActivityDayUpdateInput, GuildGeneratorActivityDayUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildGeneratorActivityDay delete
+   */
+  export type GuildGeneratorActivityDayDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+    /**
+     * Filter which GuildGeneratorActivityDay to delete.
+     */
+    where: GuildGeneratorActivityDayWhereUniqueInput
+  }
+
+  /**
+   * GuildGeneratorActivityDay deleteMany
+   */
+  export type GuildGeneratorActivityDayDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildGeneratorActivityDays to delete
+     */
+    where?: GuildGeneratorActivityDayWhereInput
+    /**
+     * Limit how many GuildGeneratorActivityDays to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildGeneratorActivityDay findRaw
+   */
+  export type GuildGeneratorActivityDayFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildGeneratorActivityDay aggregateRaw
+   */
+  export type GuildGeneratorActivityDayAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildGeneratorActivityDay without action
+   */
+  export type GuildGeneratorActivityDayDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildGeneratorActivityDay
+     */
+    select?: GuildGeneratorActivityDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildGeneratorActivityDay
+     */
+    omit?: GuildGeneratorActivityDayOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GuildVoiceMemberDay
+   */
+
+  export type AggregateGuildVoiceMemberDay = {
+    _count: GuildVoiceMemberDayCountAggregateOutputType | null
+    _min: GuildVoiceMemberDayMinAggregateOutputType | null
+    _max: GuildVoiceMemberDayMaxAggregateOutputType | null
+  }
+
+  export type GuildVoiceMemberDayMinAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    day: Date | null
+    userId: string | null
+  }
+
+  export type GuildVoiceMemberDayMaxAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    day: Date | null
+    userId: string | null
+  }
+
+  export type GuildVoiceMemberDayCountAggregateOutputType = {
+    id: number
+    guildId: number
+    day: number
+    userId: number
+    _all: number
+  }
+
+
+  export type GuildVoiceMemberDayMinAggregateInputType = {
+    id?: true
+    guildId?: true
+    day?: true
+    userId?: true
+  }
+
+  export type GuildVoiceMemberDayMaxAggregateInputType = {
+    id?: true
+    guildId?: true
+    day?: true
+    userId?: true
+  }
+
+  export type GuildVoiceMemberDayCountAggregateInputType = {
+    id?: true
+    guildId?: true
+    day?: true
+    userId?: true
+    _all?: true
+  }
+
+  export type GuildVoiceMemberDayAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildVoiceMemberDay to aggregate.
+     */
+    where?: GuildVoiceMemberDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildVoiceMemberDays to fetch.
+     */
+    orderBy?: GuildVoiceMemberDayOrderByWithRelationInput | GuildVoiceMemberDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildVoiceMemberDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildVoiceMemberDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildVoiceMemberDays.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildVoiceMemberDays
+    **/
+    _count?: true | GuildVoiceMemberDayCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildVoiceMemberDayMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildVoiceMemberDayMaxAggregateInputType
+  }
+
+  export type GetGuildVoiceMemberDayAggregateType<T extends GuildVoiceMemberDayAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildVoiceMemberDay]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildVoiceMemberDay[P]>
+      : GetScalarType<T[P], AggregateGuildVoiceMemberDay[P]>
+  }
+
+
+
+
+  export type GuildVoiceMemberDayGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildVoiceMemberDayWhereInput
+    orderBy?: GuildVoiceMemberDayOrderByWithAggregationInput | GuildVoiceMemberDayOrderByWithAggregationInput[]
+    by: GuildVoiceMemberDayScalarFieldEnum[] | GuildVoiceMemberDayScalarFieldEnum
+    having?: GuildVoiceMemberDayScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildVoiceMemberDayCountAggregateInputType | true
+    _min?: GuildVoiceMemberDayMinAggregateInputType
+    _max?: GuildVoiceMemberDayMaxAggregateInputType
+  }
+
+  export type GuildVoiceMemberDayGroupByOutputType = {
+    id: string
+    guildId: string
+    day: Date
+    userId: string
+    _count: GuildVoiceMemberDayCountAggregateOutputType | null
+    _min: GuildVoiceMemberDayMinAggregateOutputType | null
+    _max: GuildVoiceMemberDayMaxAggregateOutputType | null
+  }
+
+  type GetGuildVoiceMemberDayGroupByPayload<T extends GuildVoiceMemberDayGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildVoiceMemberDayGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildVoiceMemberDayGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildVoiceMemberDayGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildVoiceMemberDayGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildVoiceMemberDaySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    guildId?: boolean
+    day?: boolean
+    userId?: boolean
+  }, ExtArgs["result"]["guildVoiceMemberDay"]>
+
+
+
+  export type GuildVoiceMemberDaySelectScalar = {
+    id?: boolean
+    guildId?: boolean
+    day?: boolean
+    userId?: boolean
+  }
+
+  export type GuildVoiceMemberDayOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "day" | "userId", ExtArgs["result"]["guildVoiceMemberDay"]>
+
+  export type $GuildVoiceMemberDayPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildVoiceMemberDay"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      guildId: string
+      /**
+       * Midnight UTC of the day.
+       */
+      day: Date
+      userId: string
+    }, ExtArgs["result"]["guildVoiceMemberDay"]>
+    composites: {}
+  }
+
+  type GuildVoiceMemberDayGetPayload<S extends boolean | null | undefined | GuildVoiceMemberDayDefaultArgs> = $Result.GetResult<Prisma.$GuildVoiceMemberDayPayload, S>
+
+  type GuildVoiceMemberDayCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildVoiceMemberDayFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildVoiceMemberDayCountAggregateInputType | true
+    }
+
+  export interface GuildVoiceMemberDayDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildVoiceMemberDay'], meta: { name: 'GuildVoiceMemberDay' } }
+    /**
+     * Find zero or one GuildVoiceMemberDay that matches the filter.
+     * @param {GuildVoiceMemberDayFindUniqueArgs} args - Arguments to find a GuildVoiceMemberDay
+     * @example
+     * // Get one GuildVoiceMemberDay
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildVoiceMemberDayFindUniqueArgs>(args: SelectSubset<T, GuildVoiceMemberDayFindUniqueArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildVoiceMemberDay that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildVoiceMemberDayFindUniqueOrThrowArgs} args - Arguments to find a GuildVoiceMemberDay
+     * @example
+     * // Get one GuildVoiceMemberDay
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildVoiceMemberDayFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildVoiceMemberDayFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildVoiceMemberDay that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildVoiceMemberDayFindFirstArgs} args - Arguments to find a GuildVoiceMemberDay
+     * @example
+     * // Get one GuildVoiceMemberDay
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildVoiceMemberDayFindFirstArgs>(args?: SelectSubset<T, GuildVoiceMemberDayFindFirstArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildVoiceMemberDay that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildVoiceMemberDayFindFirstOrThrowArgs} args - Arguments to find a GuildVoiceMemberDay
+     * @example
+     * // Get one GuildVoiceMemberDay
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildVoiceMemberDayFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildVoiceMemberDayFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildVoiceMemberDays that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildVoiceMemberDayFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildVoiceMemberDays
+     * const guildVoiceMemberDays = await prisma.guildVoiceMemberDay.findMany()
+     * 
+     * // Get first 10 GuildVoiceMemberDays
+     * const guildVoiceMemberDays = await prisma.guildVoiceMemberDay.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildVoiceMemberDayWithIdOnly = await prisma.guildVoiceMemberDay.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildVoiceMemberDayFindManyArgs>(args?: SelectSubset<T, GuildVoiceMemberDayFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildVoiceMemberDay.
+     * @param {GuildVoiceMemberDayCreateArgs} args - Arguments to create a GuildVoiceMemberDay.
+     * @example
+     * // Create one GuildVoiceMemberDay
+     * const GuildVoiceMemberDay = await prisma.guildVoiceMemberDay.create({
+     *   data: {
+     *     // ... data to create a GuildVoiceMemberDay
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildVoiceMemberDayCreateArgs>(args: SelectSubset<T, GuildVoiceMemberDayCreateArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildVoiceMemberDays.
+     * @param {GuildVoiceMemberDayCreateManyArgs} args - Arguments to create many GuildVoiceMemberDays.
+     * @example
+     * // Create many GuildVoiceMemberDays
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildVoiceMemberDayCreateManyArgs>(args?: SelectSubset<T, GuildVoiceMemberDayCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildVoiceMemberDay.
+     * @param {GuildVoiceMemberDayDeleteArgs} args - Arguments to delete one GuildVoiceMemberDay.
+     * @example
+     * // Delete one GuildVoiceMemberDay
+     * const GuildVoiceMemberDay = await prisma.guildVoiceMemberDay.delete({
+     *   where: {
+     *     // ... filter to delete one GuildVoiceMemberDay
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildVoiceMemberDayDeleteArgs>(args: SelectSubset<T, GuildVoiceMemberDayDeleteArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildVoiceMemberDay.
+     * @param {GuildVoiceMemberDayUpdateArgs} args - Arguments to update one GuildVoiceMemberDay.
+     * @example
+     * // Update one GuildVoiceMemberDay
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildVoiceMemberDayUpdateArgs>(args: SelectSubset<T, GuildVoiceMemberDayUpdateArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildVoiceMemberDays.
+     * @param {GuildVoiceMemberDayDeleteManyArgs} args - Arguments to filter GuildVoiceMemberDays to delete.
+     * @example
+     * // Delete a few GuildVoiceMemberDays
+     * const { count } = await prisma.guildVoiceMemberDay.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildVoiceMemberDayDeleteManyArgs>(args?: SelectSubset<T, GuildVoiceMemberDayDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildVoiceMemberDays.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildVoiceMemberDayUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildVoiceMemberDays
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildVoiceMemberDayUpdateManyArgs>(args: SelectSubset<T, GuildVoiceMemberDayUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildVoiceMemberDay.
+     * @param {GuildVoiceMemberDayUpsertArgs} args - Arguments to update or create a GuildVoiceMemberDay.
+     * @example
+     * // Update or create a GuildVoiceMemberDay
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.upsert({
+     *   create: {
+     *     // ... data to create a GuildVoiceMemberDay
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildVoiceMemberDay we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildVoiceMemberDayUpsertArgs>(args: SelectSubset<T, GuildVoiceMemberDayUpsertArgs<ExtArgs>>): Prisma__GuildVoiceMemberDayClient<$Result.GetResult<Prisma.$GuildVoiceMemberDayPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildVoiceMemberDays that matches the filter.
+     * @param {GuildVoiceMemberDayFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildVoiceMemberDayFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildVoiceMemberDay.
+     * @param {GuildVoiceMemberDayAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildVoiceMemberDay = await prisma.guildVoiceMemberDay.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildVoiceMemberDayAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildVoiceMemberDays.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildVoiceMemberDayCountArgs} args - Arguments to filter GuildVoiceMemberDays to count.
+     * @example
+     * // Count the number of GuildVoiceMemberDays
+     * const count = await prisma.guildVoiceMemberDay.count({
+     *   where: {
+     *     // ... the filter for the GuildVoiceMemberDays we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildVoiceMemberDayCountArgs>(
+      args?: Subset<T, GuildVoiceMemberDayCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildVoiceMemberDayCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildVoiceMemberDay.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildVoiceMemberDayAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildVoiceMemberDayAggregateArgs>(args: Subset<T, GuildVoiceMemberDayAggregateArgs>): Prisma.PrismaPromise<GetGuildVoiceMemberDayAggregateType<T>>
+
+    /**
+     * Group by GuildVoiceMemberDay.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildVoiceMemberDayGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildVoiceMemberDayGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildVoiceMemberDayGroupByArgs['orderBy'] }
+        : { orderBy?: GuildVoiceMemberDayGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildVoiceMemberDayGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildVoiceMemberDayGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildVoiceMemberDay model
+   */
+  readonly fields: GuildVoiceMemberDayFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildVoiceMemberDay.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildVoiceMemberDayClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildVoiceMemberDay model
+   */
+  interface GuildVoiceMemberDayFieldRefs {
+    readonly id: FieldRef<"GuildVoiceMemberDay", 'String'>
+    readonly guildId: FieldRef<"GuildVoiceMemberDay", 'String'>
+    readonly day: FieldRef<"GuildVoiceMemberDay", 'DateTime'>
+    readonly userId: FieldRef<"GuildVoiceMemberDay", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildVoiceMemberDay findUnique
+   */
+  export type GuildVoiceMemberDayFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildVoiceMemberDay to fetch.
+     */
+    where: GuildVoiceMemberDayWhereUniqueInput
+  }
+
+  /**
+   * GuildVoiceMemberDay findUniqueOrThrow
+   */
+  export type GuildVoiceMemberDayFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildVoiceMemberDay to fetch.
+     */
+    where: GuildVoiceMemberDayWhereUniqueInput
+  }
+
+  /**
+   * GuildVoiceMemberDay findFirst
+   */
+  export type GuildVoiceMemberDayFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildVoiceMemberDay to fetch.
+     */
+    where?: GuildVoiceMemberDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildVoiceMemberDays to fetch.
+     */
+    orderBy?: GuildVoiceMemberDayOrderByWithRelationInput | GuildVoiceMemberDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildVoiceMemberDays.
+     */
+    cursor?: GuildVoiceMemberDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildVoiceMemberDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildVoiceMemberDays.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildVoiceMemberDays.
+     */
+    distinct?: GuildVoiceMemberDayScalarFieldEnum | GuildVoiceMemberDayScalarFieldEnum[]
+  }
+
+  /**
+   * GuildVoiceMemberDay findFirstOrThrow
+   */
+  export type GuildVoiceMemberDayFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildVoiceMemberDay to fetch.
+     */
+    where?: GuildVoiceMemberDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildVoiceMemberDays to fetch.
+     */
+    orderBy?: GuildVoiceMemberDayOrderByWithRelationInput | GuildVoiceMemberDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildVoiceMemberDays.
+     */
+    cursor?: GuildVoiceMemberDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildVoiceMemberDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildVoiceMemberDays.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildVoiceMemberDays.
+     */
+    distinct?: GuildVoiceMemberDayScalarFieldEnum | GuildVoiceMemberDayScalarFieldEnum[]
+  }
+
+  /**
+   * GuildVoiceMemberDay findMany
+   */
+  export type GuildVoiceMemberDayFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildVoiceMemberDays to fetch.
+     */
+    where?: GuildVoiceMemberDayWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildVoiceMemberDays to fetch.
+     */
+    orderBy?: GuildVoiceMemberDayOrderByWithRelationInput | GuildVoiceMemberDayOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildVoiceMemberDays.
+     */
+    cursor?: GuildVoiceMemberDayWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildVoiceMemberDays from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildVoiceMemberDays.
+     */
+    skip?: number
+    distinct?: GuildVoiceMemberDayScalarFieldEnum | GuildVoiceMemberDayScalarFieldEnum[]
+  }
+
+  /**
+   * GuildVoiceMemberDay create
+   */
+  export type GuildVoiceMemberDayCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildVoiceMemberDay.
+     */
+    data: XOR<GuildVoiceMemberDayCreateInput, GuildVoiceMemberDayUncheckedCreateInput>
+  }
+
+  /**
+   * GuildVoiceMemberDay createMany
+   */
+  export type GuildVoiceMemberDayCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildVoiceMemberDays.
+     */
+    data: GuildVoiceMemberDayCreateManyInput | GuildVoiceMemberDayCreateManyInput[]
+  }
+
+  /**
+   * GuildVoiceMemberDay update
+   */
+  export type GuildVoiceMemberDayUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildVoiceMemberDay.
+     */
+    data: XOR<GuildVoiceMemberDayUpdateInput, GuildVoiceMemberDayUncheckedUpdateInput>
+    /**
+     * Choose, which GuildVoiceMemberDay to update.
+     */
+    where: GuildVoiceMemberDayWhereUniqueInput
+  }
+
+  /**
+   * GuildVoiceMemberDay updateMany
+   */
+  export type GuildVoiceMemberDayUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildVoiceMemberDays.
+     */
+    data: XOR<GuildVoiceMemberDayUpdateManyMutationInput, GuildVoiceMemberDayUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildVoiceMemberDays to update
+     */
+    where?: GuildVoiceMemberDayWhereInput
+    /**
+     * Limit how many GuildVoiceMemberDays to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildVoiceMemberDay upsert
+   */
+  export type GuildVoiceMemberDayUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildVoiceMemberDay to update in case it exists.
+     */
+    where: GuildVoiceMemberDayWhereUniqueInput
+    /**
+     * In case the GuildVoiceMemberDay found by the `where` argument doesn't exist, create a new GuildVoiceMemberDay with this data.
+     */
+    create: XOR<GuildVoiceMemberDayCreateInput, GuildVoiceMemberDayUncheckedCreateInput>
+    /**
+     * In case the GuildVoiceMemberDay was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildVoiceMemberDayUpdateInput, GuildVoiceMemberDayUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildVoiceMemberDay delete
+   */
+  export type GuildVoiceMemberDayDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+    /**
+     * Filter which GuildVoiceMemberDay to delete.
+     */
+    where: GuildVoiceMemberDayWhereUniqueInput
+  }
+
+  /**
+   * GuildVoiceMemberDay deleteMany
+   */
+  export type GuildVoiceMemberDayDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildVoiceMemberDays to delete
+     */
+    where?: GuildVoiceMemberDayWhereInput
+    /**
+     * Limit how many GuildVoiceMemberDays to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildVoiceMemberDay findRaw
+   */
+  export type GuildVoiceMemberDayFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildVoiceMemberDay aggregateRaw
+   */
+  export type GuildVoiceMemberDayAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildVoiceMemberDay without action
+   */
+  export type GuildVoiceMemberDayDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildVoiceMemberDay
+     */
+    select?: GuildVoiceMemberDaySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildVoiceMemberDay
+     */
+    omit?: GuildVoiceMemberDayOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GuildWeeklyReport
+   */
+
+  export type AggregateGuildWeeklyReport = {
+    _count: GuildWeeklyReportCountAggregateOutputType | null
+    _min: GuildWeeklyReportMinAggregateOutputType | null
+    _max: GuildWeeklyReportMaxAggregateOutputType | null
+  }
+
+  export type GuildWeeklyReportMinAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    channelId: string | null
+    applicationId: string | null
+    lastWeekStart: Date | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildWeeklyReportMaxAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    channelId: string | null
+    applicationId: string | null
+    lastWeekStart: Date | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildWeeklyReportCountAggregateOutputType = {
+    id: number
+    guildId: number
+    channelId: number
+    applicationId: number
+    lastWeekStart: number
+    lastError: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildWeeklyReportMinAggregateInputType = {
+    id?: true
+    guildId?: true
+    channelId?: true
+    applicationId?: true
+    lastWeekStart?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildWeeklyReportMaxAggregateInputType = {
+    id?: true
+    guildId?: true
+    channelId?: true
+    applicationId?: true
+    lastWeekStart?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildWeeklyReportCountAggregateInputType = {
+    id?: true
+    guildId?: true
+    channelId?: true
+    applicationId?: true
+    lastWeekStart?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildWeeklyReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildWeeklyReport to aggregate.
+     */
+    where?: GuildWeeklyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildWeeklyReports to fetch.
+     */
+    orderBy?: GuildWeeklyReportOrderByWithRelationInput | GuildWeeklyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildWeeklyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildWeeklyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildWeeklyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildWeeklyReports
+    **/
+    _count?: true | GuildWeeklyReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildWeeklyReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildWeeklyReportMaxAggregateInputType
+  }
+
+  export type GetGuildWeeklyReportAggregateType<T extends GuildWeeklyReportAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildWeeklyReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildWeeklyReport[P]>
+      : GetScalarType<T[P], AggregateGuildWeeklyReport[P]>
+  }
+
+
+
+
+  export type GuildWeeklyReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildWeeklyReportWhereInput
+    orderBy?: GuildWeeklyReportOrderByWithAggregationInput | GuildWeeklyReportOrderByWithAggregationInput[]
+    by: GuildWeeklyReportScalarFieldEnum[] | GuildWeeklyReportScalarFieldEnum
+    having?: GuildWeeklyReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildWeeklyReportCountAggregateInputType | true
+    _min?: GuildWeeklyReportMinAggregateInputType
+    _max?: GuildWeeklyReportMaxAggregateInputType
+  }
+
+  export type GuildWeeklyReportGroupByOutputType = {
+    id: string
+    guildId: string
+    channelId: string | null
+    applicationId: string
+    lastWeekStart: Date | null
+    lastError: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GuildWeeklyReportCountAggregateOutputType | null
+    _min: GuildWeeklyReportMinAggregateOutputType | null
+    _max: GuildWeeklyReportMaxAggregateOutputType | null
+  }
+
+  type GetGuildWeeklyReportGroupByPayload<T extends GuildWeeklyReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildWeeklyReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildWeeklyReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildWeeklyReportGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildWeeklyReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildWeeklyReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    guildId?: boolean
+    channelId?: boolean
+    applicationId?: boolean
+    lastWeekStart?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildWeeklyReport"]>
+
+
+
+  export type GuildWeeklyReportSelectScalar = {
+    id?: boolean
+    guildId?: boolean
+    channelId?: boolean
+    applicationId?: boolean
+    lastWeekStart?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildWeeklyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "channelId" | "applicationId" | "lastWeekStart" | "lastError" | "createdAt" | "updatedAt", ExtArgs["result"]["guildWeeklyReport"]>
+
+  export type $GuildWeeklyReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildWeeklyReport"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      guildId: string
+      /**
+       * The text channel it is posted in, or null when the server turned it off.
+       */
+      channelId: string | null
+      applicationId: string
+      /**
+       * Monday 00:00 UTC of the last week posted - claimed before posting, so a week goes out once.
+       */
+      lastWeekStart: Date | null
+      /**
+       * Why the last week did not go out - a `GUILD_WEEKLY_REPORT_ERRORS` code - or null when it did.
+       */
+      lastError: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["guildWeeklyReport"]>
+    composites: {}
+  }
+
+  type GuildWeeklyReportGetPayload<S extends boolean | null | undefined | GuildWeeklyReportDefaultArgs> = $Result.GetResult<Prisma.$GuildWeeklyReportPayload, S>
+
+  type GuildWeeklyReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildWeeklyReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildWeeklyReportCountAggregateInputType | true
+    }
+
+  export interface GuildWeeklyReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildWeeklyReport'], meta: { name: 'GuildWeeklyReport' } }
+    /**
+     * Find zero or one GuildWeeklyReport that matches the filter.
+     * @param {GuildWeeklyReportFindUniqueArgs} args - Arguments to find a GuildWeeklyReport
+     * @example
+     * // Get one GuildWeeklyReport
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildWeeklyReportFindUniqueArgs>(args: SelectSubset<T, GuildWeeklyReportFindUniqueArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildWeeklyReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildWeeklyReportFindUniqueOrThrowArgs} args - Arguments to find a GuildWeeklyReport
+     * @example
+     * // Get one GuildWeeklyReport
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildWeeklyReportFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildWeeklyReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildWeeklyReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildWeeklyReportFindFirstArgs} args - Arguments to find a GuildWeeklyReport
+     * @example
+     * // Get one GuildWeeklyReport
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildWeeklyReportFindFirstArgs>(args?: SelectSubset<T, GuildWeeklyReportFindFirstArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildWeeklyReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildWeeklyReportFindFirstOrThrowArgs} args - Arguments to find a GuildWeeklyReport
+     * @example
+     * // Get one GuildWeeklyReport
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildWeeklyReportFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildWeeklyReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildWeeklyReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildWeeklyReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildWeeklyReports
+     * const guildWeeklyReports = await prisma.guildWeeklyReport.findMany()
+     * 
+     * // Get first 10 GuildWeeklyReports
+     * const guildWeeklyReports = await prisma.guildWeeklyReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildWeeklyReportWithIdOnly = await prisma.guildWeeklyReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildWeeklyReportFindManyArgs>(args?: SelectSubset<T, GuildWeeklyReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildWeeklyReport.
+     * @param {GuildWeeklyReportCreateArgs} args - Arguments to create a GuildWeeklyReport.
+     * @example
+     * // Create one GuildWeeklyReport
+     * const GuildWeeklyReport = await prisma.guildWeeklyReport.create({
+     *   data: {
+     *     // ... data to create a GuildWeeklyReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildWeeklyReportCreateArgs>(args: SelectSubset<T, GuildWeeklyReportCreateArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildWeeklyReports.
+     * @param {GuildWeeklyReportCreateManyArgs} args - Arguments to create many GuildWeeklyReports.
+     * @example
+     * // Create many GuildWeeklyReports
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildWeeklyReportCreateManyArgs>(args?: SelectSubset<T, GuildWeeklyReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildWeeklyReport.
+     * @param {GuildWeeklyReportDeleteArgs} args - Arguments to delete one GuildWeeklyReport.
+     * @example
+     * // Delete one GuildWeeklyReport
+     * const GuildWeeklyReport = await prisma.guildWeeklyReport.delete({
+     *   where: {
+     *     // ... filter to delete one GuildWeeklyReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildWeeklyReportDeleteArgs>(args: SelectSubset<T, GuildWeeklyReportDeleteArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildWeeklyReport.
+     * @param {GuildWeeklyReportUpdateArgs} args - Arguments to update one GuildWeeklyReport.
+     * @example
+     * // Update one GuildWeeklyReport
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildWeeklyReportUpdateArgs>(args: SelectSubset<T, GuildWeeklyReportUpdateArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildWeeklyReports.
+     * @param {GuildWeeklyReportDeleteManyArgs} args - Arguments to filter GuildWeeklyReports to delete.
+     * @example
+     * // Delete a few GuildWeeklyReports
+     * const { count } = await prisma.guildWeeklyReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildWeeklyReportDeleteManyArgs>(args?: SelectSubset<T, GuildWeeklyReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildWeeklyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildWeeklyReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildWeeklyReports
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildWeeklyReportUpdateManyArgs>(args: SelectSubset<T, GuildWeeklyReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildWeeklyReport.
+     * @param {GuildWeeklyReportUpsertArgs} args - Arguments to update or create a GuildWeeklyReport.
+     * @example
+     * // Update or create a GuildWeeklyReport
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.upsert({
+     *   create: {
+     *     // ... data to create a GuildWeeklyReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildWeeklyReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildWeeklyReportUpsertArgs>(args: SelectSubset<T, GuildWeeklyReportUpsertArgs<ExtArgs>>): Prisma__GuildWeeklyReportClient<$Result.GetResult<Prisma.$GuildWeeklyReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildWeeklyReports that matches the filter.
+     * @param {GuildWeeklyReportFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildWeeklyReportFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildWeeklyReport.
+     * @param {GuildWeeklyReportAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildWeeklyReport = await prisma.guildWeeklyReport.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildWeeklyReportAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildWeeklyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildWeeklyReportCountArgs} args - Arguments to filter GuildWeeklyReports to count.
+     * @example
+     * // Count the number of GuildWeeklyReports
+     * const count = await prisma.guildWeeklyReport.count({
+     *   where: {
+     *     // ... the filter for the GuildWeeklyReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildWeeklyReportCountArgs>(
+      args?: Subset<T, GuildWeeklyReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildWeeklyReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildWeeklyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildWeeklyReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildWeeklyReportAggregateArgs>(args: Subset<T, GuildWeeklyReportAggregateArgs>): Prisma.PrismaPromise<GetGuildWeeklyReportAggregateType<T>>
+
+    /**
+     * Group by GuildWeeklyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildWeeklyReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildWeeklyReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildWeeklyReportGroupByArgs['orderBy'] }
+        : { orderBy?: GuildWeeklyReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildWeeklyReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildWeeklyReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildWeeklyReport model
+   */
+  readonly fields: GuildWeeklyReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildWeeklyReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildWeeklyReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildWeeklyReport model
+   */
+  interface GuildWeeklyReportFieldRefs {
+    readonly id: FieldRef<"GuildWeeklyReport", 'String'>
+    readonly guildId: FieldRef<"GuildWeeklyReport", 'String'>
+    readonly channelId: FieldRef<"GuildWeeklyReport", 'String'>
+    readonly applicationId: FieldRef<"GuildWeeklyReport", 'String'>
+    readonly lastWeekStart: FieldRef<"GuildWeeklyReport", 'DateTime'>
+    readonly lastError: FieldRef<"GuildWeeklyReport", 'String'>
+    readonly createdAt: FieldRef<"GuildWeeklyReport", 'DateTime'>
+    readonly updatedAt: FieldRef<"GuildWeeklyReport", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildWeeklyReport findUnique
+   */
+  export type GuildWeeklyReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildWeeklyReport to fetch.
+     */
+    where: GuildWeeklyReportWhereUniqueInput
+  }
+
+  /**
+   * GuildWeeklyReport findUniqueOrThrow
+   */
+  export type GuildWeeklyReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildWeeklyReport to fetch.
+     */
+    where: GuildWeeklyReportWhereUniqueInput
+  }
+
+  /**
+   * GuildWeeklyReport findFirst
+   */
+  export type GuildWeeklyReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildWeeklyReport to fetch.
+     */
+    where?: GuildWeeklyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildWeeklyReports to fetch.
+     */
+    orderBy?: GuildWeeklyReportOrderByWithRelationInput | GuildWeeklyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildWeeklyReports.
+     */
+    cursor?: GuildWeeklyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildWeeklyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildWeeklyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildWeeklyReports.
+     */
+    distinct?: GuildWeeklyReportScalarFieldEnum | GuildWeeklyReportScalarFieldEnum[]
+  }
+
+  /**
+   * GuildWeeklyReport findFirstOrThrow
+   */
+  export type GuildWeeklyReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildWeeklyReport to fetch.
+     */
+    where?: GuildWeeklyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildWeeklyReports to fetch.
+     */
+    orderBy?: GuildWeeklyReportOrderByWithRelationInput | GuildWeeklyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildWeeklyReports.
+     */
+    cursor?: GuildWeeklyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildWeeklyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildWeeklyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildWeeklyReports.
+     */
+    distinct?: GuildWeeklyReportScalarFieldEnum | GuildWeeklyReportScalarFieldEnum[]
+  }
+
+  /**
+   * GuildWeeklyReport findMany
+   */
+  export type GuildWeeklyReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildWeeklyReports to fetch.
+     */
+    where?: GuildWeeklyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildWeeklyReports to fetch.
+     */
+    orderBy?: GuildWeeklyReportOrderByWithRelationInput | GuildWeeklyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildWeeklyReports.
+     */
+    cursor?: GuildWeeklyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildWeeklyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildWeeklyReports.
+     */
+    skip?: number
+    distinct?: GuildWeeklyReportScalarFieldEnum | GuildWeeklyReportScalarFieldEnum[]
+  }
+
+  /**
+   * GuildWeeklyReport create
+   */
+  export type GuildWeeklyReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildWeeklyReport.
+     */
+    data: XOR<GuildWeeklyReportCreateInput, GuildWeeklyReportUncheckedCreateInput>
+  }
+
+  /**
+   * GuildWeeklyReport createMany
+   */
+  export type GuildWeeklyReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildWeeklyReports.
+     */
+    data: GuildWeeklyReportCreateManyInput | GuildWeeklyReportCreateManyInput[]
+  }
+
+  /**
+   * GuildWeeklyReport update
+   */
+  export type GuildWeeklyReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildWeeklyReport.
+     */
+    data: XOR<GuildWeeklyReportUpdateInput, GuildWeeklyReportUncheckedUpdateInput>
+    /**
+     * Choose, which GuildWeeklyReport to update.
+     */
+    where: GuildWeeklyReportWhereUniqueInput
+  }
+
+  /**
+   * GuildWeeklyReport updateMany
+   */
+  export type GuildWeeklyReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildWeeklyReports.
+     */
+    data: XOR<GuildWeeklyReportUpdateManyMutationInput, GuildWeeklyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildWeeklyReports to update
+     */
+    where?: GuildWeeklyReportWhereInput
+    /**
+     * Limit how many GuildWeeklyReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildWeeklyReport upsert
+   */
+  export type GuildWeeklyReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildWeeklyReport to update in case it exists.
+     */
+    where: GuildWeeklyReportWhereUniqueInput
+    /**
+     * In case the GuildWeeklyReport found by the `where` argument doesn't exist, create a new GuildWeeklyReport with this data.
+     */
+    create: XOR<GuildWeeklyReportCreateInput, GuildWeeklyReportUncheckedCreateInput>
+    /**
+     * In case the GuildWeeklyReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildWeeklyReportUpdateInput, GuildWeeklyReportUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildWeeklyReport delete
+   */
+  export type GuildWeeklyReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
+    /**
+     * Filter which GuildWeeklyReport to delete.
+     */
+    where: GuildWeeklyReportWhereUniqueInput
+  }
+
+  /**
+   * GuildWeeklyReport deleteMany
+   */
+  export type GuildWeeklyReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildWeeklyReports to delete
+     */
+    where?: GuildWeeklyReportWhereInput
+    /**
+     * Limit how many GuildWeeklyReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildWeeklyReport findRaw
+   */
+  export type GuildWeeklyReportFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildWeeklyReport aggregateRaw
+   */
+  export type GuildWeeklyReportAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildWeeklyReport without action
+   */
+  export type GuildWeeklyReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildWeeklyReport
+     */
+    select?: GuildWeeklyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildWeeklyReport
+     */
+    omit?: GuildWeeklyReportOmit<ExtArgs> | null
   }
 
 
@@ -24709,6 +27873,42 @@ export namespace Prisma {
   export type GuildActivityHourScalarFieldEnum = (typeof GuildActivityHourScalarFieldEnum)[keyof typeof GuildActivityHourScalarFieldEnum]
 
 
+  export const GuildGeneratorActivityDayScalarFieldEnum: {
+    id: 'id',
+    guildId: 'guildId',
+    generatorId: 'generatorId',
+    day: 'day',
+    roomsCreated: 'roomsCreated',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildGeneratorActivityDayScalarFieldEnum = (typeof GuildGeneratorActivityDayScalarFieldEnum)[keyof typeof GuildGeneratorActivityDayScalarFieldEnum]
+
+
+  export const GuildVoiceMemberDayScalarFieldEnum: {
+    id: 'id',
+    guildId: 'guildId',
+    day: 'day',
+    userId: 'userId'
+  };
+
+  export type GuildVoiceMemberDayScalarFieldEnum = (typeof GuildVoiceMemberDayScalarFieldEnum)[keyof typeof GuildVoiceMemberDayScalarFieldEnum]
+
+
+  export const GuildWeeklyReportScalarFieldEnum: {
+    id: 'id',
+    guildId: 'guildId',
+    channelId: 'channelId',
+    applicationId: 'applicationId',
+    lastWeekStart: 'lastWeekStart',
+    lastError: 'lastError',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildWeeklyReportScalarFieldEnum = (typeof GuildWeeklyReportScalarFieldEnum)[keyof typeof GuildWeeklyReportScalarFieldEnum]
+
+
   export const GuildDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
@@ -25491,6 +28691,181 @@ export namespace Prisma {
     hour?: DateTimeWithAggregatesFilter<"GuildActivityHour"> | Date | string
     roomsCreated?: IntWithAggregatesFilter<"GuildActivityHour"> | number
     updatedAt?: DateTimeWithAggregatesFilter<"GuildActivityHour"> | Date | string
+  }
+
+  export type GuildGeneratorActivityDayWhereInput = {
+    AND?: GuildGeneratorActivityDayWhereInput | GuildGeneratorActivityDayWhereInput[]
+    OR?: GuildGeneratorActivityDayWhereInput[]
+    NOT?: GuildGeneratorActivityDayWhereInput | GuildGeneratorActivityDayWhereInput[]
+    id?: StringFilter<"GuildGeneratorActivityDay"> | string
+    guildId?: StringFilter<"GuildGeneratorActivityDay"> | string
+    generatorId?: StringFilter<"GuildGeneratorActivityDay"> | string
+    day?: DateTimeFilter<"GuildGeneratorActivityDay"> | Date | string
+    roomsCreated?: IntFilter<"GuildGeneratorActivityDay"> | number
+    updatedAt?: DateTimeFilter<"GuildGeneratorActivityDay"> | Date | string
+  }
+
+  export type GuildGeneratorActivityDayOrderByWithRelationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    generatorId?: SortOrder
+    day?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildGeneratorActivityDayWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    generatorId_day?: GuildGeneratorActivityDayGeneratorIdDayCompoundUniqueInput
+    AND?: GuildGeneratorActivityDayWhereInput | GuildGeneratorActivityDayWhereInput[]
+    OR?: GuildGeneratorActivityDayWhereInput[]
+    NOT?: GuildGeneratorActivityDayWhereInput | GuildGeneratorActivityDayWhereInput[]
+    guildId?: StringFilter<"GuildGeneratorActivityDay"> | string
+    generatorId?: StringFilter<"GuildGeneratorActivityDay"> | string
+    day?: DateTimeFilter<"GuildGeneratorActivityDay"> | Date | string
+    roomsCreated?: IntFilter<"GuildGeneratorActivityDay"> | number
+    updatedAt?: DateTimeFilter<"GuildGeneratorActivityDay"> | Date | string
+  }, "id" | "generatorId_day">
+
+  export type GuildGeneratorActivityDayOrderByWithAggregationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    generatorId?: SortOrder
+    day?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildGeneratorActivityDayCountOrderByAggregateInput
+    _avg?: GuildGeneratorActivityDayAvgOrderByAggregateInput
+    _max?: GuildGeneratorActivityDayMaxOrderByAggregateInput
+    _min?: GuildGeneratorActivityDayMinOrderByAggregateInput
+    _sum?: GuildGeneratorActivityDaySumOrderByAggregateInput
+  }
+
+  export type GuildGeneratorActivityDayScalarWhereWithAggregatesInput = {
+    AND?: GuildGeneratorActivityDayScalarWhereWithAggregatesInput | GuildGeneratorActivityDayScalarWhereWithAggregatesInput[]
+    OR?: GuildGeneratorActivityDayScalarWhereWithAggregatesInput[]
+    NOT?: GuildGeneratorActivityDayScalarWhereWithAggregatesInput | GuildGeneratorActivityDayScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildGeneratorActivityDay"> | string
+    guildId?: StringWithAggregatesFilter<"GuildGeneratorActivityDay"> | string
+    generatorId?: StringWithAggregatesFilter<"GuildGeneratorActivityDay"> | string
+    day?: DateTimeWithAggregatesFilter<"GuildGeneratorActivityDay"> | Date | string
+    roomsCreated?: IntWithAggregatesFilter<"GuildGeneratorActivityDay"> | number
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildGeneratorActivityDay"> | Date | string
+  }
+
+  export type GuildVoiceMemberDayWhereInput = {
+    AND?: GuildVoiceMemberDayWhereInput | GuildVoiceMemberDayWhereInput[]
+    OR?: GuildVoiceMemberDayWhereInput[]
+    NOT?: GuildVoiceMemberDayWhereInput | GuildVoiceMemberDayWhereInput[]
+    id?: StringFilter<"GuildVoiceMemberDay"> | string
+    guildId?: StringFilter<"GuildVoiceMemberDay"> | string
+    day?: DateTimeFilter<"GuildVoiceMemberDay"> | Date | string
+    userId?: StringFilter<"GuildVoiceMemberDay"> | string
+  }
+
+  export type GuildVoiceMemberDayOrderByWithRelationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    day?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type GuildVoiceMemberDayWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    guildId_day_userId?: GuildVoiceMemberDayGuildIdDayUserIdCompoundUniqueInput
+    AND?: GuildVoiceMemberDayWhereInput | GuildVoiceMemberDayWhereInput[]
+    OR?: GuildVoiceMemberDayWhereInput[]
+    NOT?: GuildVoiceMemberDayWhereInput | GuildVoiceMemberDayWhereInput[]
+    guildId?: StringFilter<"GuildVoiceMemberDay"> | string
+    day?: DateTimeFilter<"GuildVoiceMemberDay"> | Date | string
+    userId?: StringFilter<"GuildVoiceMemberDay"> | string
+  }, "id" | "guildId_day_userId">
+
+  export type GuildVoiceMemberDayOrderByWithAggregationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    day?: SortOrder
+    userId?: SortOrder
+    _count?: GuildVoiceMemberDayCountOrderByAggregateInput
+    _max?: GuildVoiceMemberDayMaxOrderByAggregateInput
+    _min?: GuildVoiceMemberDayMinOrderByAggregateInput
+  }
+
+  export type GuildVoiceMemberDayScalarWhereWithAggregatesInput = {
+    AND?: GuildVoiceMemberDayScalarWhereWithAggregatesInput | GuildVoiceMemberDayScalarWhereWithAggregatesInput[]
+    OR?: GuildVoiceMemberDayScalarWhereWithAggregatesInput[]
+    NOT?: GuildVoiceMemberDayScalarWhereWithAggregatesInput | GuildVoiceMemberDayScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildVoiceMemberDay"> | string
+    guildId?: StringWithAggregatesFilter<"GuildVoiceMemberDay"> | string
+    day?: DateTimeWithAggregatesFilter<"GuildVoiceMemberDay"> | Date | string
+    userId?: StringWithAggregatesFilter<"GuildVoiceMemberDay"> | string
+  }
+
+  export type GuildWeeklyReportWhereInput = {
+    AND?: GuildWeeklyReportWhereInput | GuildWeeklyReportWhereInput[]
+    OR?: GuildWeeklyReportWhereInput[]
+    NOT?: GuildWeeklyReportWhereInput | GuildWeeklyReportWhereInput[]
+    id?: StringFilter<"GuildWeeklyReport"> | string
+    guildId?: StringFilter<"GuildWeeklyReport"> | string
+    channelId?: StringNullableFilter<"GuildWeeklyReport"> | string | null
+    applicationId?: StringFilter<"GuildWeeklyReport"> | string
+    lastWeekStart?: DateTimeNullableFilter<"GuildWeeklyReport"> | Date | string | null
+    lastError?: StringNullableFilter<"GuildWeeklyReport"> | string | null
+    createdAt?: DateTimeFilter<"GuildWeeklyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildWeeklyReport"> | Date | string
+  }
+
+  export type GuildWeeklyReportOrderByWithRelationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    channelId?: SortOrder
+    applicationId?: SortOrder
+    lastWeekStart?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildWeeklyReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    guildId?: string
+    AND?: GuildWeeklyReportWhereInput | GuildWeeklyReportWhereInput[]
+    OR?: GuildWeeklyReportWhereInput[]
+    NOT?: GuildWeeklyReportWhereInput | GuildWeeklyReportWhereInput[]
+    channelId?: StringNullableFilter<"GuildWeeklyReport"> | string | null
+    applicationId?: StringFilter<"GuildWeeklyReport"> | string
+    lastWeekStart?: DateTimeNullableFilter<"GuildWeeklyReport"> | Date | string | null
+    lastError?: StringNullableFilter<"GuildWeeklyReport"> | string | null
+    createdAt?: DateTimeFilter<"GuildWeeklyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildWeeklyReport"> | Date | string
+  }, "id" | "guildId">
+
+  export type GuildWeeklyReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    channelId?: SortOrder
+    applicationId?: SortOrder
+    lastWeekStart?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildWeeklyReportCountOrderByAggregateInput
+    _max?: GuildWeeklyReportMaxOrderByAggregateInput
+    _min?: GuildWeeklyReportMinOrderByAggregateInput
+  }
+
+  export type GuildWeeklyReportScalarWhereWithAggregatesInput = {
+    AND?: GuildWeeklyReportScalarWhereWithAggregatesInput | GuildWeeklyReportScalarWhereWithAggregatesInput[]
+    OR?: GuildWeeklyReportScalarWhereWithAggregatesInput[]
+    NOT?: GuildWeeklyReportScalarWhereWithAggregatesInput | GuildWeeklyReportScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildWeeklyReport"> | string
+    guildId?: StringWithAggregatesFilter<"GuildWeeklyReport"> | string
+    channelId?: StringNullableWithAggregatesFilter<"GuildWeeklyReport"> | string | null
+    applicationId?: StringWithAggregatesFilter<"GuildWeeklyReport"> | string
+    lastWeekStart?: DateTimeNullableWithAggregatesFilter<"GuildWeeklyReport"> | Date | string | null
+    lastError?: StringNullableWithAggregatesFilter<"GuildWeeklyReport"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"GuildWeeklyReport"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildWeeklyReport"> | Date | string
   }
 
   export type GuildDataWhereInput = {
@@ -27231,6 +30606,183 @@ export namespace Prisma {
     guildId?: StringFieldUpdateOperationsInput | string
     hour?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildGeneratorActivityDayCreateInput = {
+    id?: string
+    guildId: string
+    generatorId: string
+    day: Date | string
+    roomsCreated?: number
+    updatedAt?: Date | string
+  }
+
+  export type GuildGeneratorActivityDayUncheckedCreateInput = {
+    id?: string
+    guildId: string
+    generatorId: string
+    day: Date | string
+    roomsCreated?: number
+    updatedAt?: Date | string
+  }
+
+  export type GuildGeneratorActivityDayUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    generatorId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildGeneratorActivityDayUncheckedUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    generatorId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildGeneratorActivityDayCreateManyInput = {
+    id?: string
+    guildId: string
+    generatorId: string
+    day: Date | string
+    roomsCreated?: number
+    updatedAt?: Date | string
+  }
+
+  export type GuildGeneratorActivityDayUpdateManyMutationInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    generatorId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildGeneratorActivityDayUncheckedUpdateManyInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    generatorId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomsCreated?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildVoiceMemberDayCreateInput = {
+    id?: string
+    guildId: string
+    day: Date | string
+    userId: string
+  }
+
+  export type GuildVoiceMemberDayUncheckedCreateInput = {
+    id?: string
+    guildId: string
+    day: Date | string
+    userId: string
+  }
+
+  export type GuildVoiceMemberDayUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type GuildVoiceMemberDayUncheckedUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type GuildVoiceMemberDayCreateManyInput = {
+    id?: string
+    guildId: string
+    day: Date | string
+    userId: string
+  }
+
+  export type GuildVoiceMemberDayUpdateManyMutationInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type GuildVoiceMemberDayUncheckedUpdateManyInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    day?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type GuildWeeklyReportCreateInput = {
+    id?: string
+    guildId: string
+    channelId?: string | null
+    applicationId: string
+    lastWeekStart?: Date | string | null
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildWeeklyReportUncheckedCreateInput = {
+    id?: string
+    guildId: string
+    channelId?: string | null
+    applicationId: string
+    lastWeekStart?: Date | string | null
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildWeeklyReportUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: StringFieldUpdateOperationsInput | string
+    lastWeekStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildWeeklyReportUncheckedUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: StringFieldUpdateOperationsInput | string
+    lastWeekStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildWeeklyReportCreateManyInput = {
+    id?: string
+    guildId: string
+    channelId?: string | null
+    applicationId: string
+    lastWeekStart?: Date | string | null
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildWeeklyReportUpdateManyMutationInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: StringFieldUpdateOperationsInput | string
+    lastWeekStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildWeeklyReportUncheckedUpdateManyInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: StringFieldUpdateOperationsInput | string
+    lastWeekStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -29155,6 +32707,106 @@ export namespace Prisma {
 
   export type GuildActivityHourSumOrderByAggregateInput = {
     roomsCreated?: SortOrder
+  }
+
+  export type GuildGeneratorActivityDayGeneratorIdDayCompoundUniqueInput = {
+    generatorId: string
+    day: Date | string
+  }
+
+  export type GuildGeneratorActivityDayCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    generatorId?: SortOrder
+    day?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildGeneratorActivityDayAvgOrderByAggregateInput = {
+    roomsCreated?: SortOrder
+  }
+
+  export type GuildGeneratorActivityDayMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    generatorId?: SortOrder
+    day?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildGeneratorActivityDayMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    generatorId?: SortOrder
+    day?: SortOrder
+    roomsCreated?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildGeneratorActivityDaySumOrderByAggregateInput = {
+    roomsCreated?: SortOrder
+  }
+
+  export type GuildVoiceMemberDayGuildIdDayUserIdCompoundUniqueInput = {
+    guildId: string
+    day: Date | string
+    userId: string
+  }
+
+  export type GuildVoiceMemberDayCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    day?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type GuildVoiceMemberDayMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    day?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type GuildVoiceMemberDayMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    day?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type GuildWeeklyReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    channelId?: SortOrder
+    applicationId?: SortOrder
+    lastWeekStart?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildWeeklyReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    channelId?: SortOrder
+    applicationId?: SortOrder
+    lastWeekStart?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildWeeklyReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    channelId?: SortOrder
+    applicationId?: SortOrder
+    lastWeekStart?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type GuildScalarRelationFilter = {

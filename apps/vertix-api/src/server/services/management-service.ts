@@ -18,6 +18,8 @@ import {
 
 import { GUILD_TIMINGS_FIELDS } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
+import { GUILD_WEEKLY_REPORT_TIMINGS } from "@vertix.gg/definitions/src/guild-weekly-report-definitions";
+
 import {
     dynamicChannelLfmTimingsResolve
 } from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
@@ -43,8 +45,11 @@ import type {
     GetConfigLimitsResponse,
     GetGeneratorDefaultsRequest,
     GetGeneratorDefaultsResponse,
+    GetGuildPostStatusRequest,
     TRoleUnassignableReason
 } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import type { IGuildPostStatus } from "@vertix.gg/definitions/src/guild-weekly-report-definitions";
 
 import type { ChannelPrivacyStateDefault } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
@@ -637,6 +642,29 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             );
         } catch( error ) {
             this.logger.warn( this.getConfigLimits, "Failed to read the configured limits", error );
+
+            return null;
+        }
+    }
+
+    /**
+     * Function getGuildPostStatus() :: Whether the bot can post a weekly summary in a channel - null when it
+     * could not be asked.
+     */
+    public async getGuildPostStatus( guildId: string, channelId: string ): Promise<IGuildPostStatus | null> {
+        if ( ! this.services.ipcService.isReady() ) {
+            return null;
+        }
+
+        try {
+            return await this.services.ipcService.request<GetGuildPostStatusRequest, IGuildPostStatus>(
+                IPC_CHANNELS.MANAGEMENT_REQUEST,
+                IPC_CHANNELS.MANAGEMENT_RESPONSE,
+                { action: IPC_REQUEST_ACTIONS.GET_GUILD_POST_STATUS, guildId, channelId },
+                GUILD_WEEKLY_REPORT_TIMINGS.STATUS_REQUEST_TIMEOUT_MS
+            );
+        } catch( error ) {
+            this.logger.warn( this.getGuildPostStatus, `Guild id: '${ guildId }' - Could not ask the bot about a channel`, error );
 
             return null;
         }

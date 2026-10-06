@@ -46,6 +46,8 @@ export interface MasterChannelInfo {
      * absent from an API deployed before the field existed - `categoryId` is what is left in both.
      */
     category?: MasterChannelCategory | null;
+    /** Rooms the generator made over the activity window - absent from an API older than the count. */
+    roomsInWindow?: number;
 }
 
 export interface GuildDetails {

@@ -2,36 +2,69 @@ import { jest } from "@jest/globals";
 
 import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
-const GUILD_ID = "820000000000000001";
+import type { IChannelEnterGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
-const NOW = new Date( "2026-10-06T12:00:00.000Z" );
+const GUILD_ID = "820000000000000001",
+    GENERATOR_ID = "830000000000000001",
+    ROOM_ID = "830000000000000002",
+    POOL_ROOM_ID = "830000000000000003",
+    TEXT_CHANNEL_ID = "830000000000000004",
+    OWNER_ID = "840000000000000001",
+    MEMBER_ID = "840000000000000002";
+
+const NOW = new Date( "2026-10-06T13:45:00.000Z" ),
+    TODAY = new Date( "2026-10-06T00:00:00.000Z" );
+
+/** The channels the bot keeps a row for, as their rows say what kind each is. */
+const CHANNEL_ROWS: Record<string, { isDynamic: boolean; isScaling: boolean }> = {
+    [ ROOM_ID ]: { isDynamic: true, isScaling: false },
+    [ POOL_ROOM_ID ]: { isDynamic: false, isScaling: true },
+    [ GENERATOR_ID ]: { isDynamic: false, isScaling: false }
+};
 
 async function makeService() {
     await TestWithServiceLocatorMock.withUIServiceMock();
 
+    const { ChannelModel } = await import( "@vertix.gg/data/src/models/channel/channel-model" );
     const { GuildActivityModel } = await import( "@vertix.gg/data/src/models/guild-activity-model" );
-    const { GuildModel } = await import( "@vertix.gg/data/src/models/guild-model" );
+    const { GuildVoiceMemberModel } = await import( "@vertix.gg/data/src/models/guild-voice-member-model" );
     const { GuildActivationService } = await import( "@vertix.gg/bot/src/services/guild-activation-service" );
 
     const model = {
         markSetup: jest.fn( async() => undefined ),
-        markRoomCreated: jest.fn( async() => undefined )
+        markRoomCreated: jest.fn( async( _guildId: string, _at: Date, _generatorId?: string | null ) => undefined )
     };
 
-    const guildModel = {
-        startTrial: jest.fn( async( _guildId: string, _endsAt: Date ) => true )
+    const members = {
+        markPresent: jest.fn( async( _guildId: string, _userId: string, _day: Date ) => undefined )
     };
 
     const asInstance = <T>( fake: object ): T => fake as T;
 
     jest.spyOn( GuildActivityModel, "$", "get" ).mockReturnValue( asInstance( model ) );
-    jest.spyOn( GuildModel, "$", "get" ).mockReturnValue( asInstance( guildModel ) );
+    jest.spyOn( GuildVoiceMemberModel, "$", "get" ).mockReturnValue( asInstance( members ) );
+    jest.spyOn( ChannelModel, "$", "get" ).mockReturnValue( asInstance( {
+        getByChannelId: async( channelId: string ) => CHANNEL_ROWS[ channelId ] ?? null
+    } ) );
 
     const service = Object.create( GuildActivationService.prototype ) as InstanceType<typeof GuildActivationService>;
 
-    Object.assign( service, { logger: { info: () => undefined } } );
+    // Built off the prototype, so the fields a constructor would have set are set here.
+    Object.assign( service, { notedToday: new Set<string>(), notedDay: 0 } );
 
-    return { service, model, guildModel };
+    return { service, model, members };
+}
+
+/** A member arriving in a channel, as the channel service hands it on. */
+function joining( channelId: string, userId = MEMBER_ID, isBot = false ) {
+    return {
+        newState: {
+            id: userId,
+            channelId,
+            guild: { id: GUILD_ID },
+            member: { id: userId, user: { bot: isBot } }
+        }
+    } as unknown as IChannelEnterGenericArgs;
 }
 
 /**
@@ -41,26 +74,14 @@ async function makeService() {
  * server with a pool look busy, and a generator not counted as a setup would make it look unused.
  */
 describe( "VertixBot/Services/GuildActivation", () => {
-    const configuredPrice = process.env.PADDLE_PRICE_PRO;
-
     beforeEach( () => {
         jest.useFakeTimers();
         jest.setSystemTime( NOW );
-
-        // A deployment that sells Pro, which has a trial to give - so a room starting none says the
-        // room does not start it, rather than that there was nothing to start.
-        process.env.PADDLE_PRICE_PRO = "pri_pro";
     } );
 
     afterEach( () => {
         jest.useRealTimers();
         jest.restoreAllMocks();
-
-        if ( undefined === configuredPrice ) {
-            delete process.env.PADDLE_PRICE_PRO;
-        } else {
-            process.env.PADDLE_PRICE_PRO = configuredPrice;
-        }
     } );
 
     it( "should record a generator of either kind as the server setting the bot up", async() => {
@@ -76,42 +97,141 @@ describe( "VertixBot/Services/GuildActivation", () => {
         expect( model.markRoomCreated ).not.toHaveBeenCalled();
     } );
 
-    it( "should count a room a member made from a generator", async() => {
+    it( "should count a room a member made from a generator, under that generator", async() => {
         // Arrange.
         const { service, model } = await makeService();
 
         // Act.
-        await service.record( GUILD_ID, "DYNAMIC_CHANNEL" );
+        await service.record( GUILD_ID, "DYNAMIC_CHANNEL", GENERATOR_ID, OWNER_ID );
 
         // Assert.
-        expect( model.markRoomCreated ).toHaveBeenCalledWith( GUILD_ID, expect.any( Date ) );
+        expect( model.markRoomCreated ).toHaveBeenCalledWith( GUILD_ID, NOW, GENERATOR_ID );
     } );
 
     it( "should not count a room an auto-scaling pool opened ahead of anybody", async() => {
         // Arrange.
-        const { service, model } = await makeService();
+        const { service, model, members } = await makeService();
 
         // Act.
-        await service.record( GUILD_ID, "SCALING_CHANNEL" );
+        await service.record( GUILD_ID, "SCALING_CHANNEL", "pool-row-id", OWNER_ID );
 
         // Assert.
         expect( model.markSetup ).not.toHaveBeenCalled();
         expect( model.markRoomCreated ).not.toHaveBeenCalled();
+        expect( members.markPresent ).not.toHaveBeenCalled();
     } );
 
-    describe( "the free trial", () => {
-        it( "should leave starting it to the server's owner - no room or setup starts one", async() => {
-            // Arrange.
-            const { service, model, guildModel } = await makeService();
+    describe( "members in rooms", () => {
+        it( "should note the member a room was made for as soon as it is made", async() => {
+            // Arrange - they are moved in before the room's row is written, so their join cannot be
+            // told for a room's; the room being made for them is what says they are in one.
+            const { service, members } = await makeService();
 
             // Act.
-            await service.record( GUILD_ID, "MASTER_CREATE_CHANNEL" );
-            await service.record( GUILD_ID, "DYNAMIC_CHANNEL" );
-            await service.record( GUILD_ID, "SCALING_CHANNEL" );
+            await service.record( GUILD_ID, "DYNAMIC_CHANNEL", GENERATOR_ID, OWNER_ID );
 
-            // Assert - the room is still counted; the trial is the owner's to start, from the dashboard.
-            expect( model.markRoomCreated ).toHaveBeenCalledTimes( 1 );
-            expect( guildModel.startTrial ).not.toHaveBeenCalled();
+            // Assert.
+            expect( members.markPresent ).toHaveBeenCalledWith( GUILD_ID, OWNER_ID, TODAY );
+        } );
+
+        it( "should not note the admin who set up a generator", async() => {
+            // Arrange.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.record( GUILD_ID, "MASTER_CREATE_CHANNEL", null, OWNER_ID );
+
+            // Assert.
+            expect( members.markPresent ).not.toHaveBeenCalled();
+        } );
+
+        it( "should note a member who joins a room, once a day however often they come", async() => {
+            // Arrange.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.notePresence( joining( ROOM_ID ) );
+            await service.notePresence( joining( ROOM_ID ) );
+
+            // Assert.
+            expect( members.markPresent ).toHaveBeenCalledTimes( 1 );
+            expect( members.markPresent ).toHaveBeenCalledWith( GUILD_ID, MEMBER_ID, TODAY );
+        } );
+
+        it( "should not note the owner again when their move into the room arrives after it was made", async() => {
+            // Arrange.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.record( GUILD_ID, "DYNAMIC_CHANNEL", GENERATOR_ID, OWNER_ID );
+            await service.notePresence( joining( ROOM_ID, OWNER_ID ) );
+
+            // Assert.
+            expect( members.markPresent ).toHaveBeenCalledTimes( 1 );
+        } );
+
+        it( "should note a member in a pool's room - a pool's rooms are not counted as made, but its members are there", async() => {
+            // Arrange.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.notePresence( joining( POOL_ROOM_ID ) );
+
+            // Assert.
+            expect( members.markPresent ).toHaveBeenCalledWith( GUILD_ID, MEMBER_ID, TODAY );
+        } );
+
+        it( "should not note a member in a channel that is not a room", async() => {
+            // Arrange - a generator, and a channel the bot keeps no row for.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.notePresence( joining( GENERATOR_ID ) );
+            await service.notePresence( joining( TEXT_CHANNEL_ID ) );
+
+            // Assert.
+            expect( members.markPresent ).not.toHaveBeenCalled();
+        } );
+
+        it( "should not note a bot", async() => {
+            // Arrange.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.notePresence( joining( ROOM_ID, MEMBER_ID, true ) );
+
+            // Assert.
+            expect( members.markPresent ).not.toHaveBeenCalled();
+        } );
+
+        it( "should note a member again on a new UTC day", async() => {
+            // Arrange.
+            const { service, members } = await makeService();
+
+            // Act.
+            await service.notePresence( joining( ROOM_ID ) );
+
+            jest.setSystemTime( new Date( "2026-10-07T00:30:00.000Z" ) );
+
+            await service.notePresence( joining( ROOM_ID ) );
+
+            // Assert.
+            expect( members.markPresent ).toHaveBeenCalledTimes( 2 );
+            expect( members.markPresent ).toHaveBeenLastCalledWith( GUILD_ID, MEMBER_ID, new Date( "2026-10-07T00:00:00.000Z" ) );
+        } );
+
+        it( "should try again at the next join when noting a member failed", async() => {
+            // Arrange - the database did not answer the first time.
+            const { service, members } = await makeService();
+
+            members.markPresent.mockRejectedValueOnce( new Error( "Server selection timeout" ) );
+
+            // Act.
+            await expect( service.notePresence( joining( ROOM_ID ) ) ).rejects.toThrow( "Server selection timeout" );
+            await service.notePresence( joining( ROOM_ID ) );
+
+            // Assert.
+            expect( members.markPresent ).toHaveBeenCalledTimes( 2 );
         } );
     } );
 } );

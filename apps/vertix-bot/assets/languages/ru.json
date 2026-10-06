@@ -535,6 +535,12 @@
         "content": {
           "label": "Открыть оплату"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/WeeklyReportDashboardButton",
+        "content": {
+          "label": "Открыть дашборд"
+        }
       }
     ],
     "textInputs": [
@@ -4259,6 +4265,13 @@
       "content": {
         "title": "⏳  Бесплатный пробный период {planName} заканчивается",
         "description": "Бесплатный пробный период {planName} на сервере **{guildName}** закончится <t:{endsAt}:R>, <t:{endsAt}:f>.\n\nПосле этого:\n- **Свой облик бота** - имя, аватар, баннер и описание, которые бот носит на вашем сервере, будут сняты.\n- **Генераторы** - создавать комнаты продолжат только первые {maxMasterChannels}.\n\nСохраните {planName} за ${monthlyPriceUsd} в месяц в дашборде."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WeeklyReportEmbed",
+      "content": {
+        "title": "📊  Ваша неделя в голосе",
+        "description": "**{weekRange}**\n\n🎙️ **Создано комнат:** {rooms} - неделей ранее: {roomsBefore}\n👥 **Участников в комнатах:** {members} - неделей ранее: {membersBefore}\n⏰ **Самый активный час:** {busiestHour}\n🏆 **Самый активный генератор:** {topGenerator}"
       }
     }
   ],

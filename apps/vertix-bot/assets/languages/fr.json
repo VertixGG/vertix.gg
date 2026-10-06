@@ -535,6 +535,12 @@
         "content": {
           "label": "Ouvrir la facturation"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/WeeklyReportDashboardButton",
+        "content": {
+          "label": "Ouvrir le tableau de bord"
+        }
       }
     ],
     "textInputs": [
@@ -4259,6 +4265,13 @@
       "content": {
         "title": "⏳  Ton essai gratuit de {planName} se termine",
         "description": "L'essai gratuit de {planName} sur **{guildName}** se termine <t:{endsAt}:R>, le <t:{endsAt}:f>.\n\nÀ la fin :\n- **Apparence personnalisée du bot** - le nom, l'avatar, la bannière et la bio que le bot porte sur ton serveur sont retirés.\n- **Générateurs** - seuls tes {maxMasterChannels} premiers continuent de créer des salons.\n\nGarde {planName} pour {monthlyPriceUsd} $ par mois depuis le tableau de bord."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WeeklyReportEmbed",
+      "content": {
+        "title": "📊  Ta semaine en vocal",
+        "description": "**{weekRange}**\n\n🎙️ **Salons créés :** {rooms} - la semaine d'avant : {roomsBefore}\n👥 **Membres dans les salons :** {members} - la semaine d'avant : {membersBefore}\n⏰ **Heure la plus active :** {busiestHour}\n🏆 **Générateur le plus actif :** {topGenerator}"
       }
     }
   ],

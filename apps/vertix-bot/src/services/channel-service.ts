@@ -299,7 +299,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             data.ownerChannelId = ownerChannelId;
         }
 
-        await this.onChannelCreated( guild.id, internalType );
+        await this.onChannelCreated( guild.id, internalType, ownerChannelId, userOwnerId );
 
         return { channel, db: ChannelModel.$.create( data ) };
     }
@@ -310,8 +310,18 @@ export class ChannelService extends ServiceWithDependenciesBase<{
      * Empty on purpose: the event bus emits after the method runs, and what listens is what records
      * a server's first generator and the rooms its members make. Every channel the bot creates comes
      * through `create()`, which is why this is the one place to hear it.
+     *
+     * `ownerChannelId` is what the channel's row holds as it: a room's generator - its discord id for a
+     * room a member made, the pool's row id for one a pool opened - and null for anything else.
+     * `userOwnerId` is the member it was made for, who is moved in only after this - and before the
+     * channel's row is written, so a listener that wants them cannot wait to see them join it.
      */
-    public async onChannelCreated( _guildId: string, _internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {}
+    public async onChannelCreated(
+        _guildId: string,
+        _internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES,
+        _ownerChannelId: string | null,
+        _userOwnerId: string
+    ) {}
 
     public async update( args: IChannelUpdateArgs ) {
         const { channel, userOwnerId } = args;

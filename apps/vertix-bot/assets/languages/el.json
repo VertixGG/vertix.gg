@@ -535,6 +535,12 @@
         "content": {
           "label": "Άνοιγμα χρεώσεων"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/WeeklyReportDashboardButton",
+        "content": {
+          "label": "Άνοιγμα dashboard"
+        }
       }
     ],
     "textInputs": [
@@ -4259,6 +4265,13 @@
       "content": {
         "title": "⏳  Η δωρεάν δοκιμή του {planName} τελειώνει",
         "description": "Η δωρεάν δοκιμή του {planName} στο **{guildName}** λήγει <t:{endsAt}:R>, στις <t:{endsAt}:f>.\n\nΜόλις λήξει:\n- **Προσαρμοσμένη εμφάνιση bot** - το όνομα, το avatar, το banner και η περιγραφή που έχει το bot στον server σου αφαιρούνται.\n- **Γεννήτριες** - μόνο οι πρώτες {maxMasterChannels} συνεχίζουν να ανοίγουν δωμάτια.\n\nΚράτησε το {planName} με ${monthlyPriceUsd} τον μήνα από το dashboard."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WeeklyReportEmbed",
+      "content": {
+        "title": "📊  Η εβδομάδα σου στο voice",
+        "description": "**{weekRange}**\n\n🎙️ **Δωμάτια που δημιουργήθηκαν:** {rooms} - την προηγούμενη εβδομάδα: {roomsBefore}\n👥 **Μέλη σε δωμάτια:** {members} - την προηγούμενη εβδομάδα: {membersBefore}\n⏰ **Πιο πολυσύχναστη ώρα:** {busiestHour}\n🏆 **Πιο πολυσύχναστη γεννήτρια:** {topGenerator}"
       }
     }
   ],

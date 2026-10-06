@@ -1,6 +1,7 @@
 import { GuildActivityModel, toUtcHour } from "@vertix.gg/data/src/models/guild-activity-model";
 
-const GUILD_ID = "820000000000000001";
+const GUILD_ID = "820000000000000001",
+    GENERATOR_ID = "830000000000000001";
 
 const AT = new Date( "2026-10-06T13:45:12.000Z" );
 
@@ -17,7 +18,8 @@ interface ICountArgs {
  */
 function createModel( answer: ( attempt: number ) => Promise<object> = async() => ( {} ) ) {
     const days: ICountArgs[] = [],
-        hours: ICountArgs[] = [];
+        hours: ICountArgs[] = [],
+        generators: ICountArgs[] = [];
 
     const model = Object.create( GuildActivityModel.prototype ) as GuildActivityModel;
 
@@ -39,16 +41,23 @@ function createModel( answer: ( attempt: number ) => Promise<object> = async() =
 
                     return answer( hours.length );
                 }
+            },
+            guildGeneratorActivityDay: {
+                upsert: async( args: ICountArgs ) => {
+                    generators.push( args );
+
+                    return answer( generators.length );
+                }
             }
         }
     } );
 
-    return { model, days, hours };
+    return { model, days, hours, generators };
 }
 
 /**
- * A room is counted twice over - once in its day and once in its hour - and each count is the same
- * upsert, raced the same way.
+ * A room is counted in its day, its hour and - told the generator that made it - that generator's day,
+ * and each count is the same upsert, raced the same way.
  */
 describe( "VertixData/Models/GuildActivityModel/markRoomCreated", () => {
     it( "should count a room in the UTC day and the UTC hour it was made in", async() => {
@@ -69,6 +78,32 @@ describe( "VertixData/Models/GuildActivityModel/markRoomCreated", () => {
             create: { guildId: GUILD_ID, hour: new Date( "2026-10-06T13:00:00.000Z" ), roomsCreated: 1 },
             update: { roomsCreated: { increment: 1 } }
         } ] );
+    } );
+
+    it( "should count a room in its generator's UTC day too, when it is told the generator", async() => {
+        // Arrange.
+        const { model, generators } = createModel();
+
+        // Act.
+        await model.markRoomCreated( GUILD_ID, AT, GENERATOR_ID );
+
+        // Assert - by the generator's discord id, which is what a room holds as `ownerChannelId`.
+        expect( generators ).toEqual( [ {
+            where: { generatorId_day: { generatorId: GENERATOR_ID, day: new Date( "2026-10-06T00:00:00.000Z" ) } },
+            create: { guildId: GUILD_ID, generatorId: GENERATOR_ID, day: new Date( "2026-10-06T00:00:00.000Z" ), roomsCreated: 1 },
+            update: { roomsCreated: { increment: 1 } }
+        } ] );
+    } );
+
+    it( "should count no generator when it is not told one", async() => {
+        // Arrange.
+        const { model, generators } = createModel();
+
+        // Act.
+        await model.markRoomCreated( GUILD_ID, AT );
+
+        // Assert.
+        expect( generators ).toEqual( [] );
     } );
 
     it( "should write a count again when it lost the race to create its row", async() => {

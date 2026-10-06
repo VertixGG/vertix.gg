@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 
 import { Radio, Plus, ArrowRight } from "lucide-react";
 
-import { formatDate, formatShare } from "@vertix.gg/dashboard/src/features/home/lib/format";
+import { DASHBOARD_STATS_WINDOWS } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
+
+import { formatCount, formatDate, formatShare } from "@vertix.gg/dashboard/src/features/home/lib/format";
 
 import type { MasterChannelInfo } from "@vertix.gg/dashboard/src/features/home/types";
 
@@ -100,10 +102,12 @@ function describeCategory( master: MasterChannelInfo ): string {
 }
 
 /**
- * The generators of the guild, each with the channels standing under it right now.
+ * The generators of the guild, each with the channels standing under it right now and the rooms it
+ * made over the last month.
  *
- * Ordered by how busy they are, since the question a reader brings here is which generator the
- * server actually lives in - the quiet ones are the candidates for retiring.
+ * Ordered by how busy they are - the month's rooms first, then what is open now - since the question
+ * a reader brings here is which generator the server actually lives in, and the quiet ones are the
+ * candidates for retiring.
  *
  * The bar measures each generator's live channels against how many one generator may have open at
  * once - the number the bot refuses the next member at. Counted per generator rather than per
@@ -118,7 +122,9 @@ export function GeneratorsPanel( { masterChannels, maxActiveDynamicChannels }: G
         return <EmptyState />;
     }
 
-    const ordered = [ ...masterChannels ].sort( ( a, b ) => b.dynamicChannelsCount - a.dynamicChannelsCount );
+    const ordered = [ ...masterChannels ].sort( ( a, b ) =>
+        ( b.roomsInWindow ?? 0 ) - ( a.roomsInWindow ?? 0 ) || b.dynamicChannelsCount - a.dynamicChannelsCount
+    );
 
     const limit = readGeneratorLimit( maxActiveDynamicChannels );
     const limitDescription = describeGeneratorLimit( limit );
@@ -163,6 +169,12 @@ export function GeneratorsPanel( { masterChannels, maxActiveDynamicChannels }: G
                         </div>
 
                         <div className="flex flex-wrap gap-x-4 text-xs text-text-muted">
+                            { "number" === typeof master.roomsInWindow && (
+                                <span className="text-text-secondary">
+                                    { formatCount( master.roomsInWindow ) } { 1 === master.roomsInWindow ? "room" : "rooms" } in the
+                                    last { DASHBOARD_STATS_WINDOWS.ACTIVITY_DAYS } days
+                                </span>
+                            ) }
                             <span>Created { created ?? "at an unknown date" }</span>
                             <span>{ describeCategory( master ) }</span>
                             <span>{ limitDescription }</span>

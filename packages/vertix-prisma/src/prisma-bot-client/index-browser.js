@@ -146,6 +146,7 @@ exports.Prisma.GuildScalarFieldEnum = {
   leftAt: 'leftAt',
   setupAt: 'setupAt',
   firstRoomAt: 'firstRoomAt',
+  trialEndsAt: 'trialEndsAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   updatedAtInternal: 'updatedAtInternal'

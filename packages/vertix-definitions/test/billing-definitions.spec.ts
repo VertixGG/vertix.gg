@@ -2,11 +2,14 @@ import {
     BILLING_UNLIMITED_MASTER_CHANNELS,
     formatMasterChannelAllowance,
     isSubscriptionEntitling,
+    isTrialRunning,
     isUnlimitedAllowance,
     shouldApplySubscriptionEvent,
     readBillingTiers,
     resolveCanBrand,
-    resolveMaxMasterChannels
+    resolveMaxMasterChannels,
+    resolveTrialEndsAt,
+    resolveTrialTier
 } from "@vertix.gg/definitions/src/billing-definitions";
 
 import type { IBillingTier } from "@vertix.gg/definitions/src/billing-definitions";
@@ -16,12 +19,19 @@ const FREE = 2;
 // Doubles rather than the real table: what is being checked is the arithmetic, and it takes finite
 // steps to check it at all - the table on sale is one tier with no ceiling, which would pass every
 // `Math.max` below without exercising any of them. What that table itself sells is covered further
-// down, under "the plan on sale".
+// down, under "the plan on sale". Only "Large" offers a trial, so a trial can be told apart from
+// the tiers either side of it.
 const TIERS: IBillingTier[] = [
-    { name: "Small", slug: "small", priceId: "pri_small", maxMasterChannels: 5, monthlyPriceUsd: 2, includesBranding: false },
-    { name: "Large", slug: "large", priceId: "pri_large", maxMasterChannels: 15, monthlyPriceUsd: 4, includesBranding: true },
-    { name: "Unlimited", slug: "unlimited", priceId: "pri_unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10, includesBranding: true }
+    { name: "Small", slug: "small", priceId: "pri_small", maxMasterChannels: 5, monthlyPriceUsd: 2, includesBranding: false, trialDays: 0 },
+    { name: "Large", slug: "large", priceId: "pri_large", maxMasterChannels: 15, monthlyPriceUsd: 4, includesBranding: true, trialDays: 7 },
+    { name: "Unlimited", slug: "unlimited", priceId: "pri_unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10, includesBranding: true, trialDays: 0 }
 ];
+
+// A fixed moment, so "still running" and "ran out" are arithmetic rather than a race.
+const NOW = new Date( "2026-09-21T12:00:00.000Z" );
+
+const laterThan = ( date: Date, days: number ) =>
+    new Date( date.getTime() + days * 24 * 60 * 60 * 1000 );
 
 describe( "VertixDefinitions/Billing", () => {
     describe( "resolveMaxMasterChannels()", () => {
@@ -211,6 +221,28 @@ describe( "VertixDefinitions/Billing", () => {
             expect( resolveCanBrand( { paidPriceIds: [], tiers } ) ).toBe( false );
             expect( resolveCanBrand( { paidPriceIds: [ "pri_retired_plus" ], tiers } ) ).toBe( false );
         } );
+
+        it( "should give a server on its trial everything Pro gives, for fourteen days and no longer", () => {
+            // Arrange.
+            const tiers = readBillingTiers( ENVIRONMENT );
+
+            const trialEndsAt = resolveTrialEndsAt( { startedAt: NOW, tiers } );
+
+            const holdingsAt = ( now: Date ) => ( { paidPriceIds: [], tiers, trialEndsAt, now } );
+
+            // Act.
+            const lastDay = holdingsAt( laterThan( NOW, 13 ) ),
+                dayAfter = holdingsAt( laterThan( NOW, 14 ) );
+
+            // Assert.
+            expect( trialEndsAt ).toEqual( laterThan( NOW, 14 ) );
+
+            expect( isUnlimitedAllowance( resolveMaxMasterChannels( { granted: FREE, ... lastDay } ) ) ).toBe( true );
+            expect( resolveCanBrand( lastDay ) ).toBe( true );
+
+            expect( resolveMaxMasterChannels( { granted: FREE, ... dayAfter } ) ).toBe( FREE );
+            expect( resolveCanBrand( dayAfter ) ).toBe( false );
+        } );
     } );
 
     describe( "resolveCanBrand()", () => {
@@ -226,13 +258,111 @@ describe( "VertixDefinitions/Billing", () => {
         } );
     } );
 
+    describe( "a free trial", () => {
+        it( "should hold the tier that offers it while it runs, as paying for it would", () => {
+            // Arrange.
+            const holdings = { paidPriceIds: [], tiers: TIERS, trialEndsAt: laterThan( NOW, 3 ), now: NOW };
+
+            // Act & Assert.
+            expect( resolveMaxMasterChannels( { granted: FREE, ... holdings } ) ).toBe( 15 );
+            expect( resolveCanBrand( holdings ) ).toBe( true );
+        } );
+
+        it( "should hold nothing once its date has passed", () => {
+            // Arrange - nothing came to end it; the date did.
+            const holdings = { paidPriceIds: [], tiers: TIERS, trialEndsAt: laterThan( NOW, -1 ), now: NOW };
+
+            // Act & Assert.
+            expect( resolveMaxMasterChannels( { granted: FREE, ... holdings } ) ).toBe( FREE );
+            expect( resolveCanBrand( holdings ) ).toBe( false );
+        } );
+
+        it( "should hold nothing where no tier on sale offers one", () => {
+            // Arrange - "Small" and "Unlimited" offer no trial, so a running date gives nothing.
+            const tiers = TIERS.filter( ( tier ) => 0 === tier.trialDays );
+
+            const holdings = { paidPriceIds: [], tiers, trialEndsAt: laterThan( NOW, 3 ), now: NOW };
+
+            // Act & Assert.
+            expect( resolveMaxMasterChannels( { granted: FREE, ... holdings } ) ).toBe( FREE );
+            expect( resolveCanBrand( holdings ) ).toBe( false );
+        } );
+
+        it( "should never lower what is paid for or what was granted", () => {
+            // Act - a trial is a floor under the server, not a ceiling over it.
+            const paying = resolveMaxMasterChannels( {
+                granted: FREE,
+                paidPriceIds: [ "pri_unlimited" ],
+                tiers: TIERS,
+                trialEndsAt: laterThan( NOW, 3 ),
+                now: NOW
+            } );
+
+            const granted = resolveMaxMasterChannels( {
+                granted: 40,
+                paidPriceIds: [],
+                tiers: TIERS,
+                trialEndsAt: laterThan( NOW, 3 ),
+                now: NOW
+            } );
+
+            // Assert.
+            expect( isUnlimitedAllowance( paying ) ).toBe( true );
+            expect( granted ).toBe( 40 );
+        } );
+
+        it( "should hold nothing for a server that never had one", () => {
+            // Act & Assert.
+            expect( resolveCanBrand( { paidPriceIds: [], tiers: TIERS, trialEndsAt: null, now: NOW } ) ).toBe( false );
+        } );
+    } );
+
+    describe( "resolveTrialTier()", () => {
+        it( "should find the tier that offers a trial", () => {
+            // Act & Assert.
+            expect( resolveTrialTier( TIERS )?.slug ).toBe( "large" );
+        } );
+
+        it( "should find none where no tier offers one", () => {
+            // Act & Assert.
+            expect( resolveTrialTier( TIERS.filter( ( tier ) => 0 === tier.trialDays ) ) ).toBeNull();
+            expect( resolveTrialTier( [] ) ).toBeNull();
+        } );
+    } );
+
+    describe( "resolveTrialEndsAt()", () => {
+        it( "should run a trial for as many days as its tier offers", () => {
+            // Act.
+            const endsAt = resolveTrialEndsAt( { startedAt: NOW, tiers: TIERS } );
+
+            // Assert.
+            expect( endsAt ).toEqual( laterThan( NOW, 7 ) );
+        } );
+
+        it( "should give no date where nothing offers a trial", () => {
+            // Act - null rather than a date, so the caller writes nothing instead of a trial of nothing.
+            const endsAt = resolveTrialEndsAt( { startedAt: NOW, tiers: [] } );
+
+            // Assert.
+            expect( endsAt ).toBeNull();
+        } );
+    } );
+
+    describe( "isTrialRunning()", () => {
+        it( "should run until its date and not a moment past it", () => {
+            // Act & Assert.
+            expect( isTrialRunning( laterThan( NOW, 1 ), NOW ) ).toBe( true );
+            expect( isTrialRunning( NOW, NOW ) ).toBe( false );
+            expect( isTrialRunning( laterThan( NOW, -1 ), NOW ) ).toBe( false );
+        } );
+
+        it( "should not run for a server that never had one", () => {
+            // Act & Assert.
+            expect( isTrialRunning( null, NOW ) ).toBe( false );
+        } );
+    } );
+
     describe( "isSubscriptionEntitling()", () => {
-        // A fixed moment, so "still running" and "ran out" are arithmetic rather than a race.
-        const NOW = new Date( "2026-09-21T12:00:00.000Z" );
-
-        const laterThan = ( date: Date, days: number ) =>
-            new Date( date.getTime() + days * 24 * 60 * 60 * 1000 );
-
         it( "should entitle a subscription being paid for", () => {
             // Act.
             const entitling = isSubscriptionEntitling(

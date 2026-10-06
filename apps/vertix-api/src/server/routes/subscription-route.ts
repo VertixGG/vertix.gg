@@ -3,9 +3,12 @@ import process from "process";
 import {
     formatMasterChannelAllowance,
     isSubscriptionEntitling,
-    readBillingTiers
+    isTrialRunning,
+    readBillingTiers,
+    resolveTrialTier
 } from "@vertix.gg/definitions/src/billing-definitions";
 
+import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { SubscriptionModel } from "@vertix.gg/data/src/models/subscription-model";
 
 import { API_ROUTES } from "@vertix.gg/api/src/server/constants";
@@ -22,6 +25,28 @@ interface GuildParams {
     guildId: string;
 }
 
+/**
+ * Function toTrial() :: A server's free trial as the screen prints it, or null if it never had one.
+ *
+ * Null as well where this deployment sells no tier with a trial, because the bot then holds the
+ * server to nothing by it - a screen promising a trial the bot is not honouring would be the one
+ * place the two disagree.
+ */
+function toTrial( trialEndsAt: Date | null, tiers: ReturnType<typeof readBillingTiers> ) {
+    const tier = resolveTrialTier( tiers );
+
+    if ( ! trialEndsAt || ! tier ) {
+        return null;
+    }
+
+    return {
+        planName: tier.name,
+        allowance: formatMasterChannelAllowance( tier.maxMasterChannels ),
+        endsAt: trialEndsAt.toISOString(),
+        isRunning: isTrialRunning( trialEndsAt )
+    };
+}
+
 async function handleGetSubscription(
     request: FastifyRequest<{ Params: GuildParams }>,
     reply: FastifyReply
@@ -33,16 +58,22 @@ async function handleGetSubscription(
     }
 
     try {
-        const subscription = await SubscriptionModel.$.get( guildId );
+        const [ subscription, guild ] = await Promise.all( [
+            SubscriptionModel.$.get( guildId ),
+            GuildModel.$.get( guildId )
+        ] );
+
+        const tiers = readBillingTiers( process.env );
+
+        const trial = toTrial( guild?.trialEndsAt ?? null, tiers );
 
         if ( ! subscription ) {
             // Not an error. Most servers have never bought anything, and the screen that asks this
             // needs to tell "nothing bought" apart from "we could not find out".
-            return { subscription: null };
+            return { subscription: null, trial };
         }
 
-        const tier = readBillingTiers( process.env )
-            .find( ( candidate ) => candidate.priceId === subscription.priceId ) ?? null;
+        const tier = tiers.find( ( candidate ) => candidate.priceId === subscription.priceId ) ?? null;
 
         // Fetched live, never stored - paddle's links carry temporary tokens. Its failure is not
         // this route's failure: the plan, the renewal date and the allowance are all still true
@@ -76,7 +107,8 @@ async function handleGetSubscription(
                 scheduledToCancelAt: subscription.scheduledToCancelAt?.toISOString() ?? null,
                 updatePaymentMethodUrl: management.updatePaymentMethodUrl,
                 cancelUrl: management.cancelUrl
-            }
+            },
+            trial
         };
     } catch( error ) {
         handleError( handleGetSubscription, error, reply, "Failed to fetch subscription" );
@@ -84,7 +116,7 @@ async function handleGetSubscription(
 }
 
 /**
- * What a server is paying for, for the server's owner.
+ * What a server is paying for, and the free trial it is on or has had, for the server's owner.
  *
  * Read from our own row rather than from paddle, so the screen does not wait on somebody else's
  * api - and so it says the same thing the bot is acting on, which is the row, not paddle.

@@ -23,7 +23,7 @@ Two limits, both now enforced:
 |---|---|
 | Generators per guild | `maxMasterChannels`, default **2** — [guild-config.ts](../packages/vertix-data/src/config/guild-config.ts) |
 | Rooms per generator | `maxActiveDynamicChannels`, default **20** |
-| Where the allowance is decided | [entitlement-service.ts](../apps/vertix-bot/src/services/entitlement-service.ts) — the higher of the grant and the tier paid for |
+| Where the allowance is decided | [entitlement-service.ts](../apps/vertix-bot/src/services/entitlement-service.ts) — the higher of the grant and the tier held, paid for or on trial |
 | Where it is enforced | `onJoinMasterChannel()` and `createScaledChannel()`, both answering through `ChannelCreateFailedAdapter` |
 | Payment | **Paddle**, working in sandbox: checkout from the dashboard, signed webhook, `Subscription` row |
 | Seeing and cancelling | the dashboard's Subscription page, with Paddle's own hosted pages behind it |
@@ -96,6 +96,21 @@ One paid plan. Everything below reads it from one place, so changing it is chang
 | Pro | unlimited | its own name, avatar, banner and bio | $4 / month | `PADDLE_PRICE_PRO` |
 
 Monthly only. There is no yearly price, and that is a decision rather than an omission.
+
+**Every server gets Pro free for 14 days, once, with no card.** A room a member makes starts it -
+`GuildActivationService` asks on every room, so a server already using the bot when trials began
+gets its trial from its next room - and `Guild.trialEndsAt` holds when it runs out. Until then
+`resolveHeldTiers()` counts it exactly as paying for Pro: unlimited generators, the bot's profile, no
+panel links. Paddle is nowhere in it.
+
+- **The end is stored, not the start**, so changing `trialDays` reaches trials not yet given and never
+  one already running.
+- **Once means once.** `GuildModel.startTrial()` writes only where the field is unset, and the row
+  outlives the bot leaving, so removing and re-adding the bot keeps the date already given.
+- **Nothing ends a trial but its date**, as with a lapsed subscription: the next
+  `GuildBrandingService` sweep takes the profile off (saved, not deleted), and generators past the
+  free two pause, newest first.
+- The dashboard's Subscription page shows it, from the same subscription route, as `trial`.
 
 **The bot profile is per server.** Discord's `Modify Current Member` scopes it to the one guild, so a
 Pro server changes how the bot looks there and nowhere else. It is decided by

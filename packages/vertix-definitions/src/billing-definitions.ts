@@ -41,6 +41,15 @@ export interface IBillingTier {
      * one field rather than a special case somewhere else.
      */
     includesBranding: boolean;
+
+    /**
+     * How many days a server may hold this tier for nothing, once - counted from a room its members
+     * make. Zero for a tier with no trial.
+     *
+     * On the tier for the same reason `includesBranding` is: a trial is something a tier offers, so
+     * a tier that offered none is one field rather than a special case somewhere else.
+     */
+    trialDays: number;
 }
 
 /**
@@ -113,7 +122,8 @@ export const BILLING_TIER_DEFINITIONS = [
         environmentKey: "PADDLE_PRICE_PRO",
         maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS,
         monthlyPriceUsd: 4,
-        includesBranding: true
+        includesBranding: true,
+        trialDays: 14
     }
 ] as const;
 
@@ -174,48 +184,102 @@ export function shouldApplySubscriptionEvent( options: {
     return incomingOccurredAt.getTime() >= storedOccurredAt.getTime();
 }
 
+/** A day, in the milliseconds a `Date` counts in. */
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Function resolveTrialTier() :: The tier a free trial gives, or null where none is offered.
+ *
+ * The first tier offering one, in the order they are offered - there is one tier, so it is Pro.
+ * Asked of the tiers this deployment can sell rather than of the table, so a deployment that cannot
+ * sell Pro gives nobody a trial of it either.
+ */
+export function resolveTrialTier( tiers: readonly IBillingTier[] ): IBillingTier | null {
+    return tiers.find( ( tier ) => tier.trialDays > 0 ) ?? null;
+}
+
+/**
+ * Function resolveTrialEndsAt() :: When a free trial starting at this moment would run out.
+ *
+ * Null where no tier offers one, so the caller writes nothing rather than a trial of nothing.
+ */
+export function resolveTrialEndsAt( options: {
+    startedAt: Date;
+    tiers: readonly IBillingTier[];
+} ): Date | null {
+    const tier = resolveTrialTier( options.tiers );
+
+    return tier ? new Date( options.startedAt.getTime() + tier.trialDays * DAY_MS ) : null;
+}
+
+/**
+ * Function isTrialRunning() :: Whether a server's free trial is still going.
+ *
+ * Its end date is the whole of it. Nothing has to come and stop a trial, for the same reason nothing
+ * has to come and stop a cancelled subscription: the date passes, and the answer changes on its own.
+ */
+export function isTrialRunning( trialEndsAt: Date | null, now: Date = new Date() ): boolean {
+    return null !== trialEndsAt && trialEndsAt.getTime() > now.getTime();
+}
+
+/**
+ * What a guild holds a tier by - the prices it pays for, and its free trial.
+ */
+interface IBillingHoldings {
+    paidPriceIds: readonly string[];
+    tiers: readonly IBillingTier[];
+
+    /** When its free trial runs out, or null for a server that never had one. */
+    trialEndsAt?: Date | null;
+
+    /** The moment the question is asked at - now, unless a test says otherwise. */
+    now?: Date;
+}
+
+/**
+ * Function resolveHeldTiers() :: The tiers a guild holds right now.
+ *
+ * The ones it pays for, and the one its free trial gives while that runs - a trial holds its tier
+ * exactly as paying for it would, since showing what paying gets is what a trial is for.
+ *
+ * A price this deployment does not know holds nothing. That is not a failure: it is what a price
+ * added after this build, belonging to the other paddle account, or retired from sale, correctly
+ * amounts to.
+ */
+function resolveHeldTiers( options: IBillingHoldings ): IBillingTier[] {
+    const { paidPriceIds, tiers, trialEndsAt = null, now = new Date() } = options;
+
+    const trialTier = isTrialRunning( trialEndsAt, now ) ? resolveTrialTier( tiers ) : null;
+
+    return tiers.filter( ( tier ) => paidPriceIds.includes( tier.priceId ) || tier === trialTier );
+}
+
 /**
  * Function resolveMaxMasterChannels() :: How many generators a guild may have.
  *
- * The **higher** of what it was granted and what it pays for, never the newer of the two. A grant is
+ * The **higher** of what it was granted and what it holds, never the newer of the two. A grant is
  * something given to a server for a reason - a partner, an apology, a test - and paying should not
  * be able to take it away; equally, a server that outgrows its grant should not have to have it
  * raised again by hand.
- *
- * A subscription on a price this deployment does not know is worth nothing here. That is not a
- * failure: it is what a price added after this build, belonging to the other paddle account, or
- * retired from sale, correctly amounts to.
  */
-export function resolveMaxMasterChannels( options: {
-    granted: number;
-    paidPriceIds: readonly string[];
-    tiers: readonly IBillingTier[];
-} ): number {
-    const { granted, paidPriceIds, tiers } = options;
+export function resolveMaxMasterChannels( options: IBillingHoldings & { granted: number } ): number {
+    const entitled = resolveHeldTiers( options ).map( ( tier ) => tier.maxMasterChannels );
 
-    const entitled = tiers
-        .filter( ( tier ) => paidPriceIds.includes( tier.priceId ) )
-        .map( ( tier ) => tier.maxMasterChannels );
-
-    return Math.max( granted, ...entitled );
+    return Math.max( options.granted, ...entitled );
 }
 
 /**
  * Function resolveCanBrand() :: Whether a guild may give the bot its own profile.
  *
- * Only by paying. A grant raises the number of generators a server may have and nothing else - it is
- * something given for a reason, and the reason was never "and change what the bot looks like". So
- * this reads the prices being paid for and not the grant, which is also why it is not a question
+ * By holding a tier that includes it - paying for one, or on the free trial of one. A grant raises
+ * the number of generators a server may have and nothing else - it is something given for a reason,
+ * and the reason was never "and change what the bot looks like". So this reads the prices being paid
+ * for and the trial, never the grant, which is also why it is not a question
  * `resolveMaxMasterChannels()` can answer: a granted server and a paying one can have the same
  * number.
  */
-export function resolveCanBrand( options: {
-    paidPriceIds: readonly string[];
-    tiers: readonly IBillingTier[];
-} ): boolean {
-    const { paidPriceIds, tiers } = options;
-
-    return tiers.some( ( tier ) => tier.includesBranding && paidPriceIds.includes( tier.priceId ) );
+export function resolveCanBrand( options: IBillingHoldings ): boolean {
+    return resolveHeldTiers( options ).some( ( tier ) => tier.includesBranding );
 }
 
 /**
@@ -232,7 +296,8 @@ export function readBillingTiers( environment: Record<string, string | undefined
             priceId: environment[ tier.environmentKey ]?.trim() ?? "",
             maxMasterChannels: tier.maxMasterChannels,
             monthlyPriceUsd: tier.monthlyPriceUsd,
-            includesBranding: tier.includesBranding
+            includesBranding: tier.includesBranding,
+            trialDays: tier.trialDays
         } ) )
         .filter( ( tier ) => tier.priceId.length > 0 );
 }

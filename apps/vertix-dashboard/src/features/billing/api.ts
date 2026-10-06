@@ -23,12 +23,36 @@ export interface ISubscription {
 }
 
 /**
- * Function fetchSubscription() :: What this server pays for, or null if it pays for nothing.
+ * A server's free trial of the paid plan, as the api tells it - running, or over.
  *
- * Null for "nothing bought" and a thrown error for "could not find out", because a screen that
- * shows the free plan when it simply failed to ask is telling somebody who paid that they did not.
+ * `allowance` arrives already spelled, for the same reason the subscription's does.
  */
-export async function fetchSubscription( guildId: string ): Promise<ISubscription | null> {
+export interface ITrial {
+    planName: string;
+    allowance: string;
+    endsAt: string;
+    isRunning: boolean;
+}
+
+/**
+ * What a server pays for, and the trial it is on or has had.
+ */
+export interface IBilling {
+    /** Null when it pays for nothing. */
+    subscription: ISubscription | null;
+
+    /** Null when it never had a trial - one starts from the first room its members make. */
+    trial: ITrial | null;
+}
+
+/**
+ * Function fetchBilling() :: What this server pays for, and its free trial.
+ *
+ * Nulls for "nothing bought" and "no trial", and a thrown error for "could not find out", because a
+ * screen that shows the free plan when it simply failed to ask is telling somebody who paid that
+ * they did not.
+ */
+export async function fetchBilling( guildId: string ): Promise<IBilling> {
     const response = await fetch( `${ API_CONFIG.BASE_URL }/subscription/${ guildId }`, {
         credentials: "include"
     } );
@@ -37,9 +61,7 @@ export async function fetchSubscription( guildId: string ): Promise<ISubscriptio
         throw new Error( `Failed to fetch subscription: ${ response.status }` );
     }
 
-    const body = await response.json() as { subscription: ISubscription | null };
-
-    return body.subscription;
+    return await response.json() as IBilling;
 }
 
 /**

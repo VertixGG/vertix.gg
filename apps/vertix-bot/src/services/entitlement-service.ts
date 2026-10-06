@@ -2,6 +2,7 @@ import process from "process";
 
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { SubscriptionModel } from "@vertix.gg/data/src/models/subscription-model";
 
 import {
@@ -30,6 +31,9 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
  * What replaces it is a subscription of our own, written by the paddle webhook and read here. A
  * server with no row, or one whose paid period has run out, is on whatever it was granted - which
  * is every server that has never bought anything, so the free path stays the one that is exercised.
+ *
+ * And for a while on Pro without paying: a server's first room starts its free trial (see
+ * `GuildActivationService`), and the trial counts exactly as paying would until its date passes.
  */
 export class EntitlementService extends ServiceBase {
     private readonly debugger: Debugger;
@@ -53,6 +57,7 @@ export class EntitlementService extends ServiceBase {
         const allowed = resolveMaxMasterChannels( {
             granted,
             paidPriceIds: await this.getPaidPriceIds( guildId ),
+            trialEndsAt: await this.getTrialEndsAt( guildId ),
             tiers: readBillingTiers( process.env )
         } );
 
@@ -64,11 +69,13 @@ export class EntitlementService extends ServiceBase {
     /**
      * Function canBrand() :: Whether this guild may give the bot its own profile there.
      *
-     * Paying for a plan that includes it, and nothing else - a grant raises generators only.
+     * Paying for a plan that includes it, or on the free trial of one - a grant raises generators
+     * only.
      */
     public async canBrand( guildId: string ): Promise<boolean> {
         const allowed = resolveCanBrand( {
             paidPriceIds: await this.getPaidPriceIds( guildId ),
+            trialEndsAt: await this.getTrialEndsAt( guildId ),
             tiers: readBillingTiers( process.env )
         } );
 
@@ -125,6 +132,16 @@ export class EntitlementService extends ServiceBase {
         return subscription && isSubscriptionEntitling( subscription )
             ? [ subscription.priceId ]
             : [];
+    }
+
+    /**
+     * Function getTrialEndsAt() :: When this guild's free trial runs out, or null if it never had one.
+     *
+     * The date and nothing else - whether it still counts is the clock's to answer, as it is for a
+     * subscription, so a trial that has ended needs nobody to come and end it.
+     */
+    private async getTrialEndsAt( guildId: string ): Promise<Date | null> {
+        return ( await GuildModel.$.get( guildId ) )?.trialEndsAt ?? null;
     }
 }
 

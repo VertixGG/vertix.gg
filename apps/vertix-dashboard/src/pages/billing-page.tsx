@@ -12,14 +12,14 @@ import {
     formatMasterChannelAllowance
 } from "@vertix.gg/definitions/src/billing-definitions";
 
-import { fetchSubscription, startCheckout } from "@vertix.gg/dashboard/src/features/billing/api";
+import { fetchBilling, startCheckout } from "@vertix.gg/dashboard/src/features/billing/api";
 
 import {
     getPurchasableTiers,
     isCheckoutAvailable
 } from "@vertix.gg/dashboard/src/lib/paddle";
 
-import type { ISubscription } from "@vertix.gg/dashboard/src/features/billing/api";
+import type { ISubscription, ITrial } from "@vertix.gg/dashboard/src/features/billing/api";
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
 /**
@@ -152,6 +152,44 @@ function CurrentPlan( props: { subscription: ISubscription } ) {
     );
 }
 
+/**
+ * The panel above the plans, for a server on its free trial - or one whose trial is over.
+ *
+ * Shaped like `CurrentPlan`, because while it runs the trial *is* the current plan. What it adds is
+ * the date it stops and what the server goes back to then, which is the whole of what there is to
+ * decide before that date. Nothing here buys anything - the plan cards below do that.
+ */
+function TrialPlan( props: { trial: ITrial } ) {
+    const { trial } = props;
+
+    if ( ! trial.isRunning ) {
+        return (
+            <p className="mb-6 text-sm text-text-muted">
+                The free { trial.planName } trial ended on { formatDate( trial.endsAt ) }.
+            </p>
+        );
+    }
+
+    return (
+        <div className="mb-6 p-5 rounded-xl border border-border-accent bg-surface-elevated">
+            <div className="text-xs uppercase tracking-wide text-text-muted mb-1">Current plan</div>
+
+            <h2 className="text-xl font-semibold text-text-primary mb-1">
+                { trial.planName } trial
+                <span className="text-sm font-normal text-text-muted">
+                    { " " }&middot; { trial.allowance } generators
+                </span>
+            </h2>
+
+            <p className="text-sm text-text-muted mb-0">
+                Free until { formatDate( trial.endsAt ) }. After that, back
+                to { formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS ) } generators and the
+                bot's normal profile, unless you choose { trial.planName } below.
+            </p>
+        </div>
+    );
+}
+
 interface IPlanCardProps {
     name: string;
     monthlyPriceUsd: number;
@@ -226,6 +264,7 @@ export function BillingPage() {
     const [ opening, setOpening ] = useState<string | null>( null );
     const [ error, setError ] = useState<string | null>( null );
     const [ subscription, setSubscription ] = useState<ISubscription | null>( null );
+    const [ trial, setTrial ] = useState<ITrial | null>( null );
     const [ loadFailed, setLoadFailed ] = useState( false );
     const [ isLoaded, setIsLoaded ] = useState( false );
 
@@ -246,7 +285,10 @@ export function BillingPage() {
         }
 
         try {
-            setSubscription( await fetchSubscription( guildId ) );
+            const billing = await fetchBilling( guildId );
+
+            setSubscription( billing.subscription );
+            setTrial( billing.trial );
             setLoadFailed( false );
         } catch {
             // Told apart from "pays for nothing" on purpose: showing the free plan to somebody who
@@ -283,6 +325,12 @@ export function BillingPage() {
     }, [ guildId ] );
 
     const currentSlug = subscription?.isEntitling ? subscription.planSlug : null;
+
+    // Paying answers before the trial does: a server that bought the plan during its trial is on
+    // the plan, and the trial has nothing left to say to it.
+    const isPaying = true === subscription?.isEntitling;
+
+    const isOnTrial = ! isPaying && true === trial?.isRunning;
 
     /**
      * Arriving from the site with a plan already chosen opens that checkout.
@@ -349,6 +397,8 @@ export function BillingPage() {
 
                     { subscription && <CurrentPlan subscription={ subscription } /> }
 
+                    { trial && ! isPaying && <TrialPlan trial={ trial } /> }
+
                     { ! canBuy && (
                         <div className="mb-4 px-3 py-2 bg-warning/10 border border-warning/40 rounded-lg
                             text-sm text-text-muted">
@@ -363,11 +413,11 @@ export function BillingPage() {
                             monthlyPriceUsd={ FREE_TIER.monthlyPriceUsd }
                             maxMasterChannels={ FREE_TIER.maxMasterChannels }
                             includesBranding={ FREE_TIER.includesBranding }
-                            isCurrent={ null === currentSlug }
+                            isCurrent={ null === currentSlug && ! isOnTrial }
                             action={
                                 <div className="w-full px-4 py-2 rounded-lg text-sm font-medium text-center
                                     text-text-muted border border-border">
-                                    { null === currentSlug ? "Current plan" : "Included" }
+                                    { null === currentSlug && ! isOnTrial ? "Current plan" : "Included" }
                                 </div>
                             }
                         />

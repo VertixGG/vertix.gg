@@ -83,6 +83,10 @@ model Guild {
   setupAt           DateTime?
   /// The first room a member made from a generator, ever.
   firstRoomAt       DateTime?
+  /// When the server's free trial of the paid plan runs out - written once, from a room a member
+  /// made, and never moved again. The end rather than the start, so changing how long a trial
+  /// lasts reaches new trials only, never one already given.
+  trialEndsAt       DateTime?
   // ---
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt

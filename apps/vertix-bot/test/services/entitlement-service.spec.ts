@@ -37,12 +37,14 @@ interface IWorld {
     /** What the guild's own settings row allows, before anything is paid for. */
     granted: number;
     subscription: ISubscriptionRow | null;
+    /** When the guild's free trial runs out, or null for one that never had a trial. */
+    trialEndsAt: Date | null;
     /** The guild's generators, in the order the database returns them - oldest first. */
     masterIds: string[];
 }
 
 /**
- * Stands up the service with the three things it reads and nothing else.
+ * Stands up the service with the four things it reads and nothing else.
  *
  * Built off the prototype rather than constructed, so none of the base class's wiring has to exist;
  * the collaborators are static singletons, which is why they are intercepted at `getInstance`
@@ -51,9 +53,10 @@ interface IWorld {
 async function makeService( world: Partial<IWorld> = {} ) {
     await TestWithServiceLocatorMock.withUIServiceMock();
 
-    const settled: IWorld = { granted: 2, subscription: null, masterIds: [], ... world };
+    const settled: IWorld = { granted: 2, subscription: null, trialEndsAt: null, masterIds: [], ... world };
 
     const { GuildDataManager } = await import( "@vertix.gg/data/src/managers/guild-data-manager" );
+    const { GuildModel } = await import( "@vertix.gg/data/src/models/guild-model" );
     const { SubscriptionModel } = await import( "@vertix.gg/data/src/models/subscription-model" );
     const { ChannelModel } = await import( "@vertix.gg/data/src/models/channel/channel-model" );
     const { EntitlementService } = await import( "@vertix.gg/bot/src/services/entitlement-service" );
@@ -61,9 +64,13 @@ async function makeService( world: Partial<IWorld> = {} ) {
     const asInstance = <T>( fake: object ): T => fake as T;
 
     // Spied as getters rather than on an instance method: `$` is a lazy accessor that builds the
-    // singleton on first touch, and the three of them do not agree on what is behind it.
+    // singleton on first touch, and they do not agree on what is behind it.
     jest.spyOn( GuildDataManager, "$", "get" ).mockReturnValue( asInstance( {
         getAllSettings: async() => ( { maxMasterChannels: settled.granted } )
+    } ) );
+
+    jest.spyOn( GuildModel, "$", "get" ).mockReturnValue( asInstance( {
+        get: async() => ( { trialEndsAt: settled.trialEndsAt } )
     } ) );
 
     jest.spyOn( SubscriptionModel, "$", "get" ).mockReturnValue( asInstance( {
@@ -173,6 +180,22 @@ describe( "VertixBot/Services/Entitlement", () => {
                 granted: 2,
                 subscription: { priceId: "pri_from_somewhere_else", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
             } );
+
+            // Assert.
+            await expect( service.getMaxMasterChannels( GUILD_ID ) ).resolves.toBe( 2 );
+        } );
+
+        it( "should lift the ceiling while a server's free trial runs", async() => {
+            // Act - nothing paid for, and Pro all the same until the date.
+            const { service } = await makeService( { granted: 2, trialEndsAt: daysFromNow( 3 ) } );
+
+            // Assert.
+            expect( isUnlimitedAllowance( await service.getMaxMasterChannels( GUILD_ID ) ) ).toBe( true );
+        } );
+
+        it( "should give back the free allowance once the trial has run out", async() => {
+            // Act.
+            const { service } = await makeService( { granted: 2, trialEndsAt: daysFromNow( -1 ) } );
 
             // Assert.
             await expect( service.getMaxMasterChannels( GUILD_ID ) ).resolves.toBe( 2 );
@@ -295,6 +318,24 @@ describe( "VertixBot/Services/Entitlement", () => {
             expect( await service.isMasterChannelCovered( GUILD_ID, "d" ) ).toBe( false );
             expect( await service.isMasterChannelCovered( GUILD_ID, "a" ) ).toBe( true );
         } );
+
+        it( "should start refusing the extras once a trial runs out, as a lapsed plan does", async() => {
+            // Act - the same five generators, set up during a trial and then past it.
+            const { service, world } = await makeService( {
+                granted: 2,
+                masterIds: [ "a", "b", "c", "d", "e" ],
+                trialEndsAt: daysFromNow( 3 )
+            } );
+
+            const duringTrial = await service.isMasterChannelCovered( GUILD_ID, "d" );
+
+            world.trialEndsAt = daysFromNow( -1 );
+
+            // Assert.
+            expect( duringTrial ).toBe( true );
+            expect( await service.isMasterChannelCovered( GUILD_ID, "d" ) ).toBe( false );
+            expect( await service.isMasterChannelCovered( GUILD_ID, "a" ) ).toBe( true );
+        } );
     } );
 
     describe( "canBrand()", () => {
@@ -338,6 +379,19 @@ describe( "VertixBot/Services/Entitlement", () => {
             } );
 
             // Assert.
+            await expect( service.canBrand( GUILD_ID ) ).resolves.toBe( false );
+        } );
+
+        it( "should let a server on its free trial brand the bot, until the trial runs out", async() => {
+            // Act - unlike a grant, a trial is the plan itself for a while, profile included.
+            const { service, world } = await makeService( { trialEndsAt: daysFromNow( 3 ) } );
+
+            const duringTrial = await service.canBrand( GUILD_ID );
+
+            world.trialEndsAt = daysFromNow( -1 );
+
+            // Assert.
+            expect( duringTrial ).toBe( true );
             await expect( service.canBrand( GUILD_ID ) ).resolves.toBe( false );
         } );
     } );

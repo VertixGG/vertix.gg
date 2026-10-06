@@ -85,6 +85,25 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return result;
     }
 
+    /**
+     * Function startTrial() :: Give a server its one free trial, unless it already had it.
+     *
+     * A filter rather than a read and a write, so two rooms made at once cannot both start it. The
+     * row outlives the bot leaving, so removing the bot and adding it back keeps the date already
+     * given - a trial cannot be had twice that way. Rows written before this field existed have it
+     * unset rather than null, so both are matched.
+     *
+     * Answers whether this call was the one that started it.
+     */
+    public async startTrial( guildId: string, endsAt: Date ): Promise<boolean> {
+        const { count } = await this.prisma.guild.updateMany( {
+            where: { guildId, OR: [ { trialEndsAt: { isSet: false } }, { trialEndsAt: null } ] },
+            data: { trialEndsAt: endsAt }
+        } );
+
+        return count > 0;
+    }
+
     public async isExisting( guild: Guild ) {
         return this.prisma.guild.findUnique( {
             where: { guildId: guild.id }

@@ -1,5 +1,35 @@
 # Changelog
 
+**Version: 0.0.21 ~ 06/10/2026**
+- New Features:
+    - **Pro**: One paid plan, $4 a month, for servers that want more than two generators - Pro has no ceiling. It also lets a server give the bot its own name, avatar, banner and bio, which Discord applies in that server only. Free stays exactly what it was: two generators, every button, the interface editor and Events. Plans are bought, changed and cancelled from the dashboard's Subscription page, which says which plan a server is on, when it renews and, once cancelled, the date it drops back to free.
+    - **A 14 Day Free Trial**: A server's owner can try Pro once, from the Subscription page, without paying. Two days before it ends the owner gets a direct message saying when, and what comes off - the custom look, and generators past the free two. Nothing else is needed at the end: the profile is taken off and the extra generators stop making rooms until somebody pays.
+    - **Events**: A server's scheduled voice events get a check-in board ahead of the start. Whoever marked themselves Interested checks in by joining the event's channel - or any room of a generator or pool it is held at. After the start the missing are marked, a post asks for as many subs as are missing, and the board ends as the attendance: came, late, didn't come, walked in, each with their time in voice. Every step is the server's to time, a role and the members not in voice yet can be pinged as check-in opens, and each attendance can be copied to a second channel. Free. Set it up from `/setup` -> Events, `/manage events` or the dashboard's Events page, which also keeps the history.
+    - **A Home Page That Says How The Bot Is Used**: The dashboard's Home shows a server's rooms per day over the last month, this week against last, its busiest days, how its events go - turnout, no-shows, walk-ins, regulars - and when the bot was added, first set up and first used.
+- Improvements:
+    - **Twenty Rooms To A Generator**: A generator, or an auto-scaling pool, opens at most twenty rooms at once. The bar under each generator on the dashboard counts its open rooms against that - "N of 20 channels open" - rather than its category against Discord's fifty, which no generator reached first.
+    - **LFM Comes With New Generators**: A new generator on the current interface carries the LFM button from the start. Pressed before an admin has picked where posts go, it says so.
+    - **Region Is A Button You Add**: The older interface's Region button is no longer added to panels nobody arranged. It is one press away on the buttons screen, and `/voice region` reaches the same screen without it.
+    - **`/voice claim` Claims**: Picking a channel in the command opens the claim on it, with you as the first candidate, instead of handing back a link to go and press Claim yourself.
+    - **The Server Picker Says Where The Bot Is**: Servers without the bot sort last and say so, and the "bot is not in this server" screen now offers to add it - straight onto that server.
+    - **A Set Holds At Most Fifteen Buttons**, in Discord and on the dashboard alike.
+    - **The Panels Carry A Small Add / Vote Line**, so a member who likes the bot can take it to their own server. Servers on Pro do not get it.
+- Fixes:
+    - **A Claim Vote No Longer Takes The Bot Down**: A vote whose room was deleted while it ran crashed the whole bot, and every press after that answered "The application did not respond" until it was restarted.
+    - **The Permissions Menu**: Deny after a grant answered with Discord's red error; granting someone was logged as an error though it had worked; each change posted another copy of the menu, the older one still listing who had just been removed; and a refusal - granting yourself, the owner, a staff member - read "something went wrong" rather than why.
+    - **Clearing A Ticked User** in a room's grant, deny, block, unblock or kick menu no longer hangs for two minutes and fails.
+    - **Deleting A Generator Or Pool** closes its confirmation instead of leaving it open on "Something went wrong" over a generator that was already gone.
+    - **Picking A Generator's Buttons** is answered straight away. A generator with a few rooms open used to show "this interaction failed" over a set that had saved.
+    - **A Transfer Question From Before A Restart** says it expired, instead of reading as a transfer that was tried and failed.
+    - **Reset On The Older Interface's Channel Message** pointed at a screen that does not exist.
+    - **`/help` Answers** in a server that gave the bot no permissions.
+    - **A Server The Bot Was Added Back To** while it was down is recognised as having it again, rather than shown as a server it was never in.
+    - **The Role Settings Say What The Roles Do**: the voice role is given only in rooms a generator made, and a staff role is a way in that no owner can shut, not control over other people's rooms.
+- On The Site:
+    - A pricing page, terms that acknowledge money changes hands, and a refund policy. The how-to guides become Docs, with new ones for private rooms, numbered rooms, event attendance and switching the automatic channel status off, and feature pages for the voice, verified and staff roles. Nothing is wider than a phone any more.
+
+---
+
 **Version: 0.0.20 ~ 21/09/2026**
 - New Features:
     - **Bitrate**: Set how much of everyone's connection your channel asks for, from the same screen that already sets its region - a second menu under the one that was there, on both interfaces. The steps run from 8 kbps up to 384, and a server is offered only the ones its boost tier allows, read fresh every time the screen is drawn - so a server that boosts today sees the wider list today rather than after we deploy something. `Generator default` hands the choice back to whatever the generator itself is on, which is also where every new channel starts. On a generator that remembers your settings the next channel you open comes back on the bitrate you left, and `Reset` puts it back to the generator's along with everything else.

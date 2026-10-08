@@ -12,7 +12,7 @@
         "vertix-ai:typecheck": "bunx --bun tsc --noEmit"
     },
     "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.24.3",
+        "@modelcontextprotocol/sdk": "^1.32.0",
         "@vertix.gg/ai": "workspace:*",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/definitions": "workspace:*",

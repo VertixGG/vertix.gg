@@ -20,7 +20,7 @@
     },
     "dependencies": {
         "@discordjs/rest": "^2.6.3",
-        "@napi-rs/canvas": "^1.0.9",
+        "@napi-rs/canvas": "^1.0.10",
         "@top-gg/sdk": "^3.1.6",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/data": "workspace:*",
@@ -35,7 +35,7 @@
         "dotenv": "^16.0.3",
         "jest-diff": "^30.5.1",
         "picocolors": "^1.0.1",
-        "tough-cookie": "^6.0.0"
+        "tough-cookie": "^6.0.2"
     },
     "devDependencies": {
         "@jest/globals": "^30.5.1",

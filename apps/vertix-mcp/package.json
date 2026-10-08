@@ -10,7 +10,7 @@
         "vertix-mcp:start:dev": "bunx dotenv-cli -e ../../.env -- bun run --bun src/index.ts"
     },
     "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.24.3",
+        "@modelcontextprotocol/sdk": "^1.32.0",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/definitions": "workspace:*",
         "discord.js": "^14.27.0",

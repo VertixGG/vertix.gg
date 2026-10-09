@@ -3360,5 +3360,118 @@
                 "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Hooks/OnBeforeFinish"
             }
         ]
+    },
+    {
+        "name": "VertixBot/UI-V3/TeamLobbyAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/TeamLobbyComponent",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildText",
+            "GuildVoice"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-V3/TeamLobbyElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbyEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyRandomTeams",
+                "elementsGroup": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenuGroup",
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyPickTeams",
+                "elementsGroup": "VertixBot/UI-V3/TeamLobbyPickTeamsMenuGroup",
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyGroups",
+                "elementsGroup": "VertixBot/UI-V3/TeamLobbyGroupSizeMenuGroup",
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbyGroupsEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbySplit",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbySplitEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyRefused",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbyRefusedEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V3/TeamLobbyAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V3/TeamLobbyAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-V3/TeamLobbySetupEditAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/TeamLobbySetupEditComponent",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "268435504",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbySetupEdit",
+                "elementsGroup": "VertixBot/UI-V3/TeamLobbySetupEditElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbySetupEditEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbySetupRefused",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/TeamLobbyRefusedEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V3/TeamLobbySetupEditAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V3/TeamLobbySetupEditAdapter/Hooks/GetReplyArgs"
+            }
+        ]
     }
 ]

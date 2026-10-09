@@ -1,5 +1,6 @@
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
+import { LobbyChannelDataModel } from "@vertix.gg/data/src/models/master-channel/lobby-channel-data-model";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import { ChannelType } from "discord.js";
@@ -224,6 +225,107 @@ export class ChannelCleanupService extends ServiceWithDependenciesBase<{
         this.logger.info(
             this.deleteScalingMasterChannelWithCleanup,
             `Successfully deleted scaling master channel and ${ scalingChannelsDB.length } scaling channels`
+        );
+
+        return true;
+    }
+
+    /**
+     * Function deleteLobbyMasterChannelWithCleanup() :: Delete a team lobby, the rooms it is split
+     * into and the category those are in, its panel channel, and its own category once nothing else is
+     * left in it.
+     *
+     * `masterChannelId` is the lobby's **row** id, as for a pool. Its rows go before its channels, so a
+     * delete that discord announces back finds nothing left to clear.
+     */
+    public async deleteLobbyMasterChannelWithCleanup( args: {
+        guildId: string;
+        masterChannelId: string;
+    } ): Promise<boolean> {
+        const { guildId, masterChannelId } = args;
+
+        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
+
+        if ( !guild ) {
+            this.logger.error( this.deleteLobbyMasterChannelWithCleanup, `Guild not found: ${ guildId }` );
+            return false;
+        }
+
+        const lobbyDB = await ChannelModel.$.getById( masterChannelId );
+
+        if ( !lobbyDB?.isLobbyMaster ) {
+            this.logger.error( this.deleteLobbyMasterChannelWithCleanup, `Lobby DB not found: ${ masterChannelId }` );
+            return false;
+        }
+
+        const lobby = await ChannelUtils.cacheOrFetchChannel( guild, lobbyDB.channelId );
+
+        this.logger.admin(
+            this.deleteLobbyMasterChannelWithCleanup,
+            `➖  Team lobby is being deleted - "${ lobby?.name || lobbyDB.channelId }" (${ guild.name }) (${ guild.memberCount })`
+        );
+
+        const roomsDB = await ChannelModel.$.getLobbyRoomsByLobbyId( guildId, lobbyDB.channelId, false ),
+            settings = await LobbyChannelDataModel.$.getLobbySettings( lobbyDB.id ),
+            sessionCategoryId = settings?.lobbySessionCategoryId;
+
+        for ( const roomDB of roomsDB ) {
+            const room = guild.channels.cache.get( roomDB.channelId );
+
+            if ( room && !room.isThread() ) {
+                await this.services.channelService.delete( { guild, channel: room as GuildChannel } );
+            } else {
+                await ChannelModel.$.delete( { channelId: roomDB.channelId } ).catch( ( error ) => {
+                    this.logger.error(
+                        this.deleteLobbyMasterChannelWithCleanup,
+                        `Failed to delete lobby room DB entry ${ roomDB.channelId }`,
+                        error
+                    );
+                } );
+            }
+        }
+
+        if ( sessionCategoryId ) {
+            await ChannelUtils.deleteCategoryUnlessUsed(
+                guild.channels.cache.get( sessionCategoryId ),
+                guild,
+                roomsDB.map( ( roomDB ) => roomDB.channelId ),
+                this.logger,
+                this.deleteLobbyMasterChannelWithCleanup
+            );
+        }
+
+        // Its panel channel goes with it, as a generator's control panel does.
+        const panelChannel = settings?.lobbyPanelChannelId
+            ? await ChannelUtils.cacheOrFetchChannel( guild, settings.lobbyPanelChannelId )
+            : null;
+
+        if ( panelChannel && !panelChannel.isThread() ) {
+            await this.services.channelService.delete( { guild, channel: panelChannel as GuildChannel } );
+        }
+
+        const parentCategory = lobby?.parent;
+
+        await ChannelModel.$.delete( { id: masterChannelId } ).catch( ( error ) => {
+            this.logger.error( this.deleteLobbyMasterChannelWithCleanup, "Failed to delete lobby DB entry", error );
+        } );
+
+        if ( lobby && lobby.isVoiceBased() ) {
+            await lobby.delete().catch( ( error ) => {
+                this.logger.error( this.deleteLobbyMasterChannelWithCleanup, "Failed to delete lobby from Discord", error );
+            } );
+        }
+
+        await ChannelUtils.cleanupEmptyCategoryIfNeeded(
+            parentCategory as CategoryChannel | null,
+            guild,
+            this.logger,
+            this.deleteLobbyMasterChannelWithCleanup
+        );
+
+        this.logger.info(
+            this.deleteLobbyMasterChannelWithCleanup,
+            `Successfully deleted team lobby and ${ roomsDB.length } room(s)`
         );
 
         return true;

@@ -61,6 +61,10 @@ export class GuildGeneratorsQuery extends QueryModuleBase<GuildGeneratorsDetails
         this.register( "POST", "Dashboard/Generators/CreateDynamicSetup", "management/guild/:guildId/dynamic" );
         this.register( "PUT", "Dashboard/Generators/UpdateDynamicSettings", "management/guild/:guildId/dynamic/:masterChannelId" );
         this.register( "DELETE", "Dashboard/Generators/DeleteDynamicSetup", "management/guild/:guildId/dynamic/:masterChannelId" );
+
+        // Team lobby mutations
+        this.register( "POST", "Dashboard/Generators/CreateLobbySetup", "management/guild/:guildId/lobby" );
+        this.register( "DELETE", "Dashboard/Generators/DeleteLobbySetup", "management/guild/:guildId/lobby/:masterChannelId" );
     }
 
     protected async requestHandler( _element: DCommandFunctionComponent, request: Record<string, unknown> ): Promise<Record<string, unknown>> {

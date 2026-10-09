@@ -20,7 +20,9 @@ export const DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS = {
     DELETE_DYNAMIC_SETUP: "delete_dynamic_setup",
     UPDATE_GUILD_SETTINGS: "update_guild_settings",
     REFRESH_CUSTOMIZATION: "refresh_customization",
-    RECONCILE_GUILD_BRANDING: "reconcile_guild_branding"
+    RECONCILE_GUILD_BRANDING: "reconcile_guild_branding",
+    CREATE_LOBBY_SETUP: "create_lobby_setup",
+    DELETE_LOBBY_SETUP: "delete_lobby_setup"
 } as const;
 
 export interface CreateDynamicSetupPayload {
@@ -90,6 +92,18 @@ export interface DeleteDynamicSetupPayload {
     masterChannelId: string;
 }
 
+/** A team lobby asks nothing before it is made - its hosts are set afterwards, as in `/setup`. */
+export interface CreateLobbySetupPayload {
+    guildId: string;
+    userOwnerId: string;
+}
+
+export interface DeleteLobbySetupPayload {
+    guildId: string;
+    /** The lobby's row id. */
+    masterChannelId: string;
+}
+
 export interface RefreshCustomizationPayload {
     guildId: string;
 }
@@ -128,4 +142,6 @@ export type DynamicChannelIPCManagementPayload =
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP; data: DeleteDynamicSetupPayload }
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_GUILD_SETTINGS; data: UpdateGuildSettingsPayload }
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION; data: RefreshCustomizationPayload }
-    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.RECONCILE_GUILD_BRANDING; data: ReconcileGuildBrandingPayload };
+    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.RECONCILE_GUILD_BRANDING; data: ReconcileGuildBrandingPayload }
+    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_LOBBY_SETUP; data: CreateLobbySetupPayload }
+    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_LOBBY_SETUP; data: DeleteLobbySetupPayload };

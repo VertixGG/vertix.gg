@@ -535,6 +535,54 @@
         "content": {
           "label": "お支払いを開く"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+        "content": {
+          "label": "ランダムチーム"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+        "content": {
+          "label": "チームを選ぶ"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+        "content": {
+          "label": "グループ"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRecallButton",
+        "content": {
+          "label": "呼び戻す"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGuideButton",
+        "content": {
+          "label": "使い方"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+        "content": {
+          "label": "適用"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+        "content": {
+          "label": "適用"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+        "content": {
+          "label": "適用"
+        }
       }
     ],
     "textInputs": [
@@ -927,6 +975,10 @@
             {
               "label": "Auto-Scaling Channel",
               "value": "scaling"
+            },
+            {
+              "label": "Team Lobby",
+              "value": "lobby"
             }
           ]
         }
@@ -1602,6 +1654,146 @@
         "content": {
           "placeholder": "📅 ∙ イベントチャンネル"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ このメンバーだけ（任意）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+        "content": {
+          "placeholder": "🎲 ∙ チーム数は？",
+          "selectOptions": [
+            {
+              "label": "2チーム",
+              "value": "2"
+            },
+            {
+              "label": "3チーム",
+              "value": "3"
+            },
+            {
+              "label": "4チーム",
+              "value": "4"
+            },
+            {
+              "label": "5チーム",
+              "value": "5"
+            },
+            {
+              "label": "6チーム",
+              "value": "6"
+            },
+            {
+              "label": "7チーム",
+              "value": "7"
+            },
+            {
+              "label": "8チーム",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ このメンバーだけ（任意）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+        "content": {
+          "placeholder": "🙋 ∙ チーム数は？",
+          "selectOptions": [
+            {
+              "label": "2チーム",
+              "value": "2"
+            },
+            {
+              "label": "3チーム",
+              "value": "3"
+            },
+            {
+              "label": "4チーム",
+              "value": "4"
+            },
+            {
+              "label": "5チーム",
+              "value": "5"
+            },
+            {
+              "label": "6チーム",
+              "value": "6"
+            },
+            {
+              "label": "7チーム",
+              "value": "7"
+            },
+            {
+              "label": "8チーム",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ このメンバーだけ（任意）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+        "content": {
+          "placeholder": "👥 ∙ 1グループの人数は？",
+          "selectOptions": [
+            {
+              "label": "2人グループ",
+              "value": "2"
+            },
+            {
+              "label": "3人グループ",
+              "value": "3"
+            },
+            {
+              "label": "4人グループ",
+              "value": "4"
+            },
+            {
+              "label": "5人グループ",
+              "value": "5"
+            },
+            {
+              "label": "6人グループ",
+              "value": "6"
+            },
+            {
+              "label": "7人グループ",
+              "value": "7"
+            },
+            {
+              "label": "8人グループ",
+              "value": "8"
+            },
+            {
+              "label": "9人グループ",
+              "value": "9"
+            },
+            {
+              "label": "10人グループ",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+        "content": {
+          "placeholder": "🎮 ∙ ホストロールを選択"
+        }
       }
     ]
   },
@@ -1865,7 +2057,7 @@
       "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
       "content": {
         "title": "➕  チャンネルジェネレーターを作成",
-        "description": "ジェネレーターは、メンバーが参加すると自分専用のチャンネルが作られるボイスチャンネルです。退出すると削除されます。\n\n**✨ Dynamic Channel (V3)** — 現在のUI。特に理由がなければこちらを選んでください。\n**➕ Dynamic Channel (V2)** — 旧UI。すでに使用しているサーバー向けです。\n**📈 Auto-Scaling Channel** — 混み合うと複数に増えるチャンネルです。\n\n下から選んでください。あとはいくつかの質問だけです。"
+        "description": "ジェネレーターは、メンバーが参加すると自分専用のチャンネルが作られるボイスチャンネルです。退出すると削除されます。\n\n**✨ Dynamic Channel (V3)** — 現在のUI。特に理由がなければこちらを選んでください。\n**➕ Dynamic Channel (V2)** — 旧UI。すでに使用しているサーバー向けです。\n**📈 Auto-Scaling Channel** — 混み合うと複数に増えるチャンネルです。\n**🎮 Team Lobby** — 全員が集まり、チームやグループの部屋に分かれ、また呼び戻されるチャンネルです。\n\n下から選んでください。あとはいくつかの質問だけです。"
       }
     },
     {
@@ -4259,6 +4451,133 @@
       "content": {
         "title": "⏳  {planName} の無料トライアルがまもなく終了します",
         "description": "**{guildName}** の {planName} 無料トライアルは <t:{endsAt}:R>（<t:{endsAt}:f>）に終了します。\n\n終了すると:\n- **ボットのカスタム外観** - サーバー内でボットが使っている名前、アバター、バナー、自己紹介が外れます。\n- **ジェネレーター** - ルームを作り続けるのは最初の {maxMasterChannels} 個だけになります。\n\nダッシュボードから月額 ${monthlyPriceUsd} で {planName} を続けられます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "ロビーをチームの部屋や少人数のグループに分け、ワンクリックで全員を戻せます。\n👉 **参加するには <#{lobbyId}> に入ってください** – 分割の対象はロビーにいる人だけです。\n\n🎲 **ランダムチーム** – ロビーの全員を均等にチームへ振り分けて移動します。\n🙋 **チームを選ぶ** – チームの部屋が開き、各自好きな部屋に入ります。\n👥 **グループ** – ロビーの全員を選んだ人数の少人数グループに振り分けて移動します。\n↩️ **呼び戻す** – 全員をロビーに戻し、部屋を閉じます。\n\n{splitMessage}\n{hostsMessage}",
+        "options": {
+          "splitMessage": {
+            "{roomIds}": "**分割先:** {roomIds}",
+            "{splitMessageDefault}": "**未分割** – 全員がロビーにいます。"
+          },
+          "hostsMessage": {
+            "{hostRoleIds}": "**ホスト:** {hostRoleIds}",
+            "{hostsMessageDefault}": "**ホスト:** ロビーにいる全員"
+          }
+        },
+        "arrayOptions": {
+          "roomIds": {
+            "format": "<#{value}>{separator}",
+            "separator": " · "
+          },
+          "hostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbed",
+      "content": {
+        "title": "🎲  ランダムチーム",
+        "description": "チーム数は？ロビーの全員を均等に振り分け、各チームの部屋へ移動します。\n\n一部の人だけで遊ぶ場合は、先に上のメニューでメンバーを選び、その後でチーム数を選んでください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbed",
+      "content": {
+        "title": "🙋  チームを選ぶ",
+        "description": "チーム数は？各チームの部屋が空の状態で開き、それぞれロビーの人数に応じた定員になります。各自好きな部屋に入ってください。\n\n一部の人だけで遊ぶ場合は、先に上のメニューでメンバーを選び、その後でチーム数を選んでください。部屋はその人たちだけに開かれます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyGroupsEmbed",
+      "content": {
+        "title": "👥  グループ",
+        "description": "1グループの人数は？ロビーの全員をその人数の部屋に振り分けて移動します。\n\n一部の人だけが参加する場合は、先に上のメニューでメンバーを選び、その後で人数を選んでください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+      "content": {
+        "description": "{playersMessage}\n{applyMessage}",
+        "options": {
+          "playersMessage": {
+            "{players}": "**参加者:** {players}",
+            "{playersMessageDefault}": "**参加者:** ロビーの全員"
+          },
+          "applyMessage": {
+            "{applyMessageWaiting}": "-# ❌ まだロビーにいないか、ボットです – 選んだ全員がロビーに入るまで 適用 は押せません。",
+            "{applyMessageNoCount}": "-# 数を選んでから 適用 を押してください。",
+            "{applyMessageNobody}": "-# ❌ まだロビーに分割する人がいません。",
+            "{applyMessageTooFew}": "-# ❌ ロビーの人数が足りません – 小さい数を選ぶか、他の人が入るのを待ってください。",
+            "{applyMessageTooManyRooms}": "-# ❌ {roomsLimit} 部屋を超えてしまいます – もっと大きなグループを選んでください。",
+            "{applyMessageReady}": "-# 準備完了 – 適用 でロビーを分割します。"
+          }
+        },
+        "arrayOptions": {
+          "players": {
+            "format": "{value}{separator}",
+            "separator": " · "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySplitEmbed",
+      "content": {
+        "title": "🎮  分割しました",
+        "description": "{splitResult}\n\nパネルの **↩️ 呼び戻す** を押すと全員が戻ります。",
+        "options": {
+          "splitResult": {
+            "{splitDealt}": "**{roomsCount}** 部屋を開き、**{moved}** 人を移動しました。",
+            "{splitPicked}": "**{roomsCount}** 個のチーム部屋を開きました。各自好きな部屋に入ってください。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRefusedEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotCovered}": "このサーバーはプランで許可されている数より多くのジェネレーターを持っており（ロビーも1つとして数えます）、このロビーはその超過分のひとつです。そのため現在は分割できません。**↩️ 呼び戻す** は引き続き使えます。\n\n先に作成されたものは引き続き動作します。サーバー管理者がプランをアップグレードすれば再び有効になります。使っていないジェネレーターを削除することもできます。",
+            "{reasonNotHost}": "このロビーはホストが操作します。ホストが設定されていない場合は、ロビーにいる人が操作できます。",
+            "{reasonAlreadySplit}": "このロビーはすでに分割されています。先に **↩️ 呼び戻す** を押してください。",
+            "{reasonNotSplit}": "呼び戻す対象はありません。全員がロビーにいます。",
+            "{reasonNobodyToSplit}": "ロビーに分割する人がいません。",
+            "{reasonTooFewMembers}": "そのためにはロビーの人数が足りません。",
+            "{reasonInvalidCount}": "このロビーで使えるチーム数またはグループ人数ではありません。",
+            "{reasonTooManyRooms}": "一度に **{roomsLimit}** 部屋を超えてしまいます。もっと大きいグループを選んでください。",
+            "{reasonMissingPermissions}": "このロビーでボットに **{missingPermissions}** の権限がありません。",
+            "{reasonFailed}": "Discordが部屋の作成を拒否しました。少し待ってからもう一度お試しください。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySetupEditEmbed",
+      "content": {
+        "title": "🎮  Team Lobby #{lobbyIndex}",
+        "description": "全員が集まり、チームやグループの部屋に分かれ、また呼び戻されるボイスチャンネルです。\n\n➤ ∙ ロビー: <#{lobbyChannelId}>\n➤ ∙ チャンネルID: `{lobbyChannelId}`\n➤ ∙ {hostsMessage}\n\nこのロビーを操作するロールを選んでください。ロールがない場合は、ロビーにいる誰でも分割と呼び戻しができます。管理者はいつでも操作できます。",
+        "options": {
+          "hostsMessage": {
+            "{lobbyHostRoleIds}": "ホスト: {lobbyHostRoleIds}",
+            "{hostsMessageDefault}": "ホスト: ロビーにいる全員"
+          }
+        },
+        "arrayOptions": {
+          "lobbyHostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
       }
     }
   ],

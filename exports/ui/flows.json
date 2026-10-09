@@ -12819,6 +12819,500 @@
         }
     },
     {
+        "name": "VertixBot/UI-V3/TeamLobbyFlow",
+        "module": "VertixBot/UI-V3/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                "transitions": [
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/OpenRandomTeams",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/OpenPickTeams",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/OpenGroups",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Recall",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-V3/TeamLobbyComponent",
+                    "previewDefaultVars": {
+                        "lobbyId": "🎮 Team Lobby",
+                        "splitMessage": "**Not split** - everyone is in the lobby.",
+                        "hostsMessage": "**Hosts:** anyone in the lobby"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbyEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V3/TeamLobbyElementsGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "transitions": [
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/SplitRandomTeams",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseRandomTeamsCount",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseRandomTeamsPlayers",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/TeamLobbyRandomTeams",
+                    "component": "VertixBot/UI-V3/TeamLobbyComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenuGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "transitions": [
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/SplitPickTeams",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChoosePickTeamsCount",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChoosePickTeamsPlayers",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/TeamLobbyPickTeams",
+                    "component": "VertixBot/UI-V3/TeamLobbyComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V3/TeamLobbyPickTeamsMenuGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "transitions": [
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/SplitGroups",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseGroupsCount",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseGroupsPlayers",
+                    "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/TeamLobbyGroups",
+                    "component": "VertixBot/UI-V3/TeamLobbyComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbyGroupsEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V3/TeamLobbyGroupSizeMenuGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyFlow/States/Split",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/TeamLobbySplit",
+                    "component": "VertixBot/UI-V3/TeamLobbyComponent",
+                    "previewDefaultVars": {
+                        "roomsCount": "2",
+                        "moved": "10",
+                        "splitResult": "{splitDealt}"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbySplitEmbedGroup",
+                    "navigationType": "editReply"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbyFlow/States/Refused",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/TeamLobbyRefused",
+                    "component": "VertixBot/UI-V3/TeamLobbyComponent",
+                    "previewDefaultVars": {
+                        "reason": "{reasonNotHost}"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbyRefusedEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/OpenRandomTeams",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyRandomTeams"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/OpenPickTeams",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyPickTeams"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/OpenGroups",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyGroupsButton",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyGroups"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/SplitRandomTeams",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Split",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/Split",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbySplit"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/SplitPickTeams",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Split",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/Split",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbySplit"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/SplitGroups",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Split",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/Split",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbySplit"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseRandomTeamsCount",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyRandomTeams"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChoosePickTeamsCount",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyPickTeams"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseGroupsCount",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyGroups"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseRandomTeamsPlayers",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+                        "handlerKind": "user-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyRandomTeams"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChoosePickTeamsPlayers",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+                        "handlerKind": "user-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyPickTeams"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/ChooseGroupsPlayers",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+                        "handlerKind": "user-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbyGroups"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Recall",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbyFlow/Handlers/VertixBot/UI-V3/TeamLobbyRecallButton",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyRecallButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Default",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Refused"
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/RandomTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Refused"
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/PickTeams",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Refused"
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyFlow/Transitions/Refuse",
+                "from": "VertixBot/UI-V3/TeamLobbyFlow/States/Groups",
+                "to": "VertixBot/UI-V3/TeamLobbyFlow/States/Refused"
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/TeamLobbySetupEditFlow",
+        "module": "VertixBot/UI-V3/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                "transitions": [
+                    "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/OpenEdit",
+                    "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/Refuse"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-V3/TeamLobbySetupEditComponent"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                "transitions": [
+                    "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/HostRolesChanged",
+                    "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/Done",
+                    "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/Delete"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/TeamLobbySetupEdit",
+                    "component": "VertixBot/UI-V3/TeamLobbySetupEditComponent",
+                    "previewDefaultVars": {
+                        "lobbyIndex": "1",
+                        "lobbyChannelId": "123456789",
+                        "hostsMessage": "Hosts: anyone in the lobby"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbySetupEditEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V3/TeamLobbySetupEditElementsGroup",
+                    "navigationType": "editReply"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Refused",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/TeamLobbySetupRefused",
+                    "component": "VertixBot/UI-V3/TeamLobbySetupEditComponent",
+                    "previewDefaultVars": {
+                        "reason": "{reasonFailed}"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/TeamLobbyRefusedEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/OpenEdit",
+                "from": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                "to": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Handlers/VertixBot/UI-General/SetupMasterEditSelectMenu",
+                        "sourceEntity": "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbySetupEdit"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/HostRolesChanged",
+                "from": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                "to": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Handlers/VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+                        "sourceEntity": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+                        "handlerKind": "role-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                            "executionStep": "VertixBot/UI-V3/TeamLobbySetupEdit"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/Done",
+                "from": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                "to": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Handlers/VertixBot/UI-General/DoneButton",
+                        "sourceEntity": "VertixBot/UI-General/DoneButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/Delete",
+                "from": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Edit",
+                "to": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Handlers/VertixBot/UI-General/DeleteButton",
+                        "sourceEntity": "VertixBot/UI-General/DeleteButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Handlers/VertixBot/UI-General/DeleteConfirmModal",
+                        "sourceEntity": "VertixBot/UI-General/DeleteConfirmModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySetupEditFlow/Transitions/Refuse",
+                "from": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Default",
+                "to": "VertixBot/UI-V3/TeamLobbySetupEditFlow/States/Refused"
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
         "name": "VertixBot/UI-V3/DynamicChannelFlow",
         "module": "VertixBot/UI-V3/Module",
         "flowKind": "system",

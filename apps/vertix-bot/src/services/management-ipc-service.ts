@@ -56,6 +56,7 @@ import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 import type { GuildBrandingService } from "@vertix.gg/bot/src/services/guild-branding-service";
 import type { GuildEventsService } from "@vertix.gg/bot/src/services/guild-events-service";
+import type { TeamLobbyService } from "@vertix.gg/bot/src/services/team-lobby-service";
 
 /**
  * Central IPC handler service that routes management messages to the appropriate service.
@@ -63,6 +64,7 @@ import type { GuildEventsService } from "@vertix.gg/bot/src/services/guild-event
  * This service subscribes to IPC channels and delegates:
  * - Scaling-related actions to ScalingChannelService
  * - Dynamic-related actions to DynamicChannelService
+ * - Team lobby actions to TeamLobbyService
  */
 export class ManagementIPCService extends ServiceWithDependenciesBase<{
     ipcService: IPCService;
@@ -71,6 +73,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
     dynamicChannelService: DynamicChannelService;
     guildBrandingService: GuildBrandingService;
     guildEventsService: GuildEventsService;
+    teamLobbyService: TeamLobbyService;
 }> {
     private readonly debugger: Debugger;
 
@@ -91,7 +94,8 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             scalingChannelService: "VertixBot/Services/ScalingChannel",
             dynamicChannelService: "VertixBot/Services/DynamicChannel",
             guildBrandingService: "VertixBot/Services/GuildBranding",
-            guildEventsService: "VertixBot/Services/GuildEvents"
+            guildEventsService: "VertixBot/Services/GuildEvents",
+            teamLobbyService: "VertixBot/Services/TeamLobby"
         };
     }
 
@@ -202,6 +206,15 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 // Branding -> GuildBrandingService
                 case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.RECONCILE_GUILD_BRANDING:
                     await this.services.guildBrandingService.reconcileGuild( payload.data.guildId );
+                    break;
+
+                // Team lobbies -> TeamLobbyService
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_LOBBY_SETUP:
+                    await this.services.teamLobbyService.handleCreateLobbySetup( payload.data );
+                    break;
+
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_LOBBY_SETUP:
+                    await this.services.teamLobbyService.handleDeleteLobbySetup( payload.data );
                     break;
 
                 default:

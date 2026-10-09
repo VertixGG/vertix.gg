@@ -32,6 +32,11 @@ export const FEATURE_PRODUCTS: readonly FeatureProduct[] = [
         href: "/features/auto-scaling",
         features: [],
     },
+    {
+        title: "Team Lobby",
+        href: "/features/team-lobby",
+        features: [],
+    },
 ];
 
 /** What the bot does for a server beyond its channels. */

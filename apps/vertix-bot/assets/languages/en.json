@@ -535,6 +535,54 @@
         "content": {
           "label": "Open billing"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+        "content": {
+          "label": "Random teams"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+        "content": {
+          "label": "Pick teams"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+        "content": {
+          "label": "Groups"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRecallButton",
+        "content": {
+          "label": "Recall"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGuideButton",
+        "content": {
+          "label": "How it works"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+        "content": {
+          "label": "Apply"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+        "content": {
+          "label": "Apply"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+        "content": {
+          "label": "Apply"
+        }
       }
     ],
     "textInputs": [
@@ -931,6 +979,10 @@
             {
               "label": "Auto-Scaling Channel",
               "value": "scaling"
+            },
+            {
+              "label": "Team Lobby",
+              "value": "lobby"
             }
           ]
         }
@@ -1606,6 +1658,146 @@
         "content": {
           "placeholder": "📅 ∙ Events-Channel"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Only these members (optional)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+        "content": {
+          "placeholder": "🎲 ∙ How many teams?",
+          "selectOptions": [
+            {
+              "label": "2 teams",
+              "value": "2"
+            },
+            {
+              "label": "3 teams",
+              "value": "3"
+            },
+            {
+              "label": "4 teams",
+              "value": "4"
+            },
+            {
+              "label": "5 teams",
+              "value": "5"
+            },
+            {
+              "label": "6 teams",
+              "value": "6"
+            },
+            {
+              "label": "7 teams",
+              "value": "7"
+            },
+            {
+              "label": "8 teams",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Only these members (optional)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+        "content": {
+          "placeholder": "🙋 ∙ How many teams?",
+          "selectOptions": [
+            {
+              "label": "2 teams",
+              "value": "2"
+            },
+            {
+              "label": "3 teams",
+              "value": "3"
+            },
+            {
+              "label": "4 teams",
+              "value": "4"
+            },
+            {
+              "label": "5 teams",
+              "value": "5"
+            },
+            {
+              "label": "6 teams",
+              "value": "6"
+            },
+            {
+              "label": "7 teams",
+              "value": "7"
+            },
+            {
+              "label": "8 teams",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Only these members (optional)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+        "content": {
+          "placeholder": "👥 ∙ How many to a group?",
+          "selectOptions": [
+            {
+              "label": "Groups of 2",
+              "value": "2"
+            },
+            {
+              "label": "Groups of 3",
+              "value": "3"
+            },
+            {
+              "label": "Groups of 4",
+              "value": "4"
+            },
+            {
+              "label": "Groups of 5",
+              "value": "5"
+            },
+            {
+              "label": "Groups of 6",
+              "value": "6"
+            },
+            {
+              "label": "Groups of 7",
+              "value": "7"
+            },
+            {
+              "label": "Groups of 8",
+              "value": "8"
+            },
+            {
+              "label": "Groups of 9",
+              "value": "9"
+            },
+            {
+              "label": "Groups of 10",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+        "content": {
+          "placeholder": "🎮 ∙ Select Host Roles"
+        }
       }
     ]
   },
@@ -1864,7 +2056,7 @@
       "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
       "content": {
         "title": "➕  Create a channel generator",
-        "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n\nChoose below, and the rest is a few questions."
+        "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n**🎮 Team Lobby** — one channel people gather in, split from into team rooms or groups, and called back to.\n\nChoose below, and the rest is a few questions."
       }
     },
     {
@@ -4286,6 +4478,133 @@
       "content": {
         "title": "⏳  Your free {planName} trial is ending",
         "description": "The free {planName} trial in **{guildName}** ends <t:{endsAt}:R>, on <t:{endsAt}:f>.\n\nWhen it ends:\n- **Custom bot look** - the name, avatar, banner and bio the bot wears in your server come off.\n- **Generators** - only your first {maxMasterChannels} keep making rooms.\n\nKeep {planName} for ${monthlyPriceUsd} a month on the dashboard."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "Split the lobby into team rooms or small groups - and bring everyone back with one press.\n👉 **Join <#{lobbyId}> to take part** - a split only takes the people who are in it.\n\n🎲 **Random teams** - everyone in the lobby shuffled evenly into teams, and moved.\n🙋 **Pick teams** - team rooms open, and everyone walks into the one they want.\n👥 **Groups** - everyone in the lobby dealt into small groups of a size you choose, and moved.\n↩️ **Recall** - everyone back to the lobby, and the rooms close.\n\n{splitMessage}\n{hostsMessage}",
+        "options": {
+          "splitMessage": {
+            "{roomIds}": "**Split into:** {roomIds}",
+            "{splitMessageDefault}": "**Not split** - everyone is in the lobby."
+          },
+          "hostsMessage": {
+            "{hostRoleIds}": "**Hosts:** {hostRoleIds}",
+            "{hostsMessageDefault}": "**Hosts:** anyone in the lobby"
+          }
+        },
+        "arrayOptions": {
+          "roomIds": {
+            "format": "<#{value}>{separator}",
+            "separator": " · "
+          },
+          "hostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbed",
+      "content": {
+        "title": "🎲  Random teams",
+        "description": "How many teams? Everyone in the lobby is shuffled evenly into them and moved to their team's room.\n\nOnly some of them playing? Pick who in the first menu, then the number."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbed",
+      "content": {
+        "title": "🙋  Pick teams",
+        "description": "How many teams? Their rooms open empty, each holding its share of the lobby, and everyone walks into the one they want.\n\nOnly some of them playing? Pick who in the first menu, then the number - the rooms open to them alone."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyGroupsEmbed",
+      "content": {
+        "title": "👥  Groups",
+        "description": "How many to a group? Everyone in the lobby is dealt into rooms of that size and moved.\n\nOnly some of them taking part? Pick who in the first menu, then the size."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+      "content": {
+        "description": "{playersMessage}\n{applyMessage}",
+        "options": {
+          "playersMessage": {
+            "{players}": "**Playing:** {players}",
+            "{playersMessageDefault}": "**Playing:** everyone in the lobby"
+          },
+          "applyMessage": {
+            "{applyMessageWaiting}": "-# ❌ Not in the lobby yet, or a bot - Apply waits for everyone picked to be in the lobby.",
+            "{applyMessageNoCount}": "-# Pick the number, then Apply.",
+            "{applyMessageNobody}": "-# ❌ Nobody is in the lobby to split yet.",
+            "{applyMessageTooFew}": "-# ❌ Not enough people in the lobby for that - pick a smaller number, or wait for more to join.",
+            "{applyMessageTooManyRooms}": "-# ❌ That would open more than {roomsLimit} rooms - pick bigger groups.",
+            "{applyMessageReady}": "-# Ready - Apply splits the lobby."
+          }
+        },
+        "arrayOptions": {
+          "players": {
+            "format": "{value}{separator}",
+            "separator": " · "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySplitEmbed",
+      "content": {
+        "title": "🎮  Split",
+        "description": "{splitResult}\n\nPress **↩️ Recall** on the panel to bring everyone back.",
+        "options": {
+          "splitResult": {
+            "{splitDealt}": "Opened **{roomsCount}** rooms and moved **{moved}** members into them.",
+            "{splitPicked}": "Opened **{roomsCount}** team rooms - everyone walks into the one they want."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRefusedEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotCovered}": "This server has more generators than its plan allows - a lobby counts as one - and this lobby is one of the extra ones, so it does not split at the moment. **↩️ Recall** still works.\n\nThe ones set up first are still working. A server admin can upgrade the plan to switch this one back on, or delete a generator it no longer uses.",
+            "{reasonNotHost}": "This lobby is run by its hosts - or, when it names none, by whoever is in it.",
+            "{reasonAlreadySplit}": "This lobby is split already. Press **↩️ Recall** first.",
+            "{reasonNotSplit}": "There is nothing to call back - everyone is in the lobby.",
+            "{reasonNobodyToSplit}": "Nobody is in the lobby to split.",
+            "{reasonTooFewMembers}": "There are not enough people in the lobby for that.",
+            "{reasonInvalidCount}": "That is not a number of teams or a group size this lobby takes.",
+            "{reasonTooManyRooms}": "That would open more than **{roomsLimit}** rooms at once. Pick bigger groups.",
+            "{reasonMissingPermissions}": "The bot is missing **{missingPermissions}** on this lobby.",
+            "{reasonFailed}": "Discord refused to make a room. Try again in a moment."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySetupEditEmbed",
+      "content": {
+        "title": "🎮  Team Lobby #{lobbyIndex}",
+        "description": "One voice channel people gather in, split from into team rooms or groups, and called back to.\n\n➤ ∙ Lobby: <#{lobbyChannelId}>\n➤ ∙ Channel ID: `{lobbyChannelId}`\n➤ ∙ {hostsMessage}\n\nPick the roles that run this lobby. With none, anyone in it can split it and call it back. Admins always can.",
+        "options": {
+          "hostsMessage": {
+            "{lobbyHostRoleIds}": "Hosts: {lobbyHostRoleIds}",
+            "{hostsMessageDefault}": "Hosts: anyone in the lobby"
+          }
+        },
+        "arrayOptions": {
+          "lobbyHostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
       }
     }
   ],

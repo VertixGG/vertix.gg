@@ -97,3 +97,54 @@ export interface ScalingChannelSettingsInterface {
 }
 
 export interface ScalingChannelConfigInterface extends ConfigBaseInterface<ScalingChannelSettingsInterface> {}
+
+export interface LobbyChannelSettingsInterface {
+    /**
+     * The roles whose members may split the lobby and call it back, besides the server's admins.
+     *
+     * Empty is the default and means anyone standing in the lobby may - a group of friends needs no
+     * host, and a class or an event names its own.
+     */
+    lobbyHostRoleIds: string[];
+
+    /**
+     * The text channel the lobby's panel is posted in, beside the lobby in its category - as a generator
+     * has its control panel's. Null until it is made, and a stale id is not an error: the channel can be
+     * deleted by hand, and is made again the next time the panel is drawn.
+     */
+    lobbyPanelChannelId: string | null;
+
+    /**
+     * The panel in that channel, so it is edited rather than searched for. Null until it is first
+     * posted, and a stale id is not an error either: the message can be deleted by hand.
+     */
+    lobbyPanelMessageId: string | null;
+
+    /**
+     * What the panel showed when it was last drawn, as a hash - so a restart edits only the panels
+     * with something new to show, as it does generators' control panels.
+     */
+    lobbyPanelMessageHash: string | null;
+
+    /**
+     * The same panel in the lobby's own chat, where whoever is in the lobby already is - with its
+     * hash, for the same reason. Null until first posted; a stale id is not an error.
+     */
+    lobbyChatPanelMessageId: string | null;
+    lobbyChatPanelMessageHash: string | null;
+
+    /**
+     * The category the lobby's split is open in - each split opens one of its own, right below the
+     * lobby's, and takes it down when it ends. Null while the lobby is not split.
+     */
+    lobbySessionCategoryId: string | null;
+
+    /**
+     * How the lobby is split right now - a picked team's room keeps whoever walks into it out of the
+     * other teams' rooms, where a dealt room is shut to all but its own from the start. Null while the
+     * lobby is not split.
+     */
+    lobbySplitMode: string | null;
+}
+
+export interface LobbyChannelConfigInterface extends ConfigBaseInterface<LobbyChannelSettingsInterface> {}

@@ -334,6 +334,7 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/dynamic-channel-lfm-service" ),
         import( "@vertix.gg/bot/src/services/master-channel-service" ),
         import( "@vertix.gg/bot/src/services/scaling-channel-service" ),
+        import( "@vertix.gg/bot/src/services/team-lobby-service" ),
         import( "@vertix.gg/bot/src/services/management-ipc-service" ),
         import( "@vertix.gg/bot/src/services/ui-ipc-service" ),
         import( "@vertix.gg/bot/src/services/ai-prompt-ipc-service" ),
@@ -435,6 +436,7 @@ async function registerConfigs() {
         import( "@vertix.gg/bot/src/config/master-channel-config" ),
         import( "@vertix.gg/bot/src/config/master-channel-config-v3" ),
         import( "@vertix.gg/data/src/config/scaling-channel-config" ),
+        import( "@vertix.gg/data/src/config/lobby-channel-config" ),
         import( "@vertix.gg/data/src/config/guild-config" ),
         import( "@vertix.gg/data/src/config/naming-config" )
     ] );

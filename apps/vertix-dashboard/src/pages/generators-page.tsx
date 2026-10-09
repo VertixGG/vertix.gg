@@ -5,7 +5,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 
-import { Layers, Radio, Loader2, Plus, RefreshCw, ChevronDown, AlertTriangle } from "lucide-react";
+import { Layers, Radio, Gamepad2, Loader2, Plus, RefreshCw, ChevronDown, AlertTriangle } from "lucide-react";
 
 import { DiscordButton } from "@vertix.gg/discord-ui/src";
 
@@ -23,6 +23,8 @@ import ScalingDetailsPanel from "@vertix.gg/dashboard/src/features/generators/co
 import DynamicDetailsPanel from "@vertix.gg/dashboard/src/features/generators/components/dynamic-details-panel/dynamic-details-panel";
 import CreateScalingForm from "@vertix.gg/dashboard/src/features/generators/components/create-scaling-form/create-scaling-form";
 import CreateDynamicForm from "@vertix.gg/dashboard/src/features/generators/components/create-dynamic-form/create-dynamic-form";
+import CreateLobbyForm from "@vertix.gg/dashboard/src/features/generators/components/create-lobby-form/create-lobby-form";
+import LobbyDetailsPanel from "@vertix.gg/dashboard/src/features/generators/components/lobby-details-panel/lobby-details-panel";
 
 import type { GeneratorsState, CreateModalType } from "@vertix.gg/dashboard/src/features/generators/commands";
 
@@ -79,6 +81,10 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
 
     const selectedDynamicMaster = state.selectedMasterChannelType === "dynamic" && state.generatorsDetails
         ? state.generatorsDetails.dynamicMasterChannels.find( ( m ) => m.id === state.selectedMasterChannelId )
+        : null;
+
+    const selectedLobbyMaster = state.selectedMasterChannelType === "lobby" && state.generatorsDetails
+        ? state.generatorsDetails.lobbyMasterChannels?.find( ( m ) => m.id === state.selectedMasterChannelId )
         : null;
 
     const [ showCreateDropdown, setShowCreateDropdown ] = useState( false );
@@ -143,7 +149,8 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
         const type: MasterChannelType | null =
             details.dynamicMasterChannels.some( ( master ) => master.id === routeMasterChannelId ) ? "dynamic"
                 : details.scalingMasterChannels.some( ( master ) => master.id === routeMasterChannelId ) ? "scaling"
-                    : null;
+                    : details.lobbyMasterChannels?.some( ( master ) => master.id === routeMasterChannelId ) ? "lobby"
+                        : null;
 
         // An address naming a generator this guild does not have is answered with the list, rather
         // than with a page that is permanently empty and says nothing about why.
@@ -210,10 +217,11 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
     /*
      * How many setups this server may have, and how many it has.
      *
-     * Both kinds count, against the one total. A generator and an auto-scaling pool are different
-     * things to run, but each is one setup somebody made and one category standing in the server,
-     * and the limit is on how many of those there are rather than on either kind in particular - so
-     * the last one available can be spent on either, and once it is gone neither is offered.
+     * Every kind counts, against the one total. A generator, an auto-scaling pool and a team lobby
+     * are different things to run, but each is one setup somebody made and one category standing in
+     * the server, and the limit is on how many of those there are rather than on any kind in
+     * particular - so the last one available can be spent on any of them, and once it is gone none
+     * is offered.
      *
      * The number comes out of the bot's configuration, carried here by the api rather than written
      * down again, so moving it there moves it here.
@@ -226,7 +234,9 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
         maxMasterChannels = "number" === typeof limit ? limit : null,
         dynamicMastersCount = generatorsDetails.dynamicMasterChannels.length,
         scalingMastersCount = generatorsDetails.scalingMasterChannels.length,
-        masterChannelsCount = dynamicMastersCount + scalingMastersCount,
+        lobbyMasters = generatorsDetails.lobbyMasterChannels ?? [],
+        lobbyMastersCount = lobbyMasters.length,
+        masterChannelsCount = dynamicMastersCount + scalingMastersCount + lobbyMastersCount,
         hasReachedMasterLimit = null !== maxMasterChannels && masterChannelsCount >= maxMasterChannels;
 
     const masterLimitReason = hasReachedMasterLimit
@@ -254,7 +264,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                             in Discord.
                         </p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             { /* Reachable here only on a server that was given a limit of none, since
                                  this state is the one with nothing set up at all. Guarded anyway -
                                  every entry point spends from the same total and should refuse for
@@ -290,6 +300,22 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                         "demand, so a busy server never runs out of room." }
                                 </p>
                             </button>
+
+                            <button
+                                onClick={ () => handleShowLimitedCreateModal( "lobby" ) }
+                                disabled={ hasReachedMasterLimit }
+                                title={ masterLimitReason }
+                                className="text-left bg-surface border border-border hover:border-border-accent
+                                    rounded-lg p-5 transition-colors disabled:opacity-50
+                                    disabled:hover:border-border disabled:cursor-not-allowed"
+                            >
+                                <Gamepad2 className="w-6 h-6 text-warning mb-3" />
+                                <h2 className="text-text-primary font-semibold mb-1">Team lobby</h2>
+                                <p className="text-sm text-text-muted mb-0">
+                                    { masterLimitReason ?? "One channel members gather in, split into team " +
+                                        "rooms or groups and called back with one press." }
+                                </p>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -298,6 +324,9 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                 ) }
                 { state.showCreateModal && state.createModalType === "dynamic" && (
                     <CreateDynamicForm isCreating={ state.isCreating } />
+                ) }
+                { state.showCreateModal && state.createModalType === "lobby" && (
+                    <CreateLobbyForm isCreating={ state.isCreating } />
                 ) }
 
                 { /* The same corner as on the page with a list in it - a create can be refused from
@@ -327,6 +356,8 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                             { dynamicMastersCount } dynamic
                             { " · " }
                             { scalingMastersCount } auto-scaling
+                            { " · " }
+                            { lobbyMastersCount } { 1 === lobbyMastersCount ? "team lobby" : "team lobbies" }
                         </p>
                     </div>
 
@@ -337,6 +368,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                         <MasterChannelList
                             scalingMasters={ generatorsDetails.scalingMasterChannels }
                             dynamicMasters={ generatorsDetails.dynamicMasterChannels }
+                            lobbyMasters={ lobbyMasters }
                             selectedId={ selectedMasterChannelId }
                             onSelect={ handleSelectChannel }
                         />
@@ -404,6 +436,18 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                             <Layers className="w-4 h-4 text-text-accent" />
                                             Auto-Scaling Setup
                                         </button>
+                                        <button
+                                            onClick={ () => handleShowLimitedCreateModal( "lobby" ) }
+                                            disabled={ hasReachedMasterLimit }
+                                            title={ masterLimitReason }
+                                            className="w-full px-3 py-2 text-left text-sm text-text-primary
+                                                hover:bg-surface-elevated flex items-center gap-2
+                                                disabled:opacity-50 disabled:hover:bg-transparent
+                                                disabled:cursor-not-allowed"
+                                        >
+                                            <Gamepad2 className="w-4 h-4 text-warning" />
+                                            Team Lobby Setup
+                                        </button>
                                     </div>
                                 ) }
                             </div>
@@ -448,6 +492,13 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                 isRefreshing={ state.isRefreshing }
                                 lastRefreshTime={ state.lastRefreshTimestamp ? new Date( state.lastRefreshTimestamp ) : null }
                             />
+                        ) : selectedMasterChannelType === "lobby" && selectedLobbyMaster ? (
+                            <LobbyDetailsPanel
+                                key={ selectedLobbyMaster.id }
+                                master={ selectedLobbyMaster }
+                                discordOptions={ state.discordOptions }
+                                isSaving={ state.isSaving }
+                            />
                         ) : null }
                     </div>
                 </div>
@@ -457,6 +508,9 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
             ) }
             { state.showCreateModal && state.createModalType === "dynamic" && (
                 <CreateDynamicForm isCreating={ state.isCreating } />
+            ) }
+            { state.showCreateModal && state.createModalType === "lobby" && (
+                <CreateLobbyForm isCreating={ state.isCreating } />
             ) }
 
             { /* Last, so it is over everything including a form that is still up. The page it

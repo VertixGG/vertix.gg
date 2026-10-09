@@ -62,4 +62,40 @@ export class ChannelUtils {
 
         return false;
     }
+
+    /**
+     * Function deleteCategoryUnlessUsed() :: Delete a category the bot opened for some channels of its
+     * own, once those are closed - unless anything else has been put in it since.
+     *
+     * The channels just closed are named rather than looked for: a channel deleted a moment ago can
+     * still be standing in the cache until discord's word of it arrives, and asking the cache alone
+     * would keep the category for a room that is already gone.
+     */
+    public static async deleteCategoryUnlessUsed(
+        category: GuildBasedChannel | null | undefined,
+        guild: Guild,
+        closedChannelIds: readonly string[],
+        logger?: Logger,
+        logContext?: Function
+    ): Promise<boolean> {
+        if ( ! category || category.type !== ChannelType.GuildCategory ) {
+            return false;
+        }
+
+        const others = guild.channels.cache.filter( ( channel ) =>
+            channel.parentId === category.id && ! closedChannelIds.includes( channel.id )
+        );
+
+        if ( others.size ) {
+            return false;
+        }
+
+        await CategoryManager.$.delete( category ).catch( ( error ) => {
+            if ( logger && logContext ) {
+                logger.error( logContext, `Failed to delete category ${ category.id }`, error );
+            }
+        } );
+
+        return true;
+    }
 }

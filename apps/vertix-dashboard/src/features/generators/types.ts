@@ -180,9 +180,23 @@ export interface ScalingChannelInfo {
     discord?: DiscordChannelInfo | null;
 }
 
+/** A team lobby - one channel members gather in, split into team or group rooms and called back to. */
+export interface LobbyMasterChannelInfo {
+    id: string;
+    channelId: string;
+    categoryId: string | null;
+    createdAt: string;
+    /** The rooms it is split into right now - none while everyone is in the lobby. */
+    lobbyRoomsCount: number;
+    /** The roles that run it; empty when anyone in it may. */
+    hostRoleIds: string[];
+}
+
 export interface GuildGeneratorsDetails {
     scalingMasterChannels: ScalingMasterChannelInfo[];
     dynamicMasterChannels: DynamicMasterChannelInfo[];
+    /** Optional because an api that predates team lobbies answers without them. */
+    lobbyMasterChannels?: LobbyMasterChannelInfo[];
     settings: GuildSettings;
 }
 
@@ -200,8 +214,8 @@ export interface GuildSettings {
     /**
      * How many master channels a server may have, out of the bot's own configuration.
      *
-     * Both kinds count against it together - a generator and an auto-scaling pool are different
-     * things to run, but each is one setup the server is carrying.
+     * Every kind counts against it together - a generator, an auto-scaling pool and a team lobby are
+     * different things to run, but each is one setup the server is carrying.
      *
      * Null when the api could not reach the bot to ask. Unknown rather than none: the screen shows
      * the count on its own and stops standing in the way, since a limit it had to invent would be
@@ -240,7 +254,7 @@ export interface CreateDynamicSetupInput {
     mentionable?: boolean;
 }
 
-export type MasterChannelType = "scaling" | "dynamic";
+export type MasterChannelType = "scaling" | "dynamic" | "lobby";
 
 export interface MasterChannelListItem {
     id: string;

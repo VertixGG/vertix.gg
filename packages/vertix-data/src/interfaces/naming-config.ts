@@ -28,6 +28,23 @@ export interface NamingConfigDefaultsInterface {
 
     scalingChannelsCategoryName: string;
     scalingChannelGeneratorName: string;
+
+    lobbyChannelsCategoryName: string;
+    lobbyChannelName: string;
+
+    /** The read only text channel a lobby's panel is posted in, as a generator's control panel is. */
+    lobbyControlPanelName: string;
+
+    /** The category each split's rooms open in, right below the lobby's - `{lobby}` is the lobby's name. */
+    lobbySessionCategoryName: string;
+
+    /**
+     * What a team lobby calls the rooms it splits into. A team's name carries `{color}` and
+     * `{index}`, and its colour is taken from the list in order - the first team the first colour.
+     */
+    lobbyTeamRoomName: string;
+    lobbyTeamRoomColors: string[];
+    lobbyGroupRoomName: string;
 }
 
 export interface NamingConfigInterface extends ConfigBaseInterface<NamingConfigDefaultsInterface> {}

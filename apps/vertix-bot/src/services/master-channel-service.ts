@@ -27,6 +27,7 @@ import { CategoryModel } from "@vertix.gg/data/src/models/category-model";
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import {
+    DEFAULT_CONTROL_PANEL_DENY_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
@@ -251,20 +252,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 // which on an ordinary server still shows the panel to everyone. A narrower
                 // audience has to be a deny.
                 deny: ( verifiedRoles.includes( everyoneRoleId ) ? 0n : PermissionsBitField.Flags.ViewChannel ) |
-                    PermissionsBitField.Flags.SendMessages |
-                    PermissionsBitField.Flags.SendMessagesInThreads |
-                    PermissionsBitField.Flags.CreatePublicThreads |
-                    PermissionsBitField.Flags.CreatePrivateThreads |
-                    PermissionsBitField.Flags.AddReactions |
-                    PermissionsBitField.Flags.EmbedLinks |
-                    PermissionsBitField.Flags.AttachFiles |
-                    PermissionsBitField.Flags.UseExternalEmojis |
-                    PermissionsBitField.Flags.UseExternalStickers |
-                    PermissionsBitField.Flags.ManageMessages |
-                    PermissionsBitField.Flags.ManageThreads |
-                    PermissionsBitField.Flags.SendTTSMessages |
-                    PermissionsBitField.Flags.SendVoiceMessages |
-                    PermissionsBitField.Flags.SendPolls
+                    DEFAULT_CONTROL_PANEL_DENY_PERMISSIONS
             },
             {
                 id: guild.client.user.id,

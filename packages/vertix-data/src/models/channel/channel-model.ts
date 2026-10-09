@@ -28,11 +28,11 @@ type ChannelExtendedResult<T extends TDataType> =
     | null;
 
 /**
- * Both kinds of master channel.
+ * Every kind of master channel.
  *
- * A generator and an auto-scaling pool are different things to run, but each is one setup a guild
- * made and one category standing in its server - so a question about what a guild has set up, or
- * about how much of its allowance is spent, means both of them.
+ * A generator, an auto-scaling pool and a team lobby are different things to run, but each is one
+ * setup a guild made and one category standing in its server - so a question about what a guild has
+ * set up, or about how much of its allowance is spent, means all of them.
  */
 /**
  * The channel types that are a generator rather than something a generator made.
@@ -43,7 +43,8 @@ type ChannelExtendedResult<T extends TDataType> =
  */
 export const MASTER_INTERNAL_TYPES: PrismaBot.E_INTERNAL_CHANNEL_TYPES[] = [
     PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL
+    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL,
+    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_LOBBY_CHANNEL
 ];
 
 // TODO: Cache mechanism is not fully working, in order to fix it, its require to handle all possible keys.
@@ -484,6 +485,55 @@ export class ChannelModel extends ModelWithDataBase<
 
     public async isScalingMaster( channelId: string, cache = true ) {
         return !!( await this.getByChannelId( channelId, cache ) )?.isScalingMaster;
+    }
+
+    public async isLobbyMaster( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isLobbyMaster;
+    }
+
+    public async isLobbyRoom( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isLobbyRoom;
+    }
+
+    /**
+     * Function getLobbyRoomsByLobbyId() :: The rooms a team lobby has split into.
+     *
+     * `lobbyChannelId` is the lobby's **discord** id, which is what a lobby room stores in
+     * `ownerChannelId` - the same as a dynamic channel stores of its generator, and unlike a scaling
+     * room, which stores its master's row id.
+     */
+    public async getLobbyRoomsByLobbyId( guildId: string, lobbyChannelId: string, cache = true ) {
+        return this.findMany(
+            {
+                where: {
+                    guildId,
+                    ownerChannelId: lobbyChannelId,
+                    internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.LOBBY_ROOM_CHANNEL
+                }
+            },
+            cache
+        );
+    }
+
+    /**
+     * Function getLobbyRoomsCountByLobbyId() :: How many rooms a team lobby has open, counted off the
+     * rows for the reason `getDynamicsCountByMasterId()` gives.
+     */
+    public async getLobbyRoomsCountByLobbyId( guildId: string, lobbyChannelId: string ) {
+        const total = await this.model.count( {
+            where: {
+                guildId,
+                ownerChannelId: lobbyChannelId,
+                internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.LOBBY_ROOM_CHANNEL
+            }
+        } );
+
+        this.debugger.log(
+            this.getLobbyRoomsCountByLobbyId,
+            `Guild id: '${ guildId }' lobby channel id: '${ lobbyChannelId }' - Rooms open is '${ total }'`
+        );
+
+        return total;
     }
 
     public async getScalingChannelsByMasterId( guildId: string, masterChannelId: string, cache = true ) {

@@ -15,8 +15,8 @@ import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 import type { IChannelEnterGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
-/** The channels that are a server setting the bot up - a generator of either kind. */
-const SETUP_CHANNEL_TYPES: readonly string[] = [ "MASTER_CREATE_CHANNEL", "MASTER_SCALING_CHANNEL" ];
+/** The channels that are a server setting the bot up - a generator of either kind, or a team lobby. */
+const SETUP_CHANNEL_TYPES: readonly string[] = [ "MASTER_CREATE_CHANNEL", "MASTER_SCALING_CHANNEL", "MASTER_LOBBY_CHANNEL" ];
 
 /**
  * The channel a member makes by joining a generator.

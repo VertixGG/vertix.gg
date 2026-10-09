@@ -302,3 +302,74 @@ describe( "VertixBot/Services/ManagementIPC/events", () => {
         expect( asked ).toEqual( [] );
     } );
 } );
+
+async function makeLobbyRouter() {
+    await TestWithServiceLocatorMock.withUIServiceMock();
+
+    const asked: string[] = [];
+
+    const { ManagementIPCService } = await import( "@vertix.gg/bot/src/services/management-ipc-service" );
+
+    const service = Object.create( ManagementIPCService.prototype ) as InstanceType<typeof ManagementIPCService>;
+
+    Object.assign( service, {
+        logger: { log: () => undefined, warn: () => undefined, error: () => undefined },
+        services: {
+            teamLobbyService: {
+                handleCreateLobbySetup: async( data: { guildId: string; userOwnerId: string } ) => {
+                    asked.push( `create:${ data.guildId }:${ data.userOwnerId }` );
+                },
+                handleDeleteLobbySetup: async( data: { guildId: string; masterChannelId: string } ) => {
+                    asked.push( `delete:${ data.guildId }:${ data.masterChannelId }` );
+                }
+            }
+        }
+    } );
+
+    const message = ( action: string, data: Record<string, string> ) => service[ "handleIPCMessage" ]( {
+        payload: { action, data: { guildId: GUILD_ID, ... data } }
+    } as Parameters<typeof service[ "handleIPCMessage" ]>[ 0 ] );
+
+    return { asked, message };
+}
+
+/**
+ * A team lobby made or deleted from the dashboard reaches the lobby service - on the shard that holds
+ * the server, and on no other, since each one makes or removes channels.
+ */
+describe( "VertixBot/Services/ManagementIPC/team lobbies", () => {
+    const USER_ID = "500000000000000001";
+
+    afterEach( () => {
+        jest.restoreAllMocks();
+
+        delete process.env.SHARD_COUNT;
+        delete process.env.SHARD_IDS;
+    } );
+
+    it( "should hand the dashboard's create and delete to the team lobby service", async() => {
+        // Arrange.
+        const { asked, message } = await makeLobbyRouter();
+
+        // Act.
+        await message( "create_lobby_setup", { userOwnerId: USER_ID } );
+        await message( "delete_lobby_setup", { masterChannelId: "lobby-row-1" } );
+
+        // Assert.
+        expect( asked ).toEqual( [ `create:${ GUILD_ID }:${ USER_ID }`, `delete:${ GUILD_ID }:lobby-row-1` ] );
+    } );
+
+    it( "should leave a lobby for a guild another shard holds to that shard", async() => {
+        // Arrange - the guild is on shard 1, and this process runs shard 0.
+        process.env.SHARD_COUNT = "2";
+        process.env.SHARD_IDS = "0";
+
+        const { asked, message } = await makeLobbyRouter();
+
+        // Act.
+        await message( "create_lobby_setup", { userOwnerId: USER_ID } );
+
+        // Assert - one shard makes it, so the dashboard gets one lobby rather than one per process.
+        expect( asked ).toEqual( [] );
+    } );
+} );

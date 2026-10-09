@@ -28,6 +28,16 @@ export class SelectMasterChannelCommand extends GeneratorsCommandBase<{
     }
 
     protected async perform( args: { masterChannelId: string | null; type: MasterChannelType | null } ) {
+        // A lobby's entry in the list is all there is to show of it, so nothing is fetched.
+        if ( args.type === "lobby" ) {
+            return this.setState( {
+                selectedMasterChannelId: args.masterChannelId,
+                selectedMasterChannelType: args.type,
+                isLoading: false,
+                error: null
+            } );
+        }
+
         this.setState( {
             selectedMasterChannelId: args.masterChannelId,
             selectedMasterChannelType: args.type,

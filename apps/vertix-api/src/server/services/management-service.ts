@@ -66,6 +66,9 @@ function getClient() {
 const SCALING_SETTINGS_KEY = "VertixData/Models/ScalingChannelData/settings";
 const SCALING_DATA_VERSION = "0.0.0.1";
 
+const LOBBY_SETTINGS_KEY = "VertixData/Models/LobbyChannelData/settings";
+const LOBBY_DATA_VERSION = "0.0.1.0";
+
 /**
  * The key a generator's settings row is filed under, per ui version.
  *
@@ -104,11 +107,11 @@ const DYNAMIC_CHANNEL_INFO_REQUEST_TIMEOUT_MS = 5000;
 /**
  * What counts as a master channel for the purpose of the limit.
  *
- * Both kinds. A generator and an auto-scaling pool are different things to run, but each is one
- * setup somebody made and one category standing in the server, and the limit is on how many of
- * those a server may have rather than on either kind in particular.
+ * Every kind. A generator, an auto-scaling pool and a team lobby are different things to run, but
+ * each is one setup somebody made and one category standing in the server, and the limit is on how
+ * many of those a server may have rather than on any kind in particular.
  */
-const MASTER_CHANNEL_INTERNAL_TYPES = [ "MASTER_CREATE_CHANNEL", "MASTER_SCALING_CHANNEL" ] as const;
+const MASTER_CHANNEL_INTERNAL_TYPES = [ "MASTER_CREATE_CHANNEL", "MASTER_SCALING_CHANNEL", "MASTER_LOBBY_CHANNEL" ] as const;
 
 const DYNAMIC_SETTINGS_KEYS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.key );
 const DYNAMIC_SETTINGS_VERSIONS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.version );
@@ -320,9 +323,21 @@ export interface ScalingChannelInfo {
     discord?: IPCDiscordChannelInfo | null;
 }
 
+export interface LobbyMasterChannelInfo {
+    id: string;
+    channelId: string;
+    categoryId: string | null;
+    createdAt: Date;
+    /** The rooms it is split into right now - none while everyone is in the lobby. */
+    lobbyRoomsCount: number;
+    /** The roles that run it; empty when anyone in it may. */
+    hostRoleIds: string[];
+}
+
 export interface GuildManagementDetails {
     scalingMasterChannels: ScalingMasterChannelInfo[];
     dynamicMasterChannels: DynamicMasterChannelInfo[];
+    lobbyMasterChannels: LobbyMasterChannelInfo[];
     settings: GuildSettings;
 }
 
@@ -386,7 +401,7 @@ export interface GuildTimingsSettings {
 }
 
 /**
- * What became of a request for another master channel, of either kind.
+ * What became of a request for another master channel, of any kind.
  *
  * `STARTED` only says the bot was asked - it makes the channel out of process and reports nothing
  * back, so the dashboard watches for the setup to appear rather than waiting on an answer here.
@@ -481,7 +496,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
         const settings = await this.readGuildSettings( guild.id, guildId );
 
-        const [ scalingMasters, dynamicMasters ] = await Promise.all( [
+        const [ scalingMasters, dynamicMasters, lobbyMasters ] = await Promise.all( [
             getClient().channel.findMany( {
                 where: {
                     guildId,
@@ -506,6 +521,20 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                         where: {
                             key: { in: DYNAMIC_SETTINGS_KEYS },
                             version: { in: DYNAMIC_SETTINGS_VERSIONS }
+                        }
+                    }
+                }
+            } ),
+            getClient().channel.findMany( {
+                where: {
+                    guildId,
+                    internalType: "MASTER_LOBBY_CHANNEL"
+                },
+                include: {
+                    data: {
+                        where: {
+                            key: LOBBY_SETTINGS_KEY,
+                            version: LOBBY_DATA_VERSION
                         }
                     }
                 }
@@ -567,9 +596,34 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             } )
         );
 
+        const lobbyMasterChannels: LobbyMasterChannelInfo[] = await Promise.all(
+            lobbyMasters.map( async( master ) => {
+                // A lobby's rooms store the lobby's Discord channel ID as ownerChannelId, as a
+                // generator's rooms do
+                const lobbyRoomsCount = await getClient().channel.count( {
+                    where: {
+                        ownerChannelId: master.channelId,
+                        internalType: "LOBBY_ROOM_CHANNEL"
+                    }
+                } );
+
+                const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
+
+                return {
+                    id: master.id,
+                    channelId: master.channelId,
+                    categoryId: master.categoryId,
+                    createdAt: master.createdAt,
+                    lobbyRoomsCount,
+                    hostRoleIds: ( settingsData?.lobbyHostRoleIds as string[] | undefined ) ?? []
+                };
+            } )
+        );
+
         return {
             scalingMasterChannels,
             dynamicMasterChannels,
+            lobbyMasterChannels,
             settings
         };
     }
@@ -652,8 +706,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
     /**
      * Function findMasterChannelLimitRefusal() :: The reason to refuse another setup, if there is one.
      *
-     * Counts both kinds together against the one limit, so a server's third setup is refused whether
-     * it would have been its third generator or its first auto-scaling pool.
+     * Counts every kind together against the one limit, so a server's third setup is refused whether
+     * it would have been its third generator, its first auto-scaling pool or its first team lobby.
      *
      * Null is no reason to refuse - either there is room, or the limit could not be read at all and
      * there is nothing here to hold anybody to. The bot applies its own either way, so the worst
@@ -1130,6 +1184,33 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         return true;
     }
 
+    /**
+     * Function deleteLobbySetup() :: Asks the bot to delete a team lobby, with the rooms it is split into.
+     */
+    public async deleteLobbySetup( guildId: string, masterChannelId: string ): Promise<boolean> {
+        const master = await getClient().channel.findFirst( {
+            where: {
+                id: masterChannelId,
+                guildId,
+                internalType: "MASTER_LOBBY_CHANNEL"
+            }
+        } );
+
+        if ( !master ) {
+            return false;
+        }
+
+        await this.publishManagementMessage( {
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_LOBBY_SETUP,
+            data: {
+                guildId,
+                masterChannelId
+            }
+        } );
+
+        return true;
+    }
+
     public async deleteScalingSetup( guildId: string, masterChannelId: string ): Promise<boolean> {
         const master = await getClient().channel.findFirst( {
             where: {
@@ -1359,6 +1440,39 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 userOwnerId,
                 prefix: input.prefix,
                 maxMembers: input.maxMembers
+            }
+        } );
+
+        return { code: CREATE_MASTER_SETUP_CODES.STARTED };
+    }
+
+    /**
+     * Function createLobbySetup() :: Asks the bot for a team lobby, unless there is no room.
+     *
+     * A lobby is a setup like any other here - held to the same limit, against the same total - and
+     * asks nothing first, so there is nothing to carry but who asked.
+     */
+    public async createLobbySetup( guildId: string, userOwnerId: string ): Promise<CreateMasterSetupResult> {
+        const guild = await getClient().guild.findUnique( {
+            where: { guildId },
+            select: { id: true }
+        } );
+
+        if ( !guild ) {
+            return { code: CREATE_MASTER_SETUP_CODES.GUILD_NOT_FOUND };
+        }
+
+        const refusal = await this.findMasterChannelLimitRefusal( guildId );
+
+        if ( refusal ) {
+            return refusal;
+        }
+
+        await this.publishManagementMessage( {
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_LOBBY_SETUP,
+            data: {
+                guildId,
+                userOwnerId
             }
         } );
 

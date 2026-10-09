@@ -603,6 +603,8 @@ class CleanupWorker extends InitializeBase {
         await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL );
         await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL );
         await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL );
+        await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_LOBBY_CHANNEL );
+        await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.LOBBY_ROOM_CHANNEL );
 
         /**
          * Last, and the only one that was never swept.

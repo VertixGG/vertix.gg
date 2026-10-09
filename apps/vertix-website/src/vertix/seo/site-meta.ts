@@ -103,6 +103,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.9,
     },
     {
+        path: "/features/team-lobby",
+        sourcePath: "src/vertix/pages/features/team-lobby.tsx",
+        title: "Team Lobby — Split a Voice Channel into Teams | VoiceChannels",
+        description:
+            "One Discord voice channel your members gather in: split it into random or picked team rooms "
+            + "or breakout groups, and bring everyone back with one press. Free.",
+        priority: 0.9,
+    },
+    {
         path: "/features/events",
         sourcePath: "src/vertix/pages/features/events.tsx",
         title: "Discord Event Attendance — Check-in, No-shows & Subs | VoiceChannels",

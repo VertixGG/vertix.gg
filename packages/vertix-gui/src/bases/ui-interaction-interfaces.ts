@@ -61,6 +61,10 @@ export interface UIDefaultChannelSelectMenuChannelTextInteraction extends Channe
     channel: TextChannel;
 }
 
+export interface UIDefaultUserSelectMenuChannelTextInteraction extends UserSelectMenuInteraction<"cached"> {
+    channel: TextChannel;
+}
+
 export interface UIDefaultModalChannelTextInteraction extends ModalMessageModalSubmitInteraction<"cached"> {
     channel: TextChannel;
 }

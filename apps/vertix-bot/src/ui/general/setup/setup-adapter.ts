@@ -28,6 +28,7 @@ import { EmbedBuilderUtils } from "@vertix.gg/gui/src/builders/embed-builder.uti
 
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 import { ScalingChannelDataModel } from "@vertix.gg/data/src/models/master-channel/scaling-channel-data-model";
+import { LobbyChannelDataModel } from "@vertix.gg/data/src/models/master-channel/lobby-channel-data-model";
 
 import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
 
@@ -106,6 +107,7 @@ import {
 import { SetupTipsRotation } from "@vertix.gg/bot/src/ui/general/setup/setup-tips-rotation";
 
 import {
+    MASTER_CHANNEL_TYPE_LOBBY,
     MASTER_CHANNEL_TYPE_SCALING,
     MASTER_CHANNEL_TYPE_V2,
     MASTER_CHANNEL_TYPE_V3,
@@ -119,6 +121,8 @@ import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 import type ScalingChannelService from "@vertix.gg/bot/src/services/scaling-channel-service";
 
 import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
+
+import type { TeamLobbyService } from "@vertix.gg/bot/src/services/team-lobby-service";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
@@ -180,6 +184,17 @@ async function onSelectEditMasterChannel(
     if ( !masterChannelDB ) {
         // TODO: Error...
         await context.editReply( interaction, {} );
+        return;
+    }
+
+    // Asked before the version is: a lobby is built with no interface version of its own, and the
+    // versioning service would answer for it with the oldest one it knows.
+    if ( masterChannelDB.isLobbyMaster ) {
+        await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+            .get( "VertixBot/UI-V3/TeamLobbySetupEditAdapter" )
+            ?.runInitial( interaction, { masterChannelIndex, masterChannelDB } );
+
+        context.deleteArgs( interaction );
         return;
     }
 
@@ -333,6 +348,55 @@ async function onCreateScalingChannelClicked<TInteraction extends SetupMessageCo
     }
 
     await context.showModal( interaction, "VertixBot/UI-General/SetupScalingConfigModal" );
+}
+
+/**
+ * Function onCreateLobbyClicked() :: Make a team lobby, and put the setup screen back with it listed.
+ *
+ * A lobby spends the allowance as a generator and a pool do, so it is held to it the same way and
+ * refused with the same screen. Past that it asks nothing - a lobby needs no setting to work, and its
+ * hosts are set on its own screen. Answered before the work starts, since a category, a channel and a
+ * panel outlast the three seconds discord gives.
+ */
+async function onCreateLobbyClicked(
+    context: IAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
+        guildId = interaction.guild.id,
+        limit = await ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" )
+            .getMaxMasterChannels( guildId ),
+        hasReachedLimit = await masterChannelService.isReachedMasterLimit( guildId, limit );
+
+    if ( hasReachedLimit ) {
+        const component = context.getComponent();
+
+        component.clearElements();
+        component.switchEmbedsGroup( "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup" );
+
+        await context.ephemeral( interaction, {
+            maxMasterChannels: formatMasterChannelAllowance( limit )
+        } );
+
+        return;
+    }
+
+    await context.updateInteractionDefer( interaction );
+
+    const result = await ServiceLocator.$.get<TeamLobbyService>( "VertixBot/Services/TeamLobby" ).createLobby( {
+        guild: interaction.guild,
+        userOwnerId: interaction.user.id
+    } );
+
+    if ( "success" !== result.code ) {
+        await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+            .get<"execution">( "VertixBot/UI-V3/TeamLobbySetupEditAdapter" )
+            ?.ephemeralWithStep( interaction, "VertixBot/UI-V3/TeamLobbySetupRefused", { refusalCode: result.code } );
+
+        return;
+    }
+
+    await context.editReply( interaction, {} );
 }
 
 async function onScalingConfigModalSubmitted(
@@ -784,6 +848,21 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
             const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
 
+            if ( "MASTER_LOBBY_CHANNEL" === channel?.internalType ) {
+                const hostRoleIds: string[] = ( await LobbyChannelDataModel.$.getLobbySettings( channel.id ) )
+                    ?.lobbyHostRoleIds ?? [];
+
+                return [
+                    heading( channel, index ),
+                    `${ vars.labelName } <#${ channel.channelId }>`,
+                    `${ vars.labelChannelId } \`${ channel.channelId }\``,
+                    `${ vars.labelType } ${ vars.labelTeamLobby }`,
+                    `${ vars.labelLobbyHosts } ${ hostRoleIds.length
+                        ? hostRoleIds.map( ( roleId ) => `<@&${ roleId }>` ).join( ", " )
+                        : vars.labelLobbyHostsAnyone }`
+                ];
+            }
+
             if ( version === VERSION_SCALING_CHANNEL_UI_V1 ) {
                 const scalingSettings = await ScalingChannelDataModel.$.getScalingSettings( channel.id );
 
@@ -939,6 +1018,10 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         labelNotCovered: "⏸️ **Paused** - past this server's plan",
         labelScalingPrefix: "▹ Scaling Prefix:",
         labelMaxMembers: "▹ Max Members:",
+        labelType: "▹ Type:",
+        labelTeamLobby: "🎮 Team Lobby",
+        labelLobbyHosts: "▹ Hosts:",
+        labelLobbyHostsAnyone: "Anyone in the lobby"
     } ) )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
@@ -1421,6 +1504,10 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
 
                         case MASTER_CHANNEL_TYPE_SCALING:
                             await onCreateScalingChannelClicked( context, interaction );
+                            break;
+
+                        case MASTER_CHANNEL_TYPE_LOBBY:
+                            await onCreateLobbyClicked( context, interaction );
                             break;
                     }
                 }

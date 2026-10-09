@@ -23,7 +23,7 @@ import type {
  * allowed to make it, there is simply no room left - and a reason in `message` is what the screen
  * puts in front of somebody instead of a failure with nothing to say.
  *
- * Both kinds of setup count towards the one total, so both are refused in the same words.
+ * Every kind of setup counts towards the one total, so all are refused in the same words.
  */
 function replyMasterSetupRefusal( result: CreateMasterSetupResult, reply: FastifyReply ) {
     if ( CREATE_MASTER_SETUP_CODES.LIMIT_REACHED !== result.code ) {
@@ -46,6 +46,10 @@ interface ScalingMasterParams extends GuildParams {
 }
 
 interface DynamicMasterParams extends GuildParams {
+    masterChannelId: string;
+}
+
+interface LobbyMasterParams extends GuildParams {
     masterChannelId: string;
 }
 
@@ -432,6 +436,58 @@ export class ManagementRoute extends RouteBase {
         }
     }
 
+    public async handleCreateLobbySetup(
+        request: FastifyRequest<{ Params: GuildParams }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId } = request.params;
+            const service = this.getService();
+
+            const userOwnerId = request.session.userId;
+
+            if ( !userOwnerId ) {
+                return reply.status( 401 ).send( { error: "User not authenticated" } );
+            }
+
+            const result = await service.createLobbySetup( guildId, userOwnerId );
+
+            const refusal = replyMasterSetupRefusal( result, reply );
+
+            if ( refusal ) {
+                return refusal;
+            }
+
+            if ( CREATE_MASTER_SETUP_CODES.STARTED !== result.code ) {
+                return reply.status( 500 ).send( { error: "Failed to create team lobby" } );
+            }
+
+            return reply.status( 201 ).send( { success: true, message: "Team lobby creation initiated" } );
+        } catch( error ) {
+            handleError( this.handleCreateLobbySetup, error, reply, "Failed to create team lobby" );
+        }
+    }
+
+    public async handleDeleteLobbySetup(
+        request: FastifyRequest<{ Params: LobbyMasterParams }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId, masterChannelId } = request.params;
+            const service = this.getService();
+
+            const success = await service.deleteLobbySetup( guildId, masterChannelId );
+
+            if ( !success ) {
+                return reply.status( 404 ).send( { error: "Team lobby not found" } );
+            }
+
+            return { success: true };
+        } catch( error ) {
+            handleError( this.handleDeleteLobbySetup, error, reply, "Failed to delete team lobby" );
+        }
+    }
+
     protected registerRoutes( fastify: FastifyInstance ): void {
         // Add guild access check to all routes
         fastify.addHook( "preHandler", requireGuildAccess );
@@ -505,6 +561,17 @@ export class ManagementRoute extends RouteBase {
         fastify.delete<{ Params: DynamicMasterParams }>(
             "/management/guild/:guildId/dynamic/:masterChannelId",
             this.handleDeleteDynamicSetup.bind( this )
+        );
+
+        // Team lobby routes
+        fastify.post<{ Params: GuildParams }>(
+            "/management/guild/:guildId/lobby",
+            this.handleCreateLobbySetup.bind( this )
+        );
+
+        fastify.delete<{ Params: LobbyMasterParams }>(
+            "/management/guild/:guildId/lobby/:masterChannelId",
+            this.handleDeleteLobbySetup.bind( this )
         );
     }
 }

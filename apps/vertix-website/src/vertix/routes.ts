@@ -40,6 +40,10 @@ const routes = [
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/auto-scaling" ) ),
     },
     {
+        path: "/features/team-lobby",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/team-lobby" ) ),
+    },
+    {
         path: "/features/events",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/events" ) ),
     },

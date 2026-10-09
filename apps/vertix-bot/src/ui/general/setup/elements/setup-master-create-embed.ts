@@ -21,7 +21,9 @@ const SetupMasterCreateEmbed = new EmbedBuilder( "VertixBot/UI-General/SetupMast
         "removed when they leave.\n\n" +
         "**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n" +
         "**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n" +
-        "**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n\n" +
+        "**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n" +
+        "**🎮 Team Lobby** — one channel people gather in, split from into team rooms or groups, " +
+        "and called back to.\n\n" +
         "Choose below, and the rest is a few questions."
     )
     .build();

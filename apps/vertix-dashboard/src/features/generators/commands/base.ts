@@ -12,7 +12,7 @@ import type {
     MasterChannelType
 } from "@vertix.gg/dashboard/src/features/generators/types";
 
-export type CreateModalType = "scaling" | "dynamic" | null;
+export type CreateModalType = "scaling" | "dynamic" | "lobby" | null;
 
 export interface GeneratorsState {
     guildId: string | null;
@@ -92,7 +92,7 @@ export abstract class GeneratorsCommandBase<TArgs extends DCommandArgs = DComman
     protected abstract perform( args: TArgs ): unknown;
 
     protected async pollForSetupCompletion(
-        type: "scaling" | "dynamic",
+        type: MasterChannelType,
         initialCount: number,
         maxAttempts = 10,
         intervalMs = 500
@@ -107,9 +107,11 @@ export abstract class GeneratorsCommandBase<TArgs extends DCommandArgs = DComman
                     guildId: this.guildId
                 } );
 
-                const currentCount = type === "scaling"
-                    ? data.scalingMasterChannels.length
-                    : data.dynamicMasterChannels.length;
+                const currentCount = {
+                    scaling: data.scalingMasterChannels.length,
+                    dynamic: data.dynamicMasterChannels.length,
+                    lobby: data.lobbyMasterChannels?.length ?? 0
+                }[ type ];
 
                 if ( currentCount > initialCount ) {
                     return data;

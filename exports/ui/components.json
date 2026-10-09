@@ -429,6 +429,12 @@
                                         "value": "scaling",
                                         "emoji": "📈",
                                         "description": "Automatically scales based on member count"
+                                    },
+                                    {
+                                        "label": "Team Lobby",
+                                        "value": "lobby",
+                                        "emoji": "🎮",
+                                        "description": "Split one channel into team rooms or groups"
                                     }
                                 ]
                             }
@@ -501,6 +507,12 @@
                                         "value": "scaling",
                                         "emoji": "📈",
                                         "description": "Automatically scales based on member count"
+                                    },
+                                    {
+                                        "label": "Team Lobby",
+                                        "value": "lobby",
+                                        "emoji": "🎮",
+                                        "description": "Split one channel into team rooms or groups"
                                     }
                                 ]
                             }
@@ -956,7 +968,11 @@
                                 "labelVersion": "▹ UI Version:",
                                 "labelNotCovered": "⏸️ **Paused** - past this server's plan",
                                 "labelScalingPrefix": "▹ Scaling Prefix:",
-                                "labelMaxMembers": "▹ Max Members:"
+                                "labelMaxMembers": "▹ Max Members:",
+                                "labelType": "▹ Type:",
+                                "labelTeamLobby": "🎮 Team Lobby",
+                                "labelLobbyHosts": "▹ Hosts:",
+                                "labelLobbyHostsAnyone": "Anyone in the lobby"
                             }
                         }
                     }
@@ -1019,7 +1035,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "➕  Create a channel generator",
-                            "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n\nChoose below, and the rest is a few questions.",
+                            "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n**🎮 Team Lobby** — one channel people gather in, split from into team rooms or groups, and called back to.\n\nChoose below, and the rest is a few questions.",
                             "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963
                         }
@@ -14579,6 +14595,817 @@
             "embedAudit": {
                 "total": 1,
                 "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/TeamLobbyComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Random teams",
+                                "style": "primary",
+                                "emoji": "🎲"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Pick teams",
+                                "style": "secondary",
+                                "emoji": "🙋"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Groups",
+                                "style": "secondary",
+                                "emoji": "👥"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyRecallButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyRecallButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Recall",
+                                "style": "success",
+                                "emoji": "↩️"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyGuideButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyGuideButton",
+                                "elementType": "button-url",
+                                "instanceType": "Dynamic",
+                                "label": "How it works",
+                                "style": "link",
+                                "url": "https://voicechannels.online/features/team-lobby"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👥 ∙ Only these members (optional)"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎲 ∙ How many teams?",
+                                "selectOptions": [
+                                    {
+                                        "label": "2 teams",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "label": "3 teams",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "label": "4 teams",
+                                        "value": "4"
+                                    },
+                                    {
+                                        "label": "5 teams",
+                                        "value": "5"
+                                    },
+                                    {
+                                        "label": "6 teams",
+                                        "value": "6"
+                                    },
+                                    {
+                                        "label": "7 teams",
+                                        "value": "7"
+                                    },
+                                    {
+                                        "label": "8 teams",
+                                        "value": "8"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Apply",
+                                "style": "success",
+                                "emoji": "✅"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyPickTeamsMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👥 ∙ Only these members (optional)"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🙋 ∙ How many teams?",
+                                "selectOptions": [
+                                    {
+                                        "label": "2 teams",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "label": "3 teams",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "label": "4 teams",
+                                        "value": "4"
+                                    },
+                                    {
+                                        "label": "5 teams",
+                                        "value": "5"
+                                    },
+                                    {
+                                        "label": "6 teams",
+                                        "value": "6"
+                                    },
+                                    {
+                                        "label": "7 teams",
+                                        "value": "7"
+                                    },
+                                    {
+                                        "label": "8 teams",
+                                        "value": "8"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Apply",
+                                "style": "success",
+                                "emoji": "✅"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyGroupSizeMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👥 ∙ Only these members (optional)"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👥 ∙ How many to a group?",
+                                "selectOptions": [
+                                    {
+                                        "label": "Groups of 2",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "label": "Groups of 3",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "label": "Groups of 4",
+                                        "value": "4"
+                                    },
+                                    {
+                                        "label": "Groups of 5",
+                                        "value": "5"
+                                    },
+                                    {
+                                        "label": "Groups of 6",
+                                        "value": "6"
+                                    },
+                                    {
+                                        "label": "Groups of 7",
+                                        "value": "7"
+                                    },
+                                    {
+                                        "label": "Groups of 8",
+                                        "value": "8"
+                                    },
+                                    {
+                                        "label": "Groups of 9",
+                                        "value": "9"
+                                    },
+                                    {
+                                        "label": "Groups of 10",
+                                        "value": "10"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Apply",
+                                "style": "success",
+                                "emoji": "✅"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎮  Team Lobby",
+                            "description": "Split the lobby into team rooms or small groups - and bring everyone back with one press.\n👉 **Join <#{lobbyId}> to take part** - a split only takes the people who are in it.\n\n🎲 **Random teams** - everyone in the lobby shuffled evenly into teams, and moved.\n🙋 **Pick teams** - team rooms open, and everyone walks into the one they want.\n👥 **Groups** - everyone in the lobby dealt into small groups of a size you choose, and moved.\n↩️ **Recall** - everyone back to the lobby, and the rooms close.\n\n{splitMessage}\n{hostsMessage}",
+                            "color": 3369963,
+                            "options": {
+                                "splitMessage": {
+                                    "{roomIds}": "**Split into:** {roomIds}",
+                                    "{splitMessageDefault}": "**Not split** - everyone is in the lobby."
+                                },
+                                "hostsMessage": {
+                                    "{hostRoleIds}": "**Hosts:** {hostRoleIds}",
+                                    "{hostsMessageDefault}": "**Hosts:** anyone in the lobby"
+                                }
+                            },
+                            "arrayOptions": {
+                                "roomIds": {
+                                    "format": "<#{value}>{separator}",
+                                    "separator": " · "
+                                },
+                                "hostRoleIds": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "lobbyId": "{lobbyId}",
+                                "roomIds": "{roomIds}",
+                                "splitMessage": "{splitMessage}",
+                                "splitMessageDefault": "{splitMessageDefault}",
+                                "hostRoleIds": "{hostRoleIds}",
+                                "hostsMessage": "{hostsMessage}",
+                                "hostsMessageDefault": "{hostsMessageDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => {\n  const result = {\n    lobbyId: String(args?.lobbyId ?? \"\")\n  };\n  if (args?.roomIds?.length) {\n    result.roomIds = args.roomIds;\n    result.splitMessage = vars.roomIds;\n  } else\n    result.splitMessage = vars.splitMessageDefault;\n  if (args?.hostRoleIds?.length) {\n    result.hostRoleIds = args.hostRoleIds;\n    result.hostsMessage = vars.hostRoleIds;\n  } else\n    result.hostsMessage = vars.hostsMessageDefault;\n  return result;\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎲  Random teams",
+                            "description": "How many teams? Everyone in the lobby is shuffled evenly into them and moved to their team's room.\n\nOnly some of them playing? Pick who in the first menu, then the number.",
+                            "color": 3369963
+                        }
+                    },
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "description": "{playersMessage}\n{applyMessage}",
+                            "color": 3369963,
+                            "options": {
+                                "playersMessage": {
+                                    "{players}": "**Playing:** {players}",
+                                    "{playersMessageDefault}": "**Playing:** everyone in the lobby"
+                                },
+                                "applyMessage": {
+                                    "{applyMessageWaiting}": "-# ❌ Not in the lobby yet, or a bot - Apply waits for everyone picked to be in the lobby.",
+                                    "{applyMessageNoCount}": "-# Pick the number, then Apply.",
+                                    "{applyMessageNobody}": "-# ❌ Nobody is in the lobby to split yet.",
+                                    "{applyMessageTooFew}": "-# ❌ Not enough people in the lobby for that - pick a smaller number, or wait for more to join.",
+                                    "{applyMessageTooManyRooms}": "-# ❌ That would open more than {roomsLimit} rooms - pick bigger groups.",
+                                    "{applyMessageReady}": "-# Ready - Apply splits the lobby."
+                                }
+                            },
+                            "arrayOptions": {
+                                "players": {
+                                    "format": "{value}{separator}",
+                                    "separator": " · "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "players": "{players}",
+                                "playersMessage": "{playersMessage}",
+                                "playersMessageDefault": "{playersMessageDefault}",
+                                "roomsLimit": "{roomsLimit}",
+                                "applyMessage": "{applyMessage}",
+                                "applyMessageWaiting": "{applyMessageWaiting}",
+                                "applyMessageNoCount": "{applyMessageNoCount}",
+                                "applyMessageNobody": "{applyMessageNobody}",
+                                "applyMessageTooFew": "{applyMessageTooFew}",
+                                "applyMessageTooManyRooms": "{applyMessageTooManyRooms}",
+                                "applyMessageReady": "{applyMessageReady}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => {\n  const result = {}, players = args?.players ?? [];\n  if (players.length) {\n    result.players = players.map((player) => `${player.isReady ? \"\\u2705\" : \"\\u274C\"} <@${player.id}>`);\n    result.playersMessage = vars.players;\n  } else\n    result.playersMessage = vars.playersMessageDefault;\n  const byRefusal = {\n    \"nobody-to-split\": vars.applyMessageNobody,\n    \"too-few-members\": vars.applyMessageTooFew,\n    \"too-many-rooms\": vars.applyMessageTooManyRooms\n  };\n  if (players.some((player) => !player.isReady))\n    result.applyMessage = vars.applyMessageWaiting;\n  else if (args?.count === void 0 || args?.count === null)\n    result.applyMessage = vars.applyMessageNoCount;\n  else if (args?.planRefusal && byRefusal[String(args.planRefusal)]) {\n    result.applyMessage = byRefusal[String(args.planRefusal)];\n    result.roomsLimit = String(args?.roomsLimit ?? \"\");\n  } else\n    result.applyMessage = vars.applyMessageReady;\n  return result;\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🙋  Pick teams",
+                            "description": "How many teams? Their rooms open empty, each holding its share of the lobby, and everyone walks into the one they want.\n\nOnly some of them playing? Pick who in the first menu, then the number - the rooms open to them alone.",
+                            "color": 3369963
+                        }
+                    },
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "description": "{playersMessage}\n{applyMessage}",
+                            "color": 3369963,
+                            "options": {
+                                "playersMessage": {
+                                    "{players}": "**Playing:** {players}",
+                                    "{playersMessageDefault}": "**Playing:** everyone in the lobby"
+                                },
+                                "applyMessage": {
+                                    "{applyMessageWaiting}": "-# ❌ Not in the lobby yet, or a bot - Apply waits for everyone picked to be in the lobby.",
+                                    "{applyMessageNoCount}": "-# Pick the number, then Apply.",
+                                    "{applyMessageNobody}": "-# ❌ Nobody is in the lobby to split yet.",
+                                    "{applyMessageTooFew}": "-# ❌ Not enough people in the lobby for that - pick a smaller number, or wait for more to join.",
+                                    "{applyMessageTooManyRooms}": "-# ❌ That would open more than {roomsLimit} rooms - pick bigger groups.",
+                                    "{applyMessageReady}": "-# Ready - Apply splits the lobby."
+                                }
+                            },
+                            "arrayOptions": {
+                                "players": {
+                                    "format": "{value}{separator}",
+                                    "separator": " · "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "players": "{players}",
+                                "playersMessage": "{playersMessage}",
+                                "playersMessageDefault": "{playersMessageDefault}",
+                                "roomsLimit": "{roomsLimit}",
+                                "applyMessage": "{applyMessage}",
+                                "applyMessageWaiting": "{applyMessageWaiting}",
+                                "applyMessageNoCount": "{applyMessageNoCount}",
+                                "applyMessageNobody": "{applyMessageNobody}",
+                                "applyMessageTooFew": "{applyMessageTooFew}",
+                                "applyMessageTooManyRooms": "{applyMessageTooManyRooms}",
+                                "applyMessageReady": "{applyMessageReady}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => {\n  const result = {}, players = args?.players ?? [];\n  if (players.length) {\n    result.players = players.map((player) => `${player.isReady ? \"\\u2705\" : \"\\u274C\"} <@${player.id}>`);\n    result.playersMessage = vars.players;\n  } else\n    result.playersMessage = vars.playersMessageDefault;\n  const byRefusal = {\n    \"nobody-to-split\": vars.applyMessageNobody,\n    \"too-few-members\": vars.applyMessageTooFew,\n    \"too-many-rooms\": vars.applyMessageTooManyRooms\n  };\n  if (players.some((player) => !player.isReady))\n    result.applyMessage = vars.applyMessageWaiting;\n  else if (args?.count === void 0 || args?.count === null)\n    result.applyMessage = vars.applyMessageNoCount;\n  else if (args?.planRefusal && byRefusal[String(args.planRefusal)]) {\n    result.applyMessage = byRefusal[String(args.planRefusal)];\n    result.roomsLimit = String(args?.roomsLimit ?? \"\");\n  } else\n    result.applyMessage = vars.applyMessageReady;\n  return result;\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyGroupsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyGroupsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Groups",
+                            "description": "How many to a group? Everyone in the lobby is dealt into rooms of that size and moved.\n\nOnly some of them taking part? Pick who in the first menu, then the size.",
+                            "color": 3369963
+                        }
+                    },
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "description": "{playersMessage}\n{applyMessage}",
+                            "color": 3369963,
+                            "options": {
+                                "playersMessage": {
+                                    "{players}": "**Playing:** {players}",
+                                    "{playersMessageDefault}": "**Playing:** everyone in the lobby"
+                                },
+                                "applyMessage": {
+                                    "{applyMessageWaiting}": "-# ❌ Not in the lobby yet, or a bot - Apply waits for everyone picked to be in the lobby.",
+                                    "{applyMessageNoCount}": "-# Pick the number, then Apply.",
+                                    "{applyMessageNobody}": "-# ❌ Nobody is in the lobby to split yet.",
+                                    "{applyMessageTooFew}": "-# ❌ Not enough people in the lobby for that - pick a smaller number, or wait for more to join.",
+                                    "{applyMessageTooManyRooms}": "-# ❌ That would open more than {roomsLimit} rooms - pick bigger groups.",
+                                    "{applyMessageReady}": "-# Ready - Apply splits the lobby."
+                                }
+                            },
+                            "arrayOptions": {
+                                "players": {
+                                    "format": "{value}{separator}",
+                                    "separator": " · "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "players": "{players}",
+                                "playersMessage": "{playersMessage}",
+                                "playersMessageDefault": "{playersMessageDefault}",
+                                "roomsLimit": "{roomsLimit}",
+                                "applyMessage": "{applyMessage}",
+                                "applyMessageWaiting": "{applyMessageWaiting}",
+                                "applyMessageNoCount": "{applyMessageNoCount}",
+                                "applyMessageNobody": "{applyMessageNobody}",
+                                "applyMessageTooFew": "{applyMessageTooFew}",
+                                "applyMessageTooManyRooms": "{applyMessageTooManyRooms}",
+                                "applyMessageReady": "{applyMessageReady}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => {\n  const result = {}, players = args?.players ?? [];\n  if (players.length) {\n    result.players = players.map((player) => `${player.isReady ? \"\\u2705\" : \"\\u274C\"} <@${player.id}>`);\n    result.playersMessage = vars.players;\n  } else\n    result.playersMessage = vars.playersMessageDefault;\n  const byRefusal = {\n    \"nobody-to-split\": vars.applyMessageNobody,\n    \"too-few-members\": vars.applyMessageTooFew,\n    \"too-many-rooms\": vars.applyMessageTooManyRooms\n  };\n  if (players.some((player) => !player.isReady))\n    result.applyMessage = vars.applyMessageWaiting;\n  else if (args?.count === void 0 || args?.count === null)\n    result.applyMessage = vars.applyMessageNoCount;\n  else if (args?.planRefusal && byRefusal[String(args.planRefusal)]) {\n    result.applyMessage = byRefusal[String(args.planRefusal)];\n    result.roomsLimit = String(args?.roomsLimit ?? \"\");\n  } else\n    result.applyMessage = vars.applyMessageReady;\n  return result;\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySplitEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbySplitEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎮  Split",
+                            "description": "{splitResult}\n\nPress **↩️ Recall** on the panel to bring everyone back.",
+                            "color": 3369963,
+                            "options": {
+                                "splitResult": {
+                                    "{splitDealt}": "Opened **{roomsCount}** rooms and moved **{moved}** members into them.",
+                                    "{splitPicked}": "Opened **{roomsCount}** team rooms - everyone walks into the one they want."
+                                }
+                            },
+                            "vars": {
+                                "roomsCount": "{roomsCount}",
+                                "moved": "{moved}",
+                                "splitResult": "{splitResult}",
+                                "splitDealt": "{splitDealt}",
+                                "splitPicked": "{splitPicked}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => ({\n  roomsCount: args?.roomsCount ?? \"0\",\n  moved: args?.moved ?? \"0\",\n  splitResult: args?.mode === \"pick-teams\" ? vars.splitPicked : vars.splitDealt\n})"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyRefusedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyRefusedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎮  Team Lobby",
+                            "description": "{reason}",
+                            "color": 16738560,
+                            "options": {
+                                "reason": {
+                                    "{reasonNotCovered}": "This server has more generators than its plan allows - a lobby counts as one - and this lobby is one of the extra ones, so it does not split at the moment. **↩️ Recall** still works.\n\nThe ones set up first are still working. A server admin can upgrade the plan to switch this one back on, or delete a generator it no longer uses.",
+                                    "{reasonNotHost}": "This lobby is run by its hosts - or, when it names none, by whoever is in it.",
+                                    "{reasonAlreadySplit}": "This lobby is split already. Press **↩️ Recall** first.",
+                                    "{reasonNotSplit}": "There is nothing to call back - everyone is in the lobby.",
+                                    "{reasonNobodyToSplit}": "Nobody is in the lobby to split.",
+                                    "{reasonTooFewMembers}": "There are not enough people in the lobby for that.",
+                                    "{reasonInvalidCount}": "That is not a number of teams or a group size this lobby takes.",
+                                    "{reasonTooManyRooms}": "That would open more than **{roomsLimit}** rooms at once. Pick bigger groups.",
+                                    "{reasonMissingPermissions}": "The bot is missing **{missingPermissions}** on this lobby.",
+                                    "{reasonFailed}": "Discord refused to make a room. Try again in a moment."
+                                }
+                            },
+                            "vars": {
+                                "roomsLimit": "{roomsLimit}",
+                                "missingPermissions": "{missingPermissions}",
+                                "reason": "{reason}",
+                                "reasonNotCovered": "{reasonNotCovered}",
+                                "reasonNotHost": "{reasonNotHost}",
+                                "reasonAlreadySplit": "{reasonAlreadySplit}",
+                                "reasonNotSplit": "{reasonNotSplit}",
+                                "reasonNobodyToSplit": "{reasonNobodyToSplit}",
+                                "reasonTooFewMembers": "{reasonTooFewMembers}",
+                                "reasonInvalidCount": "{reasonInvalidCount}",
+                                "reasonTooManyRooms": "{reasonTooManyRooms}",
+                                "reasonMissingPermissions": "{reasonMissingPermissions}",
+                                "reasonFailed": "{reasonFailed}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => {\n  return {\n    reason: {\n      \"not-covered\": vars.reasonNotCovered,\n      \"not-host\": vars.reasonNotHost,\n      \"already-split\": vars.reasonAlreadySplit,\n      \"not-split\": vars.reasonNotSplit,\n      \"nobody-to-split\": vars.reasonNobodyToSplit,\n      \"too-few-members\": vars.reasonTooFewMembers,\n      \"invalid-count\": vars.reasonInvalidCount,\n      \"too-many-rooms\": vars.reasonTooManyRooms,\n      \"missing-permissions\": vars.reasonMissingPermissions,\n      failed: vars.reasonFailed\n    }[String(args?.refusalCode)] ?? vars.reasonFailed,\n    roomsLimit: String(args?.roomsLimit ?? \"\"),\n    missingPermissions: (args?.missingPermissions ?? []).join(\", \")\n  };\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": "VertixBot/UI-V3/TeamLobbyElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/TeamLobbyEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "renderAsContainer": true,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 9,
+                "withDefinition": 9,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/TeamLobbySetupEditComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySetupEditElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎮 ∙ Select Host Roles"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/DoneButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/DoneButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "✓ Done",
+                                "style": "success"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/DeleteButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/DeleteButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Delete",
+                                "style": "danger"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/TeamLobbySetupEditEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbySetupEditEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎮  Team Lobby #{lobbyIndex}",
+                            "description": "One voice channel people gather in, split from into team rooms or groups, and called back to.\n\n➤ ∙ Lobby: <#{lobbyChannelId}>\n➤ ∙ Channel ID: `{lobbyChannelId}`\n➤ ∙ {hostsMessage}\n\nPick the roles that run this lobby. With none, anyone in it can split it and call it back. Admins always can.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963,
+                            "options": {
+                                "hostsMessage": {
+                                    "{lobbyHostRoleIds}": "Hosts: {lobbyHostRoleIds}",
+                                    "{hostsMessageDefault}": "Hosts: anyone in the lobby"
+                                }
+                            },
+                            "arrayOptions": {
+                                "lobbyHostRoleIds": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "lobbyIndex": "{lobbyIndex}",
+                                "lobbyChannelId": "{lobbyChannelId}",
+                                "lobbyHostRoleIds": "{lobbyHostRoleIds}",
+                                "hostsMessage": "{hostsMessage}",
+                                "hostsMessageDefault": "{hostsMessageDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => {\n  const result = {\n    lobbyIndex: Number(args?.lobbyIndex ?? 0) + 1,\n    lobbyChannelId: args?.lobbyChannelId ?? \"\"\n  };\n  if (args?.lobbyHostRoleIds?.length) {\n    result.lobbyHostRoleIds = args.lobbyHostRoleIds;\n    result.hostsMessage = vars.lobbyHostRoleIds;\n  } else\n    result.hostsMessage = vars.hostsMessageDefault;\n  return result;\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/TeamLobbyRefusedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/TeamLobbyRefusedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎮  Team Lobby",
+                            "description": "{reason}",
+                            "color": 16738560,
+                            "options": {
+                                "reason": {
+                                    "{reasonNotCovered}": "This server has more generators than its plan allows - a lobby counts as one - and this lobby is one of the extra ones, so it does not split at the moment. **↩️ Recall** still works.\n\nThe ones set up first are still working. A server admin can upgrade the plan to switch this one back on, or delete a generator it no longer uses.",
+                                    "{reasonNotHost}": "This lobby is run by its hosts - or, when it names none, by whoever is in it.",
+                                    "{reasonAlreadySplit}": "This lobby is split already. Press **↩️ Recall** first.",
+                                    "{reasonNotSplit}": "There is nothing to call back - everyone is in the lobby.",
+                                    "{reasonNobodyToSplit}": "Nobody is in the lobby to split.",
+                                    "{reasonTooFewMembers}": "There are not enough people in the lobby for that.",
+                                    "{reasonInvalidCount}": "That is not a number of teams or a group size this lobby takes.",
+                                    "{reasonTooManyRooms}": "That would open more than **{roomsLimit}** rooms at once. Pick bigger groups.",
+                                    "{reasonMissingPermissions}": "The bot is missing **{missingPermissions}** on this lobby.",
+                                    "{reasonFailed}": "Discord refused to make a room. Try again in a moment."
+                                }
+                            },
+                            "vars": {
+                                "roomsLimit": "{roomsLimit}",
+                                "missingPermissions": "{missingPermissions}",
+                                "reason": "{reason}",
+                                "reasonNotCovered": "{reasonNotCovered}",
+                                "reasonNotHost": "{reasonNotHost}",
+                                "reasonAlreadySplit": "{reasonAlreadySplit}",
+                                "reasonNotSplit": "{reasonNotSplit}",
+                                "reasonNobodyToSplit": "{reasonNobodyToSplit}",
+                                "reasonTooFewMembers": "{reasonTooFewMembers}",
+                                "reasonInvalidCount": "{reasonInvalidCount}",
+                                "reasonTooManyRooms": "{reasonTooManyRooms}",
+                                "reasonMissingPermissions": "{reasonMissingPermissions}",
+                                "reasonFailed": "{reasonFailed}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, vars) => {\n  return {\n    reason: {\n      \"not-covered\": vars.reasonNotCovered,\n      \"not-host\": vars.reasonNotHost,\n      \"already-split\": vars.reasonAlreadySplit,\n      \"not-split\": vars.reasonNotSplit,\n      \"nobody-to-split\": vars.reasonNobodyToSplit,\n      \"too-few-members\": vars.reasonTooFewMembers,\n      \"invalid-count\": vars.reasonInvalidCount,\n      \"too-many-rooms\": vars.reasonTooManyRooms,\n      \"missing-permissions\": vars.reasonMissingPermissions,\n      failed: vars.reasonFailed\n    }[String(args?.refusalCode)] ?? vars.reasonFailed,\n    roomsLimit: String(args?.roomsLimit ?? \"\"),\n    missingPermissions: (args?.missingPermissions ?? []).join(\", \")\n  };\n}"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [
+            "VertixBot/UI-General/DeleteConfirmModal"
+        ],
+        "modalDefinitions": [
+            {
+                "name": "VertixBot/UI-General/DeleteConfirmModal",
+                "title": "Confirm deletion",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/DeleteConfirmInput",
+                        "label": "TYPE DELETE TO CONFIRM",
+                        "placeholder": "DELETE",
+                        "style": "short",
+                        "minLength": 6,
+                        "maxLength": 6
+                    }
+                ]
+            }
+        ],
+        "defaultElementsGroup": "VertixBot/UI-V3/TeamLobbySetupEditElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/TeamLobbySetupEditEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "renderAsContainer": true,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 2,
+                "withDefinition": 2,
                 "missingDefinition": 0
             }
         }

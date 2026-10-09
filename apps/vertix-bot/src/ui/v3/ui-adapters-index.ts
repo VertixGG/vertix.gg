@@ -28,3 +28,5 @@ export { DynamicChannelTemplatesCommandAdapter } from "@vertix.gg/bot/src/ui/v3/
 export { DynamicChannelTemplatesAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-adapter";
 export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-adapter";
 export { ScalingSetupEditAdapter } from "@vertix.gg/bot/src/ui/v3/scaling-setup/scaling-setup-edit-adapter";
+export { TeamLobbyAdapter } from "@vertix.gg/bot/src/ui/v3/team-lobby/team-lobby-adapter";
+export { TeamLobbySetupEditAdapter } from "@vertix.gg/bot/src/ui/v3/team-lobby-setup/team-lobby-setup-edit-adapter";

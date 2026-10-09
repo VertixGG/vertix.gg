@@ -274,3 +274,224 @@ describe( "VertixBot/Services/ChannelCleanup/dynamic generator", () => {
         expect( categoriesSwept ).toEqual( [ "category-1" ] );
     } );
 } );
+
+const LOBBY_ROW_ID = "lobby-row-1",
+    LOBBY_CHANNEL_ID = "840000000000000002",
+    PANEL_CHANNEL_ID = "870000000000000002";
+
+interface ILobbyWorld {
+    guildExists: boolean;
+    /** The category the lobby's split is open in, or null while it is not split. */
+    sessionCategoryId: string | null;
+    /** Whether the row asked for is a lobby, rather than a generator of another kind. */
+    isLobby: boolean;
+    /** Rows the database holds for the lobby's rooms. */
+    roomRows: string[];
+    /** Of those, the ones discord still has. */
+    liveInDiscord: string[];
+    /** Whether discord still has the lobby's panel channel - it can be deleted by hand. */
+    isPanelChannelLive: boolean;
+}
+
+/**
+ * Stands up the cleanup with a team lobby and whatever rooms the world says it is split into, keeping
+ * what was deleted - in discord and in the database - in the order it went.
+ */
+async function makeLobbyCleanup( world: Partial<ILobbyWorld> = {} ) {
+    await TestWithServiceLocatorMock.withUIServiceMock();
+
+    const settled: ILobbyWorld = {
+        guildExists: true,
+        sessionCategoryId: null,
+        isLobby: true,
+        roomRows: [],
+        liveInDiscord: [],
+        isPanelChannelLive: true,
+        ... world
+    };
+
+    const deleted: string[] = [],
+        categoriesSwept: Array<string | null> = [];
+
+    const { ChannelUtils } = await import( "@vertix.gg/bot/src/utils/channel-utils" );
+    const { ChannelModel } = await import( "@vertix.gg/data/src/models/channel/channel-model" );
+    const { LobbyChannelDataModel } = await import( "@vertix.gg/data/src/models/master-channel/lobby-channel-data-model" );
+    const { ChannelCleanupService } = await import( "@vertix.gg/bot/src/services/channel-cleanup-service" );
+
+    const asInstance = <T>( fake: object ): T => fake as T;
+    const asNullable = <T>( fake: object | null ): T => fake as T;
+
+    const sessionCategoriesDeleted: Array<{ id: string; closed: readonly string[] }> = [];
+
+    const lobby = {
+        id: LOBBY_CHANNEL_ID,
+        name: "🎮 Team Lobby",
+        parent: { id: "lobby-category" } as object | null,
+        isVoiceBased: () => true,
+        delete: async() => {
+            deleted.push( `discord:${ LOBBY_CHANNEL_ID }` );
+            lobby.parent = null;
+        }
+    };
+
+    const guild = {
+        id: GUILD_ID,
+        name: "Guild",
+        memberCount: 10,
+        channels: {
+            cache: new Map(
+                [ ... settled.liveInDiscord, ... ( settled.sessionCategoryId ? [ settled.sessionCategoryId ] : [] ) ]
+                    .map( ( id ) => [ id, { id, isThread: () => false } ] )
+            )
+        }
+    };
+
+    jest.spyOn( ChannelUtils, "cacheOrFetchGuild" )
+        .mockImplementation( async() => asNullable( settled.guildExists ? guild : null ) );
+
+    const panelChannel = { id: PANEL_CHANNEL_ID, isThread: () => false };
+
+    jest.spyOn( ChannelUtils, "cacheOrFetchChannel" ).mockImplementation( async( _guild, channelId ) => {
+        if ( PANEL_CHANNEL_ID === channelId ) {
+            return asNullable( settled.isPanelChannelLive ? panelChannel : null );
+        }
+
+        return asInstance( lobby );
+    } );
+
+    jest.spyOn( ChannelUtils, "cleanupEmptyCategoryIfNeeded" ).mockImplementation( async( parent ) => {
+        categoriesSwept.push( ( parent as { id?: string } | null )?.id ?? null );
+
+        return true;
+    } );
+
+    jest.spyOn( ChannelUtils, "deleteCategoryUnlessUsed" ).mockImplementation( async( category, _guild, closed ) => {
+        sessionCategoriesDeleted.push( { id: ( category as { id: string } ).id, closed } );
+
+        return true;
+    } );
+
+    jest.spyOn( LobbyChannelDataModel, "$", "get" ).mockReturnValue( asInstance( {
+        getLobbySettings: async() => ( {
+            lobbySessionCategoryId: settled.sessionCategoryId,
+            lobbyPanelChannelId: PANEL_CHANNEL_ID
+        } )
+    } ) );
+
+    jest.spyOn( ChannelModel, "$", "get" ).mockReturnValue( asInstance( {
+        getById: async() => ( { id: LOBBY_ROW_ID, channelId: LOBBY_CHANNEL_ID, isLobbyMaster: settled.isLobby } ),
+        getLobbyRoomsByLobbyId: async() => settled.roomRows.map( ( channelId ) => ( { channelId } ) ),
+        delete: async( where: { channelId?: string; id?: string } ) => {
+            deleted.push( `row:${ where.channelId ?? where.id }` );
+        }
+    } ) );
+
+    const service = Object.create( ChannelCleanupService.prototype ) as {
+        deleteLobbyMasterChannelWithCleanup( args: { guildId: string; masterChannelId: string } ): Promise<boolean>;
+    };
+
+    Object.assign( service, {
+        logger: { log: () => undefined, info: () => undefined, error: () => undefined, admin: () => undefined },
+        services: {
+            channelService: {
+                delete: async( args: { channel: { id: string } } ) => {
+                    deleted.push( `channel:${ args.channel.id }` );
+                }
+            }
+        }
+    } );
+
+    return {
+        deleted,
+        categoriesSwept,
+        sessionCategoriesDeleted,
+        run: () => service.deleteLobbyMasterChannelWithCleanup( { guildId: GUILD_ID, masterChannelId: LOBBY_ROW_ID } )
+    };
+}
+
+/**
+ * Taking a team lobby down, and the rooms it is split into.
+ */
+describe( "VertixBot/Services/ChannelCleanup/team lobby", () => {
+    afterEach( () => {
+        jest.restoreAllMocks();
+    } );
+
+    it( "should close its rooms and its panel channel, then forget the lobby before deleting it, and sweep its category", async() => {
+        // Arrange - one room discord still has, one it already lost.
+        const { run, deleted, categoriesSwept } = await makeLobbyCleanup( {
+            roomRows: [ "room-a", "room-b" ],
+            liveInDiscord: [ "room-a" ]
+        } );
+
+        // Act.
+        const result = await run();
+
+        // Assert - the row before the channel, so the delete discord announces back finds nothing left.
+        expect( result ).toBe( true );
+        expect( deleted ).toEqual( [
+            "channel:room-a",
+            "row:room-b",
+            `channel:${ PANEL_CHANNEL_ID }`,
+            `row:${ LOBBY_ROW_ID }`,
+            `discord:${ LOBBY_CHANNEL_ID }`
+        ] );
+        expect( categoriesSwept ).toEqual( [ "lobby-category" ] );
+    } );
+
+    it( "should still delete a lobby whose panel channel was already deleted by hand", async() => {
+        // Arrange.
+        const { run, deleted } = await makeLobbyCleanup( { isPanelChannelLive: false } );
+
+        // Act.
+        const result = await run();
+
+        // Assert.
+        expect( result ).toBe( true );
+        expect( deleted ).toEqual( [ `row:${ LOBBY_ROW_ID }`, `discord:${ LOBBY_CHANNEL_ID }` ] );
+    } );
+
+    it( "should take down the category its split is open in, with the rooms that were in it", async() => {
+        // Arrange.
+        const { run, sessionCategoriesDeleted } = await makeLobbyCleanup( {
+            sessionCategoryId: "session-1",
+            roomRows: [ "room-a", "room-b" ],
+            liveInDiscord: [ "room-a" ]
+        } );
+
+        // Act.
+        await run();
+
+        // Assert.
+        expect( sessionCategoriesDeleted ).toEqual( [ { id: "session-1", closed: [ "room-a", "room-b" ] } ] );
+    } );
+
+    it( "should leave every other category alone while the lobby is not split", async() => {
+        // Arrange.
+        const { run, sessionCategoriesDeleted } = await makeLobbyCleanup();
+
+        // Act.
+        await run();
+
+        // Assert.
+        expect( sessionCategoriesDeleted ).toEqual( [] );
+    } );
+
+    it( "should refuse a row that is not a lobby, and touch nothing", async() => {
+        // Act.
+        const { run, deleted } = await makeLobbyCleanup( { isLobby: false, roomRows: [ "room-a" ] } );
+
+        // Assert.
+        await expect( run() ).resolves.toBe( false );
+        expect( deleted ).toEqual( [] );
+    } );
+
+    it( "should refuse a guild it can no longer reach", async() => {
+        // Act.
+        const { run, deleted } = await makeLobbyCleanup( { guildExists: false } );
+
+        // Assert.
+        await expect( run() ).resolves.toBe( false );
+        expect( deleted ).toEqual( [] );
+    } );
+} );

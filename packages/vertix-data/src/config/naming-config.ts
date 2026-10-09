@@ -40,7 +40,16 @@ export class NamingConfig extends ConfigBase<NamingConfigInterface> {
                 "Please be advised that the privilege to make alterations is vested solely of the channel owner.",
 
             scalingChannelsCategoryName: "༄ Auto Scaling Channels",
-            scalingChannelGeneratorName: "⤢⤡ Join free channels"
+            scalingChannelGeneratorName: "⤢⤡ Join free channels",
+
+            lobbyChannelsCategoryName: "༄ Team Lobby",
+            lobbyChannelName: "🎮 Team Lobby",
+            lobbyControlPanelName: "🎮・lobby-panel",
+            lobbySessionCategoryName: "↳ {lobby}",
+
+            lobbyTeamRoomName: "{color} Team {index}",
+            lobbyTeamRoomColors: [ "🔴", "🔵", "🟢", "🟡", "🟣", "🟠", "⚪", "🟤" ],
+            lobbyGroupRoomName: "👥 Group {index}"
         };
     }
 }

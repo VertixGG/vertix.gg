@@ -33,6 +33,7 @@ const STORED_KEY_PREFIXES: Readonly<Record<string, string>> = {
     DynamicChannelStatusModel: "VertixData/Models/DynamicChannelStatus",
     DynamicChannelVoteStateModel: "VertixData/Models/DynamicChannelVoteState",
     GuildDataModel: "VertixData/Models/GuildDataV3",
+    LobbyChannelDataModel: "VertixData/Models/LobbyChannelData",
     MasterChannelDataModel: "VertixData/Models/MasterChannelDataModel",
     MasterChannelDataModelV3: "VertixData/Models/MasterChannelDataV3",
     ScalingChannelDataModel: "VertixData/Models/ScalingChannelData",

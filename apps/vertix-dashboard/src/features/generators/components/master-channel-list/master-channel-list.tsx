@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { useCommandState, useComponent } from "@zenflux/react-commander/hooks";
 
-import { Search, X, Layers, Radio } from "lucide-react";
+import { Search, X, Layers, Radio, Gamepad2 } from "lucide-react";
 
 import { isV2Version } from "@vertix.gg/definitions/src/button-ids";
 
@@ -17,12 +17,14 @@ import type { MasterChannelListState } from "@vertix.gg/dashboard/src/features/g
 import type {
     ScalingMasterChannelInfo,
     DynamicMasterChannelInfo,
+    LobbyMasterChannelInfo,
     MasterChannelType
 } from "@vertix.gg/dashboard/src/features/generators/types";
 
 export interface MasterChannelListProps {
     scalingMasters: ScalingMasterChannelInfo[];
     dynamicMasters: DynamicMasterChannelInfo[];
+    lobbyMasters: LobbyMasterChannelInfo[];
     selectedId: string | null;
     onSelect: ( id: string, type: MasterChannelType ) => void;
 }
@@ -32,6 +34,8 @@ interface ChannelGroup {
     type: MasterChannelType;
     color: string;
     icon: typeof Layers;
+    /** What each item's count is a count of. */
+    unit: string;
     items: Array<{
         id: string;
         channelId: string;
@@ -43,6 +47,7 @@ interface ChannelGroup {
 const MasterChannelListComponent: DCommandFunctionComponent<MasterChannelListProps, MasterChannelListState> = ( {
     scalingMasters,
     dynamicMasters,
+    lobbyMasters,
     selectedId,
     onSelect
 } ) => {
@@ -62,6 +67,7 @@ const MasterChannelListComponent: DCommandFunctionComponent<MasterChannelListPro
                 type: "scaling" as MasterChannelType,
                 color: "var(--color-success)",
                 icon: Layers,
+                unit: "scaling",
                 items: scalingMasters.map( ( m ) => ( {
                     id: m.id,
                     channelId: m.channelId,
@@ -73,15 +79,28 @@ const MasterChannelListComponent: DCommandFunctionComponent<MasterChannelListPro
                 type: "dynamic" as MasterChannelType,
                 color: "var(--color-accent)",
                 icon: Radio,
+                unit: "dynamic",
                 items: dynamicMasters.map( ( m ) => ( {
                     id: m.id,
                     channelId: m.channelId,
                     childCount: m.dynamicChannelsCount,
                     version: m.version
                 } ) )
+            },
+            {
+                label: "Team Lobby",
+                type: "lobby" as MasterChannelType,
+                color: "var(--color-warning)",
+                icon: Gamepad2,
+                unit: "rooms",
+                items: lobbyMasters.map( ( m ) => ( {
+                    id: m.id,
+                    channelId: m.channelId,
+                    childCount: m.lobbyRoomsCount
+                } ) )
             }
         ].filter( ( group ) => group.items.length > 0 );
-    }, [ scalingMasters, dynamicMasters ] );
+    }, [ scalingMasters, dynamicMasters, lobbyMasters ] );
 
     const filteredGroups = useMemo( () => {
         if ( !state.searchTerm.trim() ) {
@@ -101,7 +120,7 @@ const MasterChannelListComponent: DCommandFunctionComponent<MasterChannelListPro
             .filter( ( group ) => group.items.length > 0 );
     }, [ channelGroups, state.searchTerm ] );
 
-    const totalChannels = scalingMasters.length + dynamicMasters.length;
+    const totalChannels = scalingMasters.length + dynamicMasters.length + lobbyMasters.length;
 
     const handleSearchChange = ( value: string ) => {
         listCommands.run( "Dashboard/Generators/MasterChannelList/SetSearchTerm", { value } );
@@ -188,7 +207,7 @@ const MasterChannelListComponent: DCommandFunctionComponent<MasterChannelListPro
                                             ) }
                                         </div>
                                         <span className="text-xs text-text-muted ml-2 flex-shrink-0">
-                                            { item.childCount } { group.type === "scaling" ? "scaling" : "dynamic" }
+                                            { item.childCount } { group.unit }
                                         </span>
                                     </div>
                                 </div>

@@ -535,6 +535,54 @@
         "content": {
           "label": "Άνοιγμα χρεώσεων"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+        "content": {
+          "label": "Τυχαίες ομάδες"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+        "content": {
+          "label": "Επιλογή ομάδων"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+        "content": {
+          "label": "Μικρές ομάδες"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRecallButton",
+        "content": {
+          "label": "Επιστροφή"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGuideButton",
+        "content": {
+          "label": "Πώς λειτουργεί"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+        "content": {
+          "label": "Εφαρμογή"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+        "content": {
+          "label": "Εφαρμογή"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+        "content": {
+          "label": "Εφαρμογή"
+        }
       }
     ],
     "textInputs": [
@@ -927,6 +975,10 @@
             {
               "label": "Auto-Scaling Channel",
               "value": "scaling"
+            },
+            {
+              "label": "Team Lobby",
+              "value": "lobby"
             }
           ]
         }
@@ -1602,6 +1654,146 @@
         "content": {
           "placeholder": "📅 ∙ Κανάλι εκδηλώσεων"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Μόνο αυτά τα μέλη (προαιρετικό)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+        "content": {
+          "placeholder": "🎲 ∙ Πόσες ομάδες;",
+          "selectOptions": [
+            {
+              "label": "2 ομάδες",
+              "value": "2"
+            },
+            {
+              "label": "3 ομάδες",
+              "value": "3"
+            },
+            {
+              "label": "4 ομάδες",
+              "value": "4"
+            },
+            {
+              "label": "5 ομάδες",
+              "value": "5"
+            },
+            {
+              "label": "6 ομάδες",
+              "value": "6"
+            },
+            {
+              "label": "7 ομάδες",
+              "value": "7"
+            },
+            {
+              "label": "8 ομάδες",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Μόνο αυτά τα μέλη (προαιρετικό)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+        "content": {
+          "placeholder": "🙋 ∙ Πόσες ομάδες;",
+          "selectOptions": [
+            {
+              "label": "2 ομάδες",
+              "value": "2"
+            },
+            {
+              "label": "3 ομάδες",
+              "value": "3"
+            },
+            {
+              "label": "4 ομάδες",
+              "value": "4"
+            },
+            {
+              "label": "5 ομάδες",
+              "value": "5"
+            },
+            {
+              "label": "6 ομάδες",
+              "value": "6"
+            },
+            {
+              "label": "7 ομάδες",
+              "value": "7"
+            },
+            {
+              "label": "8 ομάδες",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Μόνο αυτά τα μέλη (προαιρετικό)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+        "content": {
+          "placeholder": "👥 ∙ Πόσα άτομα ανά ομάδα;",
+          "selectOptions": [
+            {
+              "label": "Ανά 2 άτομα",
+              "value": "2"
+            },
+            {
+              "label": "Ανά 3 άτομα",
+              "value": "3"
+            },
+            {
+              "label": "Ανά 4 άτομα",
+              "value": "4"
+            },
+            {
+              "label": "Ανά 5 άτομα",
+              "value": "5"
+            },
+            {
+              "label": "Ανά 6 άτομα",
+              "value": "6"
+            },
+            {
+              "label": "Ανά 7 άτομα",
+              "value": "7"
+            },
+            {
+              "label": "Ανά 8 άτομα",
+              "value": "8"
+            },
+            {
+              "label": "Ανά 9 άτομα",
+              "value": "9"
+            },
+            {
+              "label": "Ανά 10 άτομα",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+        "content": {
+          "placeholder": "🎮 ∙ Επιλογή ρόλων οικοδεσπότη"
+        }
       }
     ]
   },
@@ -1865,7 +2057,7 @@
       "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
       "content": {
         "title": "➕  Δημιουργία γεννήτριας καναλιών",
-        "description": "Μια γεννήτρια είναι ένα φωνητικό κανάλι στο οποίο μπαίνουν τα μέλη για να αποκτήσουν δικό τους – φτιάχνεται γι' αυτά και αφαιρείται όταν φύγουν.\n\n**✨ Dynamic Channel (V3)** — η τρέχουσα διεπαφή. Διάλεξε αυτή εκτός αν έχεις λόγο να μην το κάνεις.\n**➕ Dynamic Channel (V2)** — η παλαιότερη διεπαφή, για διακομιστές που ήδη τη χρησιμοποιούν.\n**📈 Auto-Scaling Channel** — ένα κανάλι που γίνεται περισσότερα καθώς γεμίζει.\n\nΔιάλεξε παρακάτω, και τα υπόλοιπα είναι λίγες ερωτήσεις."
+        "description": "Μια γεννήτρια είναι ένα φωνητικό κανάλι στο οποίο μπαίνουν τα μέλη για να αποκτήσουν δικό τους – φτιάχνεται γι' αυτά και αφαιρείται όταν φύγουν.\n\n**✨ Dynamic Channel (V3)** — η τρέχουσα διεπαφή. Διάλεξε αυτή εκτός αν έχεις λόγο να μην το κάνεις.\n**➕ Dynamic Channel (V2)** — η παλαιότερη διεπαφή, για διακομιστές που ήδη τη χρησιμοποιούν.\n**📈 Auto-Scaling Channel** — ένα κανάλι που γίνεται περισσότερα καθώς γεμίζει.\n**🎮 Team Lobby** — ένα κανάλι όπου μαζεύονται όλοι, χωρίζονται σε δωμάτια ομάδων ή μικρές ομάδες και ξαναμαζεύονται.\n\nΔιάλεξε παρακάτω, και τα υπόλοιπα είναι λίγες ερωτήσεις."
       }
     },
     {
@@ -4259,6 +4451,133 @@
       "content": {
         "title": "⏳  Η δωρεάν δοκιμή του {planName} τελειώνει",
         "description": "Η δωρεάν δοκιμή του {planName} στο **{guildName}** λήγει <t:{endsAt}:R>, στις <t:{endsAt}:f>.\n\nΜόλις λήξει:\n- **Προσαρμοσμένη εμφάνιση bot** - το όνομα, το avatar, το banner και η περιγραφή που έχει το bot στον server σου αφαιρούνται.\n- **Γεννήτριες** - μόνο οι πρώτες {maxMasterChannels} συνεχίζουν να ανοίγουν δωμάτια.\n\nΚράτησε το {planName} με ${monthlyPriceUsd} τον μήνα από το dashboard."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "Χώρισε το lobby σε δωμάτια ομάδων ή μικρές ομάδες – και φέρε όλους πίσω με ένα πάτημα.\n👉 **Μπες στο <#{lobbyId}> για να συμμετάσχεις** – ο χωρισμός αφορά μόνο όσους είναι μέσα.\n\n🎲 **Τυχαίες ομάδες** – όλοι στο lobby μοιράζονται ισομερώς σε ομάδες και μετακινούνται.\n🙋 **Επιλογή ομάδων** – ανοίγουν δωμάτια ομάδων και ο καθένας μπαίνει σε όποιο θέλει.\n👥 **Μικρές ομάδες** – όλοι στο lobby μοιράζονται σε μικρές ομάδες με επιλεγμένο αριθμό ατόμων και μετακινούνται.\n↩️ **Επιστροφή** – όλοι πίσω στο lobby, και τα δωμάτια κλείνουν.\n\n{splitMessage}\n{hostsMessage}",
+        "options": {
+          "splitMessage": {
+            "{roomIds}": "**Χωρισμένο σε:** {roomIds}",
+            "{splitMessageDefault}": "**Δεν έχει χωριστεί** – όλοι είναι στο lobby."
+          },
+          "hostsMessage": {
+            "{hostRoleIds}": "**Οικοδεσπότες:** {hostRoleIds}",
+            "{hostsMessageDefault}": "**Οικοδεσπότες:** όποιος είναι στο lobby"
+          }
+        },
+        "arrayOptions": {
+          "roomIds": {
+            "format": "<#{value}>{separator}",
+            "separator": " · "
+          },
+          "hostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbed",
+      "content": {
+        "title": "🎲  Τυχαίες ομάδες",
+        "description": "Πόσες ομάδες; Όλοι στο lobby μοιράζονται ισομερώς και μετακινούνται στο δωμάτιο της ομάδας τους.\n\nΠαίζουν μόνο κάποιοι; Διάλεξέ τους πρώτα στο πάνω μενού, μετά τον αριθμό."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbed",
+      "content": {
+        "title": "🙋  Επιλογή ομάδων",
+        "description": "Πόσες ομάδες; Τα δωμάτιά τους ανοίγουν άδεια, το καθένα χωράει το μερίδιό του από το lobby, και ο καθένας μπαίνει σε όποιο θέλει.\n\nΠαίζουν μόνο κάποιοι; Διάλεξέ τους πρώτα στο πάνω μενού, μετά τον αριθμό – τα δωμάτια ανοίγουν μόνο για αυτούς."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyGroupsEmbed",
+      "content": {
+        "title": "👥  Μικρές ομάδες",
+        "description": "Πόσα άτομα ανά ομάδα; Όλοι στο lobby μοιράζονται σε δωμάτια αυτού του μεγέθους και μετακινούνται.\n\nΣυμμετέχουν μόνο κάποιοι; Διάλεξέ τους πρώτα στο πάνω μενού, μετά το μέγεθος."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+      "content": {
+        "description": "{playersMessage}\n{applyMessage}",
+        "options": {
+          "playersMessage": {
+            "{players}": "**Παίζουν:** {players}",
+            "{playersMessageDefault}": "**Παίζουν:** όλοι στο lobby"
+          },
+          "applyMessage": {
+            "{applyMessageWaiting}": "-# ❌ Δεν είναι ακόμα στο lobby ή είναι bot – το Εφαρμογή περιμένει να είναι όλοι οι επιλεγμένοι στο lobby.",
+            "{applyMessageNoCount}": "-# Διάλεξε τον αριθμό, μετά Εφαρμογή.",
+            "{applyMessageNobody}": "-# ❌ Δεν υπάρχει ακόμα κανείς στο lobby για να χωριστεί.",
+            "{applyMessageTooFew}": "-# ❌ Δεν υπάρχουν αρκετά άτομα στο lobby γι' αυτό – διάλεξε μικρότερο αριθμό ή περίμενε να μπουν κι άλλοι.",
+            "{applyMessageTooManyRooms}": "-# ❌ Αυτό θα άνοιγε πάνω από {roomsLimit} δωμάτια – διάλεξε μεγαλύτερες ομάδες.",
+            "{applyMessageReady}": "-# Έτοιμο – το Εφαρμογή χωρίζει το lobby."
+          }
+        },
+        "arrayOptions": {
+          "players": {
+            "format": "{value}{separator}",
+            "separator": " · "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySplitEmbed",
+      "content": {
+        "title": "🎮  Χωρίστηκε",
+        "description": "{splitResult}\n\nΠάτα **↩️ Επιστροφή** στο πάνελ για να φέρεις όλους πίσω.",
+        "options": {
+          "splitResult": {
+            "{splitDealt}": "Άνοιξαν **{roomsCount}** δωμάτια και μετακινήθηκαν **{moved}** μέλη σε αυτά.",
+            "{splitPicked}": "Άνοιξαν **{roomsCount}** δωμάτια ομάδων – ο καθένας μπαίνει σε όποιο θέλει."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRefusedEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotCovered}": "Αυτός ο διακομιστής έχει περισσότερες γεννήτριες από όσες επιτρέπει το πρόγραμμά του – ένα lobby μετράει ως μία – και αυτό το lobby είναι ένα από τα επιπλέον, γι' αυτό δεν χωρίζεται αυτή τη στιγμή. Το **↩️ Επιστροφή** λειτουργεί κανονικά.\n\nΌσα δημιουργήθηκαν πρώτα εξακολουθούν να λειτουργούν. Ένας διαχειριστής μπορεί να αναβαθμίσει το πρόγραμμα για να το ενεργοποιήσει ξανά, ή να διαγράψει μια γεννήτρια που δεν χρησιμοποιείται.",
+            "{reasonNotHost}": "Αυτό το lobby το διαχειρίζονται οι οικοδεσπότες του – ή, αν δεν ορίζει κανέναν, όποιος βρίσκεται μέσα.",
+            "{reasonAlreadySplit}": "Αυτό το lobby έχει ήδη χωριστεί. Πάτα πρώτα **↩️ Επιστροφή**.",
+            "{reasonNotSplit}": "Δεν υπάρχει κάτι να επιστρέψει – όλοι είναι στο lobby.",
+            "{reasonNobodyToSplit}": "Δεν υπάρχει κανείς στο lobby για να χωριστεί.",
+            "{reasonTooFewMembers}": "Δεν υπάρχουν αρκετά άτομα στο lobby γι' αυτό.",
+            "{reasonInvalidCount}": "Αυτός δεν είναι αριθμός ομάδων ή μέγεθος ομάδας που δέχεται αυτό το lobby.",
+            "{reasonTooManyRooms}": "Αυτό θα άνοιγε πάνω από **{roomsLimit}** δωμάτια ταυτόχρονα. Διάλεξε μεγαλύτερες ομάδες.",
+            "{reasonMissingPermissions}": "Στο bot λείπει **{missingPermissions}** σε αυτό το lobby.",
+            "{reasonFailed}": "Το Discord αρνήθηκε να δημιουργήσει δωμάτιο. Δοκίμασε ξανά σε λίγο."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySetupEditEmbed",
+      "content": {
+        "title": "🎮  Team Lobby #{lobbyIndex}",
+        "description": "Ένα φωνητικό κανάλι όπου μαζεύονται όλοι, χωρίζονται σε δωμάτια ομάδων ή μικρές ομάδες και ξαναμαζεύονται.\n\n➤ ∙ Lobby: <#{lobbyChannelId}>\n➤ ∙ ID καναλιού: `{lobbyChannelId}`\n➤ ∙ {hostsMessage}\n\nΔιάλεξε τους ρόλους που διαχειρίζονται αυτό το lobby. Χωρίς ρόλους, όποιος είναι μέσα μπορεί να το χωρίσει και να φέρει όλους πίσω. Οι διαχειριστές μπορούν πάντα.",
+        "options": {
+          "hostsMessage": {
+            "{lobbyHostRoleIds}": "Οικοδεσπότες: {lobbyHostRoleIds}",
+            "{hostsMessageDefault}": "Οικοδεσπότες: όποιος είναι στο lobby"
+          }
+        },
+        "arrayOptions": {
+          "lobbyHostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
       }
     }
   ],

@@ -535,6 +535,54 @@
         "content": {
           "label": "Открыть оплату"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+        "content": {
+          "label": "Случайные команды"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+        "content": {
+          "label": "Выбор команд"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+        "content": {
+          "label": "Группы"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRecallButton",
+        "content": {
+          "label": "Вернуть всех"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGuideButton",
+        "content": {
+          "label": "Как это работает"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+        "content": {
+          "label": "Применить"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+        "content": {
+          "label": "Применить"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+        "content": {
+          "label": "Применить"
+        }
       }
     ],
     "textInputs": [
@@ -927,6 +975,10 @@
             {
               "label": "Auto-Scaling Channel",
               "value": "scaling"
+            },
+            {
+              "label": "Team Lobby",
+              "value": "lobby"
             }
           ]
         }
@@ -1602,6 +1654,146 @@
         "content": {
           "placeholder": "📅 ∙ Канал событий"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Только эти участники (необязательно)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+        "content": {
+          "placeholder": "🎲 ∙ Сколько команд?",
+          "selectOptions": [
+            {
+              "label": "2 команды",
+              "value": "2"
+            },
+            {
+              "label": "3 команды",
+              "value": "3"
+            },
+            {
+              "label": "4 команды",
+              "value": "4"
+            },
+            {
+              "label": "5 команд",
+              "value": "5"
+            },
+            {
+              "label": "6 команд",
+              "value": "6"
+            },
+            {
+              "label": "7 команд",
+              "value": "7"
+            },
+            {
+              "label": "8 команд",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Только эти участники (необязательно)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+        "content": {
+          "placeholder": "🙋 ∙ Сколько команд?",
+          "selectOptions": [
+            {
+              "label": "2 команды",
+              "value": "2"
+            },
+            {
+              "label": "3 команды",
+              "value": "3"
+            },
+            {
+              "label": "4 команды",
+              "value": "4"
+            },
+            {
+              "label": "5 команд",
+              "value": "5"
+            },
+            {
+              "label": "6 команд",
+              "value": "6"
+            },
+            {
+              "label": "7 команд",
+              "value": "7"
+            },
+            {
+              "label": "8 команд",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ Только эти участники (необязательно)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+        "content": {
+          "placeholder": "👥 ∙ Сколько человек в группе?",
+          "selectOptions": [
+            {
+              "label": "Группы по 2",
+              "value": "2"
+            },
+            {
+              "label": "Группы по 3",
+              "value": "3"
+            },
+            {
+              "label": "Группы по 4",
+              "value": "4"
+            },
+            {
+              "label": "Группы по 5",
+              "value": "5"
+            },
+            {
+              "label": "Группы по 6",
+              "value": "6"
+            },
+            {
+              "label": "Группы по 7",
+              "value": "7"
+            },
+            {
+              "label": "Группы по 8",
+              "value": "8"
+            },
+            {
+              "label": "Группы по 9",
+              "value": "9"
+            },
+            {
+              "label": "Группы по 10",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+        "content": {
+          "placeholder": "🎮 ∙ Выберите роли ведущих"
+        }
       }
     ]
   },
@@ -1865,7 +2057,7 @@
       "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
       "content": {
         "title": "➕  Создать генератор каналов",
-        "description": "Генератор — это голосовой канал, при входе в который участник получает собственный канал: он создаётся для него и удаляется, когда он выходит.\n\n**✨ Dynamic Channel (V3)** — текущий интерфейс. Выбирайте его, если нет причин поступить иначе.\n**➕ Dynamic Channel (V2)** — старый интерфейс, для серверов, которые уже его используют.\n**📈 Auto-Scaling Channel** — один канал, который разрастается в несколько по мере заполнения.\n\nВыберите ниже — дальше всего несколько вопросов."
+        "description": "Генератор — это голосовой канал, при входе в который участник получает собственный канал: он создаётся для него и удаляется, когда он выходит.\n\n**✨ Dynamic Channel (V3)** — текущий интерфейс. Выбирайте его, если нет причин поступить иначе.\n**➕ Dynamic Channel (V2)** — старый интерфейс, для серверов, которые уже его используют.\n**📈 Auto-Scaling Channel** — один канал, который разрастается в несколько по мере заполнения.\n**🎮 Team Lobby** — один канал, где все собираются, делятся на командные комнаты или группы и возвращаются обратно.\n\nВыберите ниже — дальше всего несколько вопросов."
       }
     },
     {
@@ -4259,6 +4451,133 @@
       "content": {
         "title": "⏳  Бесплатный пробный период {planName} заканчивается",
         "description": "Бесплатный пробный период {planName} на сервере **{guildName}** закончится <t:{endsAt}:R>, <t:{endsAt}:f>.\n\nПосле этого:\n- **Свой облик бота** - имя, аватар, баннер и описание, которые бот носит на вашем сервере, будут сняты.\n- **Генераторы** - создавать комнаты продолжат только первые {maxMasterChannels}.\n\nСохраните {planName} за ${monthlyPriceUsd} в месяц в дашборде."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "Делите лобби на командные комнаты или небольшие группы — и возвращайте всех одним нажатием.\n👉 **Зайдите в <#{lobbyId}>, чтобы участвовать** — разделяются только те, кто в нём.\n\n🎲 **Случайные команды** — все в лобби поровну распределяются по командам и перемещаются.\n🙋 **Выбор команд** — открываются комнаты команд, и каждый заходит в нужную.\n👥 **Группы** — все в лобби распределяются по небольшим группам выбранного размера и перемещаются.\n↩️ **Вернуть всех** — все возвращаются в лобби, а комнаты закрываются.\n\n{splitMessage}\n{hostsMessage}",
+        "options": {
+          "splitMessage": {
+            "{roomIds}": "**Разделено на:** {roomIds}",
+            "{splitMessageDefault}": "**Не разделено** — все в лобби."
+          },
+          "hostsMessage": {
+            "{hostRoleIds}": "**Ведущие:** {hostRoleIds}",
+            "{hostsMessageDefault}": "**Ведущие:** любой в лобби"
+          }
+        },
+        "arrayOptions": {
+          "roomIds": {
+            "format": "<#{value}>{separator}",
+            "separator": " · "
+          },
+          "hostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbed",
+      "content": {
+        "title": "🎲  Случайные команды",
+        "description": "Сколько команд? Все в лобби поровну распределяются по командам и перемещаются в комнату своей команды.\n\nИграют не все? Сначала выберите участников в верхнем меню, затем число."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbed",
+      "content": {
+        "title": "🙋  Выбор команд",
+        "description": "Сколько команд? Их комнаты открываются пустыми, каждая вмещает свою долю лобби, и каждый заходит в нужную.\n\nИграют не все? Сначала выберите участников в верхнем меню, затем число — комнаты откроются только для них."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyGroupsEmbed",
+      "content": {
+        "title": "👥  Группы",
+        "description": "Сколько человек в группе? Все в лобби распределяются по комнатам такого размера и перемещаются.\n\nУчаствуют не все? Сначала выберите участников в верхнем меню, затем размер."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+      "content": {
+        "description": "{playersMessage}\n{applyMessage}",
+        "options": {
+          "playersMessage": {
+            "{players}": "**Играют:** {players}",
+            "{playersMessageDefault}": "**Играют:** все в лобби"
+          },
+          "applyMessage": {
+            "{applyMessageWaiting}": "-# ❌ Ещё не в лобби или это бот — Применить ждёт, пока все выбранные будут в лобби.",
+            "{applyMessageNoCount}": "-# Выберите число, затем Применить.",
+            "{applyMessageNobody}": "-# ❌ В лобби пока никого нет, чтобы разделить.",
+            "{applyMessageTooFew}": "-# ❌ Недостаточно людей в лобби для этого — выберите число меньше или подождите, пока зайдут другие.",
+            "{applyMessageTooManyRooms}": "-# ❌ Это откроет больше {roomsLimit} комнат — выберите группы побольше.",
+            "{applyMessageReady}": "-# Готово — Применить разделит лобби."
+          }
+        },
+        "arrayOptions": {
+          "players": {
+            "format": "{value}{separator}",
+            "separator": " · "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySplitEmbed",
+      "content": {
+        "title": "🎮  Разделено",
+        "description": "{splitResult}\n\nНажмите **↩️ Вернуть всех** на панели, чтобы вернуть всех.",
+        "options": {
+          "splitResult": {
+            "{splitDealt}": "Открыто комнат: **{roomsCount}**, перемещено участников: **{moved}**.",
+            "{splitPicked}": "Открыто командных комнат: **{roomsCount}** — каждый заходит в нужную."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRefusedEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotCovered}": "На этом сервере больше генераторов, чем позволяет его тариф (лобби считается одним из них), и это лобби — одно из лишних, поэтому сейчас оно не делится. **↩️ Вернуть всех** продолжает работать.\n\nСозданные первыми продолжают работать. Администратор сервера может повысить тариф, чтобы снова включить это лобби, или удалить генератор, который больше не нужен.",
+            "{reasonNotHost}": "Этим лобби управляют его ведущие — а если они не назначены, то любой, кто в нём находится.",
+            "{reasonAlreadySplit}": "Это лобби уже разделено. Сначала нажмите **↩️ Вернуть всех**.",
+            "{reasonNotSplit}": "Возвращать некого — все уже в лобби.",
+            "{reasonNobodyToSplit}": "В лобби нет никого, кого можно разделить.",
+            "{reasonTooFewMembers}": "Для этого в лобби недостаточно людей.",
+            "{reasonInvalidCount}": "Такое число команд или размер группы это лобби не поддерживает.",
+            "{reasonTooManyRooms}": "Так откроется больше **{roomsLimit}** комнат сразу. Выберите группы побольше.",
+            "{reasonMissingPermissions}": "Боту не хватает **{missingPermissions}** в этом лобби.",
+            "{reasonFailed}": "Discord отказался создать комнату. Попробуйте ещё раз через минуту."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySetupEditEmbed",
+      "content": {
+        "title": "🎮  Team Lobby #{lobbyIndex}",
+        "description": "Голосовой канал, где все собираются, делятся на командные комнаты или группы и возвращаются обратно.\n\n➤ ∙ Лобби: <#{lobbyChannelId}>\n➤ ∙ ID канала: `{lobbyChannelId}`\n➤ ∙ {hostsMessage}\n\nВыберите роли, которые управляют этим лобби. Без них разделить лобби и вернуть всех может любой, кто в нём находится. Администраторы могут всегда.",
+        "options": {
+          "hostsMessage": {
+            "{lobbyHostRoleIds}": "Ведущие: {lobbyHostRoleIds}",
+            "{hostsMessageDefault}": "Ведущие: любой в лобби"
+          }
+        },
+        "arrayOptions": {
+          "lobbyHostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
       }
     }
   ],

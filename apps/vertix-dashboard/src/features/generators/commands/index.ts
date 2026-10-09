@@ -13,6 +13,8 @@ import { TriggerCleanupCommand } from "./trigger-cleanup-command";
 import { DeleteScalingSetupCommand } from "./delete-scaling-setup-command";
 import { UpdateDynamicSettingsCommand } from "./update-dynamic-settings-command";
 import { DeleteDynamicSetupCommand } from "./delete-dynamic-setup-command";
+import { CreateLobbySetupCommand } from "./create-lobby-setup-command";
+import { DeleteLobbySetupCommand } from "./delete-lobby-setup-command";
 import { ClearErrorCommand } from "./clear-error-command";
 import { ShowCreateModalCommand } from "./show-create-modal-command";
 import { HideCreateModalCommand } from "./hide-create-modal-command";
@@ -37,6 +39,8 @@ export {
     DeleteScalingSetupCommand,
     UpdateDynamicSettingsCommand,
     DeleteDynamicSetupCommand,
+    CreateLobbySetupCommand,
+    DeleteLobbySetupCommand,
     ClearErrorCommand,
     ShowCreateModalCommand,
     HideCreateModalCommand
@@ -139,6 +143,8 @@ export const GENERATORS_COMMANDS: DCommandNewInstanceWithArgs<GeneratorsState>[]
     DeleteScalingSetupCommand,
     UpdateDynamicSettingsCommand,
     DeleteDynamicSetupCommand,
+    CreateLobbySetupCommand,
+    DeleteLobbySetupCommand,
     ClearErrorCommand,
     ShowCreateModalCommand,
     HideCreateModalCommand

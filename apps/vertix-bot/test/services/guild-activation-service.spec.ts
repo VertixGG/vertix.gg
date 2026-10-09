@@ -122,6 +122,20 @@ describe( "VertixBot/Services/GuildActivation", () => {
         expect( members.markPresent ).not.toHaveBeenCalled();
     } );
 
+    it( "should record a team lobby as the server setting the bot up, and not count the rooms it splits into", async() => {
+        // Arrange.
+        const { service, model, members } = await makeService();
+
+        // Act.
+        await service.record( GUILD_ID, "MASTER_LOBBY_CHANNEL" );
+        await service.record( GUILD_ID, "LOBBY_ROOM_CHANNEL", "lobby-discord-id", OWNER_ID );
+
+        // Assert - a split's rooms are opened by a host for a group, not made by a member for themselves.
+        expect( model.markSetup ).toHaveBeenCalledTimes( 1 );
+        expect( model.markRoomCreated ).not.toHaveBeenCalled();
+        expect( members.markPresent ).not.toHaveBeenCalled();
+    } );
+
     describe( "members in rooms", () => {
         it( "should note the member a room was made for as soon as it is made", async() => {
             // Arrange - they are moved in before the room's row is written, so their join cannot be

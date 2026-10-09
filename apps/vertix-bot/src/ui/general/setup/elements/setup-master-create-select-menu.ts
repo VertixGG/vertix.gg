@@ -7,6 +7,7 @@ import type { APISelectMenuOption } from "discord.js";
 export const MASTER_CHANNEL_TYPE_V2 = "v2";
 export const MASTER_CHANNEL_TYPE_V3 = "v3";
 export const MASTER_CHANNEL_TYPE_SCALING = "scaling";
+export const MASTER_CHANNEL_TYPE_LOBBY = "lobby";
 
 export class SetupMasterCreateSelectMenu extends UIElementStringSelectMenu {
     public static getName() {
@@ -48,6 +49,12 @@ export class SetupMasterCreateSelectMenu extends UIElementStringSelectMenu {
                 value: MASTER_CHANNEL_TYPE_SCALING,
                 emoji: { name: "📈" },
                 description: "Automatically scales based on member count"
+            },
+            {
+                label: "Team Lobby",
+                value: MASTER_CHANNEL_TYPE_LOBBY,
+                emoji: { name: "🎮" },
+                description: "Split one channel into team rooms or groups"
             }
         ];
     }

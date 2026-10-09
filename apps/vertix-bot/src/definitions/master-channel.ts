@@ -189,3 +189,23 @@ export const DEFAULT_SETUP_PERMISSIONS = [
     PermissionsBitField.Flags.ManageChannels,
     PermissionsBitField.Flags.ManageRoles
 ];
+
+/**
+ * What nobody may do in a control panel's channel - a generator's, or a team lobby's. The channel is
+ * the bot's to write in and everybody else's to press buttons in, so the audience reads and no more.
+ */
+export const DEFAULT_CONTROL_PANEL_DENY_PERMISSIONS =
+    Flags.SendMessages |
+    Flags.SendMessagesInThreads |
+    Flags.CreatePublicThreads |
+    Flags.CreatePrivateThreads |
+    Flags.AddReactions |
+    Flags.EmbedLinks |
+    Flags.AttachFiles |
+    Flags.UseExternalEmojis |
+    Flags.UseExternalStickers |
+    Flags.ManageMessages |
+    Flags.ManageThreads |
+    Flags.SendTTSMessages |
+    Flags.SendVoiceMessages |
+    Flags.SendPolls;

@@ -18,9 +18,11 @@ const SetupServerOptionsEmbed = new EmbedBuilder( "VertixBot/UI-General/SetupSer
     .setTitle( "⚙️  Server settings" )
     .setDescription(
         "Settings that belong to the whole server rather than to one generator.\n\n" +
-        "**Voice Role** — given to members while they are in a dynamic channel.\n" +
+        "**Voice Role** — given to members while they are in a dynamic channel, an auto-scaling channel or " +
+        "a team lobby.\n" +
         "**Verified Roles** — who dynamic channels are for.\n" +
-        "**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n" +
+        "**Staff Roles** — who no channel can shut out, and no owner can block or kick. A team lobby's rooms " +
+        "let them in too.\n" +
         "**Bad Words** — words a member cannot put in a channel name.\n" +
         "**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\n" +
         "Pick one to change it."
@@ -33,11 +35,12 @@ const SetupServerOptionsRolesEmbed = new EmbedBuilder( "VertixBot/UI-General/Set
     .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( "🛡️  Server roles" )
     .setDescription(
-        "Which roles this server's dynamic channels answer to.\n\n" +
-        "**Voice Role** — given to members while they are in a dynamic channel, and taken back when " +
-        "they leave.\n" +
-        "**Verified Roles** — who the channels are for. Everyone else is kept out.\n" +
-        "**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n\n" +
+        "Which roles this server's dynamic channels, auto-scaling channels and team lobbies answer to.\n\n" +
+        "**Voice Role** — given to members while they are in a dynamic channel, an auto-scaling channel or " +
+        "a team lobby, and taken back when they leave.\n" +
+        "**Verified Roles** — who a generator's channels are for. Everyone else is kept out.\n" +
+        "**Staff Roles** — who no channel can shut out, and no owner can block or kick. A team lobby's rooms " +
+        "let them in too.\n\n" +
         "Pick one to change it."
     )
     .build();

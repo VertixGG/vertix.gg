@@ -553,7 +553,7 @@
                                         "label": "Voice Role",
                                         "value": "editVoiceRole",
                                         "emoji": "🎙️",
-                                        "description": "The role given to members while they are in a dynamic channel"
+                                        "description": "Given while a member is in a dynamic channel, an auto-scaling channel or a team lobby"
                                     },
                                     {
                                         "label": "Verified Roles",
@@ -565,7 +565,7 @@
                                         "label": "Staff Roles",
                                         "value": "editStaffRoles",
                                         "emoji": "🔑",
-                                        "description": "Who no channel can shut out, and no owner can block or kick"
+                                        "description": "Who no channel or team lobby room can shut out, and no owner can block or kick"
                                     },
                                     {
                                         "label": "Bad Words",
@@ -1065,7 +1065,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "⚙️  Server settings",
-                            "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a dynamic channel.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it.",
+                            "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a dynamic channel, an auto-scaling channel or a team lobby.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who no channel can shut out, and no owner can block or kick. A team lobby's rooms let them in too.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it.",
                             "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963
                         }
@@ -1080,7 +1080,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🛡️  Server roles",
-                            "description": "Which roles this server's dynamic channels answer to.\n\n**Voice Role** — given to members while they are in a dynamic channel, and taken back when they leave.\n**Verified Roles** — who the channels are for. Everyone else is kept out.\n**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n\nPick one to change it.",
+                            "description": "Which roles this server's dynamic channels, auto-scaling channels and team lobbies answer to.\n\n**Voice Role** — given to members while they are in a dynamic channel, an auto-scaling channel or a team lobby, and taken back when they leave.\n**Verified Roles** — who a generator's channels are for. Everyone else is kept out.\n**Staff Roles** — who no channel can shut out, and no owner can block or kick. A team lobby's rooms let them in too.\n\nPick one to change it.",
                             "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963
                         }

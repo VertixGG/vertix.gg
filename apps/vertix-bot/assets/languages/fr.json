@@ -908,7 +908,7 @@
           "selectOptions": [
             {
               "label": "Rôle vocal",
-              "description": "Le rôle donné aux membres tant qu'ils sont dans un salon dynamique",
+              "description": "Le rôle dans un salon dynamique, un salon auto-scaling ou un team lobby",
               "value": "editVoiceRole"
             },
             {
@@ -918,7 +918,7 @@
             },
             {
               "label": "Rôles du staff",
-              "description": "Ceux qu'aucun salon ne laisse dehors et qu'aucun propriétaire ne peut bloquer ou expulser",
+              "description": "Ceux qu'aucun salon ni salle de lobby ne laisse dehors, ni aucun propriétaire ne bloque",
               "value": "editStaffRoles"
             },
             {
@@ -2078,14 +2078,14 @@
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
         "title": "⚙️  Paramètres du serveur",
-        "description": "Paramètres qui concernent tout le serveur plutôt qu'un générateur.\n\n**Voice Role** — attribué aux membres tant qu'ils sont dans un salon dynamique.\n**Verified Roles** — à qui s'adressent les salons dynamiques.\n**Staff Roles** — ceux qu'aucun salon ne peut laisser dehors, ni aucun propriétaire bloquer ou expulser.\n**Bad Words** — mots qu'un membre ne peut pas mettre dans un nom de salon.\n**Claim** — combien de temps un salon abandonné attend, et combien de temps dure le vote.\n\nChoisis-en un pour le modifier."
+        "description": "Paramètres qui concernent tout le serveur plutôt qu'un générateur.\n\n**Voice Role** — attribué aux membres tant qu'ils sont dans un salon dynamique, un salon auto-scaling ou un team lobby.\n**Verified Roles** — à qui s'adressent les salons dynamiques.\n**Staff Roles** — ceux qu'aucun salon ne peut laisser dehors, ni aucun propriétaire bloquer ou expulser. Les salles d'un team lobby les laissent entrer aussi.\n**Bad Words** — mots qu'un membre ne peut pas mettre dans un nom de salon.\n**Claim** — combien de temps un salon abandonné attend, et combien de temps dure le vote.\n\nChoisis-en un pour le modifier."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
         "title": "🛡️  Rôles du serveur",
-        "description": "Les rôles auxquels répondent les salons dynamiques de ce serveur.\n\n**Voice Role** — attribué aux membres tant qu'ils sont dans un salon dynamique, et retiré quand ils partent.\n**Verified Roles** — à qui s'adressent les salons. Tous les autres restent dehors.\n**Staff Roles** — ceux qu'aucun salon ne peut laisser dehors, ni aucun propriétaire bloquer ou expulser.\n\nChoisis-en un pour le modifier."
+        "description": "Les rôles auxquels répondent les salons dynamiques, les salons auto-scaling et les team lobbies de ce serveur.\n\n**Voice Role** — attribué aux membres tant qu'ils sont dans un salon dynamique, un salon auto-scaling ou un team lobby, et retiré quand ils partent.\n**Verified Roles** — à qui s'adressent les salons d'un générateur. Tous les autres restent dehors.\n**Staff Roles** — ceux qu'aucun salon ne peut laisser dehors, ni aucun propriétaire bloquer ou expulser. Les salles d'un team lobby les laissent entrer aussi.\n\nChoisis-en un pour le modifier."
       }
     },
     {

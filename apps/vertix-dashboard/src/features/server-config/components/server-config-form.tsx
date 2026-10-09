@@ -261,14 +261,15 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                 <div>
                     <h2 className="text-base font-semibold text-text-primary mb-1">Roles</h2>
                     <p className="text-xs text-text-muted mb-0">
-                        What every generator falls back to when it has no list of its own
+                        What every generator falls back to when it has no list of its own - pools and team lobbies
+                        use them as they are
                     </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     <RoleRadioList
                         label="Voice role"
-                        hint="Held only while a member sits in a dynamic channel"
+                        hint="Held only while a member sits in a generator's room, a pool's room or a team lobby"
                         roles={ roles }
                         unavailableReason={ voiceRoleUnavailableReason }
                         selected={ voiceRoleId }
@@ -280,7 +281,7 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
 
                     <RoleCheckList
                         label="Verified roles"
-                        hint="@everyone is the whole server, picking a role narrows it"
+                        hint="Generators only. @everyone is the whole server, picking a role narrows it"
                         roles={ roles }
                         selected={ verifiedSelection }
                         disabled={ isSaving }
@@ -290,7 +291,7 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
 
                     <RoleCheckList
                         label="Staff roles"
-                        hint="Empty means nobody bypasses a channel's privacy"
+                        hint="Get into any room past its privacy, and into every team's room of a lobby. Empty means nobody does"
                         roles={ roles }
                         selected={ staffRoleIds }
                         disabled={ isSaving }

@@ -3,6 +3,8 @@ import { DiscordChannelWizard, DiscordChannelDisplay, DiscordUIComponentMessage,
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
+import RouterLink from "@vertix.gg/website/src/vertix/ui/router-link";
+
 import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from "@vertix.gg/website/src/vertix/shared/auto-scaling-data";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
@@ -38,7 +40,8 @@ export default function AutoScalingPage() {
                         <div className="p-4 bg-vc-space rounded border border-vc-hairline-bright h-full">
                             <h3 className="text-h5 text-vc-mint">Scaled Channels</h3>
                             <p className="text-vc-ice-dim mb-0 text-sm">
-                                Voice channels where users communicate. Created automatically based on demand.
+                                Voice channels where users communicate. Created automatically based on demand. Users
+                                in one hold the server&apos;s <RouterLink to="/features/voice-role">voice role</RouterLink>.
                             </p>
                         </div>
                     </div>

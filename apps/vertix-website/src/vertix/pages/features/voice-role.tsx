@@ -69,7 +69,10 @@ export default function VoiceRolePage() {
                 <ol className="text-vc-ice-dim mb-6">
                     <li>
                         <strong>Gives it</strong> to a member the moment they land in a room a generator made - their
-                        own room or anybody else&apos;s.
+                        own room or anybody else&apos;s. An{ " " }
+                        <RouterLink to="/features/auto-scaling">auto-scaling</RouterLink> pool&apos;s rooms count too,
+                        and so do a <RouterLink to="/features/team-lobby">team lobby</RouterLink> and the rooms it
+                        splits into.
                     </li>
                     <li>
                         <strong>Takes it back</strong> the moment they leave voice, or move to a channel the bot did not
@@ -100,8 +103,8 @@ export default function VoiceRolePage() {
                     </li>
                 </ul>
                 <p className="text-vc-ice-dim mb-6">
-                    Anybody who can open a room can hold the role, so give it nothing you would not give everybody in
-                    voice. It has no say over who can see or join the rooms either - that is what{ " " }
+                    Anybody who can get into a room or a lobby can hold the role, so give it nothing you would not give
+                    everybody in voice. It has no say over who can see or join the rooms either - that is what{ " " }
                     <RouterLink to="/features/verified-roles">verified roles</RouterLink> and{ " " }
                     <RouterLink to="/features/staff-roles">staff roles</RouterLink> are for.
                 </p>
@@ -122,7 +125,8 @@ export default function VoiceRolePage() {
                 <h2 className="text-h4 mb-4">Setup</h2>
                 <p className="text-vc-ice-dim mb-6">
                     The voice role is set once for the server, and every generator gives it out unless it has
-                    one of its own.
+                    one of its own. Auto-scaling pools and team lobbies have no voice role of their own, so they
+                    always give the server&apos;s.
                 </p>
 
                 <ServerSettingsSteps option="editVoiceRole" label="Voice Role"/>
@@ -141,7 +145,8 @@ export default function VoiceRolePage() {
                 </div>
                 <p className="text-vc-ice-dim mb-4">
                     It is saved the moment you pick it, and the screen&apos;s <strong>Server Voice Role</strong> line
-                    shows it. <strong>Clear</strong> empties it again, and <strong>Back</strong> returns to the server
+                    shows it. Whoever already sits where it is given swaps the old role for the new one there and
+                    then. <strong>Clear</strong> empties it again, and <strong>Back</strong> returns to the server
                     settings.
                 </p>
                 <div className="discord-chat-container m-0">
@@ -193,9 +198,11 @@ export default function VoiceRolePage() {
                     />
                 </div>
                 <p className="text-vc-ice-dim mb-0">
-                    Moving between the rooms of two generators swaps one role for the other; between two that give
-                    the same role, the member simply keeps it. To put a generator back on the server&apos;s role,
-                    pick <strong>From the server options</strong> for it on the dashboard.
+                    Moving between the rooms of two generators swaps one role for the other, and so does moving from
+                    a room that gives its generator&apos;s own role into a pool&apos;s room or a team lobby, which give
+                    the server&apos;s. Between two that give the same role, the member simply keeps it. To put a
+                    generator back on the server&apos;s role, pick <strong>From the server options</strong> for it on
+                    the dashboard.
                 </p>
             </section>
 
@@ -275,9 +282,11 @@ export default function VoiceRolePage() {
                 <h2 className="text-h4 mb-4">Things to Know</h2>
                 <ul className="text-vc-ice-dim mb-0">
                     <li>
-                        <strong>Only its rooms count.</strong> Rooms made by a v2 or v3 generator give the role. An{ " " }
-                        <RouterLink to="/features/auto-scaling">auto-scaling</RouterLink> pool&apos;s rooms, the
-                        generator channel itself and the server&apos;s other voice channels do not.
+                        <strong>Only its rooms and lobbies count.</strong> Rooms made by a v2 or v3 generator give the
+                        role, and so do an <RouterLink to="/features/auto-scaling">auto-scaling</RouterLink> pool&apos;s
+                        rooms, a <RouterLink to="/features/team-lobby">team lobby</RouterLink> and the rooms it splits
+                        into. The generator channel itself, the channel that sends members into a pool and the
+                        server&apos;s other voice channels do not.
                     </li>
                     <li>
                         <strong>Make a role just for this.</strong> Leaving a room takes the role off whoever holds it,
@@ -296,7 +305,10 @@ export default function VoiceRolePage() {
                 <h2 className="text-h4 mb-4">Troubleshooting</h2>
                 <p className="text-vc-ice-dim">Nobody gets the role? Check that:</p>
                 <ul className="text-vc-ice-dim">
-                    <li>They are in a room a generator made - not a pool&apos;s room, or a channel of the server&apos;s own.</li>
+                    <li>
+                        They are in a room a generator or a pool made, or in a team lobby or one of its rooms - not a
+                        channel of the server&apos;s own.
+                    </li>
                     <li>The bot has Manage Roles, and its role sits above the voice role.</li>
                     <li>The voice role is not one that belongs to another app.</li>
                     <li>The generator has no voice role of its own - if it has, that one is given instead.</li>

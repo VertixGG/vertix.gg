@@ -145,8 +145,10 @@ export default function TeamLobbyPage() {
                 </div>
                 <p className="text-vc-ice-dim mb-6">
                     Naming a host role takes the panel away from everyone else: once a lobby names one, members
-                    without it cannot press, even while they sit in the lobby. Who may join the lobby and its rooms is
-                    a different question, answered below.
+                    without it cannot press, even while they sit in the lobby. The server&apos;s{ " " }
+                    <RouterLink to="/features/staff-roles">staff roles</RouterLink> are not host roles: they get into
+                    every room, but press the panel only as anybody else would. Who may join the lobby and its rooms
+                    is a different question, answered below.
                 </p>
 
                 <h3 className="text-h5 text-vc-cyan mb-4">Every team keeps to its own room</h3>
@@ -167,7 +169,7 @@ export default function TeamLobbyPage() {
                     <li>
                         <strong>Hosts can go anywhere.</strong> Members with one of the lobby&apos;s host roles - and the
                         server&apos;s owner and administrators - can enter every room, the way a teacher visits breakout
-                        groups.
+                        groups. So can the server&apos;s staff roles, as they stood when the split opened its rooms.
                     </li>
                 </ul>
                 <p className="text-vc-ice-dim mb-6">
@@ -414,6 +416,11 @@ export default function TeamLobbyPage() {
                     </li>
                     <li>
                         <strong>Bots are not split.</strong> A music bot in the lobby stays where it is.
+                    </li>
+                    <li>
+                        <strong>The server&apos;s voice role is held here.</strong> Anybody in the lobby or one of its
+                        rooms holds the server&apos;s <RouterLink to="/features/voice-role">voice role</RouterLink> - a
+                        lobby has none of its own.
                     </li>
                     <li>
                         <strong>Late arrivals wait in the lobby.</strong> After random teams or groups, each room is

@@ -908,7 +908,7 @@
           "selectOptions": [
             {
               "label": "ボイスロール",
-              "description": "ダイナミックチャンネルにいる間メンバーに付与されるロール",
+              "description": "ダイナミックチャンネル、Auto-Scaling チャンネル、Team Lobby にいる間付与されるロール",
               "value": "editVoiceRole"
             },
             {
@@ -918,7 +918,7 @@
             },
             {
               "label": "スタッフロール",
-              "description": "どのチャンネルからも締め出されず、ブロックやキックもされない人",
+              "description": "どのチャンネルやロビーの部屋からも締め出されず、ブロックやキックもされない人",
               "value": "editStaffRoles"
             },
             {
@@ -2078,14 +2078,14 @@
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
         "title": "⚙️  サーバー設定",
-        "description": "個々のジェネレーターではなく、サーバー全体に関わる設定です。\n\n**Voice Role** — ダイナミックチャンネルにいる間、メンバーに付与されます。\n**Verified Roles** — ダイナミックチャンネルを使える対象です。\n**Staff Roles** — どのチャンネルからも締め出されず、オーナーにブロックやキックもされない人です。\n**Bad Words** — チャンネル名に使えない単語です。\n**Claim** — 放置されたチャンネルが待つ時間と、投票の長さです。\n\n変更したい項目を選んでください。"
+        "description": "個々のジェネレーターではなく、サーバー全体に関わる設定です。\n\n**Voice Role** — ダイナミックチャンネル、Auto-Scaling チャンネル、Team Lobby にいる間、メンバーに付与されます。\n**Verified Roles** — ダイナミックチャンネルを使える対象です。\n**Staff Roles** — どのチャンネルからも締め出されず、オーナーにブロックやキックもされない人です。Team Lobby の部屋にも入れます。\n**Bad Words** — チャンネル名に使えない単語です。\n**Claim** — 放置されたチャンネルが待つ時間と、投票の長さです。\n\n変更したい項目を選んでください。"
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
         "title": "🛡️  サーバーロール",
-        "description": "このサーバーのダイナミックチャンネルが従うロールです。\n\n**Voice Role** — ダイナミックチャンネルにいる間メンバーに付与され、退出すると外されます。\n**Verified Roles** — チャンネルを使える対象です。それ以外は入れません。\n**Staff Roles** — どのチャンネルからも締め出されず、オーナーにブロックやキックもされない人です。\n\n変更したい項目を選んでください。"
+        "description": "このサーバーのダイナミックチャンネル、Auto-Scaling チャンネル、Team Lobby が従うロールです。\n\n**Voice Role** — ダイナミックチャンネル、Auto-Scaling チャンネル、Team Lobby にいる間メンバーに付与され、退出すると外されます。\n**Verified Roles** — ジェネレーターのチャンネルを使える対象です。それ以外は入れません。\n**Staff Roles** — どのチャンネルからも締め出されず、オーナーにブロックやキックもされない人です。Team Lobby の部屋にも入れます。\n\n変更したい項目を選んでください。"
       }
     },
     {

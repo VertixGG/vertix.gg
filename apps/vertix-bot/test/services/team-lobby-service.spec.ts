@@ -14,7 +14,8 @@ const GUILD_ID = "820000000000000001",
     PANEL_ID = "870000000000000001",
     PANEL_ROW_ID = "panel-row-1",
     CATEGORY_ID = "830000000000000001",
-    HOST_ROLE_ID = "860000000000000001";
+    HOST_ROLE_ID = "860000000000000001",
+    STAFF_ROLE_ID = "860000000000000002";
 
 const LOBBY_CATEGORY_POSITION = 3;
 
@@ -103,6 +104,8 @@ interface IWorld {
     /** Whether the server's allowance reaches the lobby. */
     isCovered: boolean;
     hostRoleIds: string[];
+    /** The server's staff roles - which no room the bot makes may shut out. */
+    staffRoleIds: string[];
     roomsLimit: number;
     missingPermissions: string[];
     /** Discord refuses every room past this many. */
@@ -137,6 +140,7 @@ async function makeLobby( world: Partial<IWorld> = {} ) {
     const settled: IWorld = {
         isCovered: true,
         hostRoleIds: [],
+        staffRoleIds: [],
         roomsLimit: 20,
         missingPermissions: [],
         refuseRoomsAfter: Number.POSITIVE_INFINITY,
@@ -156,6 +160,7 @@ async function makeLobby( world: Partial<IWorld> = {} ) {
     const { ConfigManager } = await import( "@vertix.gg/data/src/managers/config-manager" );
     const { LobbyChannelDataModel } = await import( "@vertix.gg/data/src/models/master-channel/lobby-channel-data-model" );
     const { PermissionsManager } = await import( "@vertix.gg/bot/src/managers/permissions-manager" );
+    const { VoiceRoleManager } = await import( "@vertix.gg/bot/src/managers/voice-role-manager" );
     const { CategoryManager } = await import( "@vertix.gg/bot/src/managers/category-manager" );
     const { TeamLobbyService } = await import( "@vertix.gg/bot/src/services/team-lobby-service" );
     const { ChannelUtils } = await import( "@vertix.gg/bot/src/utils/channel-utils" );
@@ -429,8 +434,17 @@ async function makeLobby( world: Partial<IWorld> = {} ) {
     } ) );
 
     jest.spyOn( GuildDataManager, "$", "get" ).mockReturnValue( asInstance( {
-        getAllSettings: async() => ( { maxActiveDynamicChannels: settled.roomsLimit } )
+        getAllSettings: async() => ( { maxActiveDynamicChannels: settled.roomsLimit } ),
+        getStaffRoleIds: async() => settled.staffRoleIds
     } ) );
+
+    // Which channels a move in or out of had the voice role looked at - who holds what is the voice
+    // role manager's own spec.
+    const voiceRoleSyncs: Array<{ from: string | null; to: string | null }> = [];
+
+    jest.spyOn( VoiceRoleManager.$, "syncMember" ).mockImplementation( async( oldState, newState ) => {
+        voiceRoleSyncs.push( { from: oldState?.channelId ?? null, to: newState?.channelId ?? null } );
+    } );
 
     jest.spyOn( ConfigManager, "$", "get" ).mockReturnValue( asInstance( {
         get: () => ( { data: NAMING } )
@@ -586,7 +600,7 @@ async function makeLobby( world: Partial<IWorld> = {} ) {
 
     return {
         service, listeners, world: settled, guild, lobby, category, members, rows, savedSettings, panels, categories,
-        cleanups, created, overwriteChanges, panelWrites, aMember, asLobby, asMember, rooms,
+        cleanups, created, overwriteChanges, panelWrites, voiceRoleSyncs, aMember, asLobby, asMember, rooms,
         panelChannelOf: ( ownerId: string ) => panelChannels.get( ownerId ) ?? null,
         splitMode: () => splitMode,
         sessionCategoryId: () => sessionCategoryId
@@ -1571,6 +1585,27 @@ describe( "VertixBot/Services/TeamLobby", () => {
             } );
         } );
 
+        // Staff roles are the server's promise that no room the bot makes keeps them out - a lobby's
+        // rooms included, though a lobby has no staff list of its own.
+        it( "should let the server's staff into every dealt room, as the lobby's hosts are", async() => {
+            // Arrange.
+            const { service, aMember, asLobby, asMember, created } = await makeLobby( { staffRoleIds: [ STAFF_ROLE_ID ] } );
+
+            const host = aMember( "member-1" );
+
+            aMember( "member-2" );
+
+            // Act.
+            await service.split( { lobby: asLobby(), member: asMember( host ), mode: "random-teams", count: 2 } );
+
+            // Assert.
+            roomsMade( created ).forEach( ( made ) => {
+                const staffRole = made.find( ( overwrite ) => STAFF_ROLE_ID === overwrite.id );
+
+                expect( bits( staffRole?.allow ) & ACCESS ).toBe( ACCESS );
+            } );
+        } );
+
         it( "should open picked teams' rooms to the whole lobby until somebody walks into one", async() => {
             // Arrange.
             const { service, aMember, asLobby, asMember, created, guild } = await makeLobby();
@@ -1618,6 +1653,23 @@ describe( "VertixBot/Services/TeamLobby", () => {
 
             // Act.
             await listeners.onJoin( { newState: { channelId: "room-1", guild, member: host } } );
+
+            // Assert.
+            expect( overwriteChanges ).toEqual( [] );
+        } );
+
+        it( "should leave the server's staff free to go between picked rooms", async() => {
+            // Arrange.
+            const { service, listeners, aMember, asLobby, asMember, guild, overwriteChanges } =
+                await makeLobby( { staffRoleIds: [ STAFF_ROLE_ID ] } );
+
+            const host = aMember( "member-1" ),
+                moderator = aMember( "member-2", { roles: [ STAFF_ROLE_ID ] } );
+
+            await service.split( { lobby: asLobby(), member: asMember( host ), mode: "pick-teams", count: 2 } );
+
+            // Act.
+            await listeners.onJoin( { newState: { channelId: "room-1", guild, member: moderator } } );
 
             // Assert.
             expect( overwriteChanges ).toEqual( [] );
@@ -1819,6 +1871,48 @@ describe( "VertixBot/Services/TeamLobby", () => {
             // Assert.
             expect( result ).toEqual( { code: "too-few-members" } );
             expect( rooms() ).toEqual( [] );
+        } );
+    } );
+
+    // A lobby and its rooms are voice the bot runs, as a generator's channels are, so sitting in one
+    // is what the server's voice role is for.
+    describe( "the server's voice role", () => {
+        it( "should look at it whenever somebody comes into or leaves the lobby or one of its rooms", async() => {
+            // Arrange.
+            const { service, listeners, aMember, asLobby, asMember, guild, voiceRoleSyncs } = await makeLobby();
+
+            const host = aMember( "member-1" ),
+                player = aMember( "member-2" );
+
+            await service.split( { lobby: asLobby(), member: asMember( host ), mode: "pick-teams", count: 2 } );
+
+            // Act - into the lobby, over to a team's room, and out of both.
+            await listeners.onJoin( { newState: { channelId: LOBBY_ID, guild, member: player } } );
+            await listeners.onJoin( { newState: { channelId: "room-1", guild, member: player } } );
+            await listeners.onLeave( { oldState: { channelId: "room-1", guild } } );
+            await listeners.onLeave( { oldState: { channelId: LOBBY_ID, guild } } );
+
+            // Assert.
+            expect( voiceRoleSyncs ).toEqual( [
+                { from: null, to: LOBBY_ID },
+                { from: null, to: "room-1" },
+                { from: "room-1", to: null },
+                { from: LOBBY_ID, to: null }
+            ] );
+        } );
+
+        it( "should leave it alone for a channel that is not a lobby's", async() => {
+            // Arrange.
+            const { listeners, aMember, guild, voiceRoleSyncs } = await makeLobby();
+
+            const member = aMember( "member-1" );
+
+            // Act.
+            await listeners.onJoin( { newState: { channelId: "850000000000000099", guild, member } } );
+            await listeners.onLeave( { oldState: { channelId: "850000000000000099", guild } } );
+
+            // Assert.
+            expect( voiceRoleSyncs ).toEqual( [] );
         } );
     } );
 

@@ -908,7 +908,7 @@
           "selectOptions": [
             {
               "label": "Sprachrolle",
-              "description": "Die Rolle, die Mitglieder in einem dynamischen Kanal erhalten",
+              "description": "Die Rolle in einem dynamischen Kanal, einem Auto-Scaling-Kanal oder einer Team-Lobby",
               "value": "editVoiceRole"
             },
             {
@@ -918,7 +918,7 @@
             },
             {
               "label": "Team-Rollen",
-              "description": "Wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann",
+              "description": "Wen kein Kanal und kein Lobby-Raum aussperren und kein Besitzer blockieren oder kicken kann",
               "value": "editStaffRoles"
             },
             {
@@ -2078,14 +2078,14 @@
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
         "title": "⚙️  Servereinstellungen",
-        "description": "Einstellungen, die dem ganzen Server gehören und nicht einem einzelnen Generator.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem dynamischen Kanal sind.\n**Verified Roles** — für wen dynamische Kanäle da sind.\n**Staff Roles** — wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann.\n**Bad Words** — Wörter, die ein Mitglied nicht in einen Kanalnamen setzen darf.\n**Claim** — wie lange ein verlassener Kanal wartet und wie lange die Abstimmung läuft.\n\nWähle eine Option, um sie zu ändern."
+        "description": "Einstellungen, die dem ganzen Server gehören und nicht einem einzelnen Generator.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem dynamischen Kanal, einem Auto-Scaling-Kanal oder einer Team-Lobby sind.\n**Verified Roles** — für wen dynamische Kanäle da sind.\n**Staff Roles** — wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann. Auch die Räume einer Team-Lobby lassen sie hinein.\n**Bad Words** — Wörter, die ein Mitglied nicht in einen Kanalnamen setzen darf.\n**Claim** — wie lange ein verlassener Kanal wartet und wie lange die Abstimmung läuft.\n\nWähle eine Option, um sie zu ändern."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
         "title": "🛡️  Serverrollen",
-        "description": "Auf welche Rollen die dynamischen Kanäle dieses Servers hören.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem dynamischen Kanal sind, und wieder entzogen, wenn sie gehen.\n**Verified Roles** — für wen die Kanäle da sind. Alle anderen bleiben draußen.\n**Staff Roles** — wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann.\n\nWähle eine Option, um sie zu ändern."
+        "description": "Auf welche Rollen die dynamischen Kanäle, Auto-Scaling-Kanäle und Team-Lobbys dieses Servers hören.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem dynamischen Kanal, einem Auto-Scaling-Kanal oder einer Team-Lobby sind, und wieder entzogen, wenn sie gehen.\n**Verified Roles** — für wen die Kanäle eines Generators da sind. Alle anderen bleiben draußen.\n**Staff Roles** — wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann. Auch die Räume einer Team-Lobby lassen sie hinein.\n\nWähle eine Option, um sie zu ändern."
       }
     },
     {

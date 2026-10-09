@@ -114,8 +114,8 @@ export class VoiceRoleManager extends InitializeBase {
     }
 
     /**
-     * Function reconcileGuild() :: Strips the voice role from anyone who is not in a dynamic
-     * channel right now.
+     * Function reconcileGuild() :: Strips the voice role from anyone who is not in a channel that
+     * gives it right now.
      *
      * A crash leaves the role on whoever held it, and discord never cleans it up, so without this
      * a restart is enough to hand out a permanent role.
@@ -158,15 +158,15 @@ export class VoiceRoleManager extends InitializeBase {
     }
 
     /**
-     * Function resyncGuild() :: Moves everybody sitting in a dynamic channel onto the voice role
-     * that applies to it now, after the setting changed under them.
+     * Function resyncGuild() :: Moves everybody sitting in a channel that gives a voice role onto the
+     * one that applies to it now, after the setting changed under them.
      *
      * Leaving takes off the role the channel gives *now*, and the reconcile reclaims only roles that
      * are still configured - so a role changed or cleared while people sat in channels stayed on them
      * for good, and the new one reached them only once they moved. By the time this runs the stored
      * setting already names the new role, which is why the caller says what applied before.
      *
-     * Only the people in a dynamic channel are visited: anybody else lost the role when they left,
+     * Only the people in such a channel are visited: anybody else lost the role when they left,
      * back when it was still the one their channel gave.
      */
     public async resyncGuild( guild: Guild, previousRoleIds: ReadonlyArray<string | null> ) {
@@ -176,7 +176,7 @@ export class VoiceRoleManager extends InitializeBase {
             for ( const voiceState of guild.voiceStates.cache.values() ) {
                 const { member, channelId } = voiceState;
 
-                if ( ! member || ! channelId || ! ( await ChannelModel.$.isDynamic( channelId ) ) ) {
+                if ( ! member || ! channelId || ! ( await this.isVoiceRoleChannel( channelId ) ) ) {
                     continue;
                 }
 
@@ -245,22 +245,43 @@ export class VoiceRoleManager extends InitializeBase {
     }
 
     /**
+     * Function isVoiceRoleChannel() :: Whether sitting in this channel is what the voice role is for -
+     * a generator's dynamic channel, a pool's channel, a team lobby or one of the rooms it split into.
+     *
+     * The services that run each of those call `syncMember()` on a move in or out of one of their own,
+     * and a change to the setting visits exactly these.
+     */
+    public async isVoiceRoleChannel( channelId: Snowflake ): Promise<boolean> {
+        const channelDB = await ChannelModel.$.getByChannelId( channelId );
+
+        return !! ( channelDB?.isDynamic || channelDB?.isScaling || channelDB?.isLobbyMaster || channelDB?.isLobbyRoom );
+    }
+
+    /**
      * Function resolveRoleId() :: The voice role that applies to a channel.
      *
-     * Its master channel's, and a channel that is not dynamic has none at all.
+     * A dynamic channel gives its master channel's. A pool's channel, a lobby and a lobby's room give
+     * the guild wide one - neither a pool nor a lobby has a role of its own to put first. Any other
+     * channel gives none at all.
      */
     private async resolveRoleId( guild: Guild, channelId: Snowflake | null ): Promise<string | null> {
-        if ( ! channelId || ! ( await ChannelModel.$.isDynamic( channelId ) ) ) {
-            return null;
+        const channelDB = await ChannelModel.$.getByChannelId( channelId );
+
+        if ( channelDB?.isDynamic ) {
+            const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channelDB.channelId );
+
+            if ( masterChannelDB ) {
+                return this.resolveMasterRoleId( masterChannelDB, guild.id );
+            }
+
+            return GuildDataManager.$.getVoiceRoleId( guild.id );
         }
 
-        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channelId );
-
-        if ( masterChannelDB ) {
-            return this.resolveMasterRoleId( masterChannelDB, guild.id );
+        if ( channelDB?.isScaling || channelDB?.isLobbyMaster || channelDB?.isLobbyRoom ) {
+            return GuildDataManager.$.getVoiceRoleId( guild.id );
         }
 
-        return GuildDataManager.$.getVoiceRoleId( guild.id );
+        return null;
     }
 
     private async getConfiguredRoleIds( guild: Guild ) {

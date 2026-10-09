@@ -28,6 +28,7 @@ import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 
 import { ownsGuild } from "@vertix.gg/bot/src/definitions/sharding";
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
 import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
@@ -906,6 +907,8 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
 
         if ( isScaling ) {
             await this.handleJoinScaling( args );
+
+            await VoiceRoleManager.$.syncMember( args.oldState, newState );
         }
     }
 
@@ -962,6 +965,8 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
 
         if ( isScaling ) {
             await this.handleLeaveScaling( args );
+
+            await VoiceRoleManager.$.syncMember( oldState, args.newState );
         }
     }
 

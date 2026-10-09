@@ -9,7 +9,7 @@ import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager
 
 import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
-import type { Guild, GuildMember, Role } from "discord.js";
+import type { Guild, GuildMember, Role, VoiceState } from "discord.js";
 
 /**
  * A guild is only ever asked for its id here, because `reconcileGuild()` is replaced in every test.
@@ -35,7 +35,22 @@ const asInstance = <T>( fake: object ): T => fake as T;
 
 const DYNAMIC_CHANNEL_ID = "dynamic-channel",
     OWN_ROLE_DYNAMIC_CHANNEL_ID = "dynamic-channel-of-a-generator-with-its-own-role",
+    POOL_CHANNEL_ID = "pool-channel",
+    LOBBY_CHANNEL_ID = "team-lobby",
+    LOBBY_ROOM_CHANNEL_ID = "team-lobby-room",
     LOUNGE_CHANNEL_ID = "lounge";
+
+/**
+ * The kind of each channel the bot made - what it reads off a channel's row to decide whether sitting
+ * in it is what the voice role is for. A channel missing here has no row, as one the bot did not make.
+ */
+const CHANNEL_KINDS: Readonly<Record<string, "isDynamic" | "isScaling" | "isLobbyMaster" | "isLobbyRoom">> = {
+    [ DYNAMIC_CHANNEL_ID ]: "isDynamic",
+    [ OWN_ROLE_DYNAMIC_CHANNEL_ID ]: "isDynamic",
+    [ POOL_CHANNEL_ID ]: "isScaling",
+    [ LOBBY_CHANNEL_ID ]: "isLobbyMaster",
+    [ LOBBY_ROOM_CHANNEL_ID ]: "isLobbyRoom"
+};
 
 const VOICE_ROLE_ID = "role-voice",
     TALKING_ROLE_ID = "role-talking";
@@ -83,8 +98,8 @@ function aVoiceGuild() {
 }
 
 /**
- * What the bot reads to decide which role a channel gives: which channels are dynamic, each one's
- * generator and its own voice role, and the guild wide one beneath them.
+ * What the bot reads to decide which role a channel gives: what kind of channel each one is, a dynamic
+ * one's generator and its own voice role, and the guild wide one beneath them.
  */
 function stubVoiceRoleSettings( options: {
     guildRoleId: string | null;
@@ -94,7 +109,11 @@ function stubVoiceRoleSettings( options: {
     const ownRoleIds = options.ownRoleIds ?? {};
 
     jest.spyOn( ChannelModel, "$", "get" ).mockReturnValue( asInstance( {
-        isDynamic: async( channelId: string ) => [ DYNAMIC_CHANNEL_ID, OWN_ROLE_DYNAMIC_CHANNEL_ID ].includes( channelId ),
+        getByChannelId: async( channelId: string | null ) => {
+            const kind = channelId ? CHANNEL_KINDS[ channelId ] : undefined;
+
+            return kind ? { channelId, [ kind ]: true } : null;
+        },
         getMasterByDynamicChannelId: async( channelId: string ) => ( { id: `generator-of-${ channelId }`, channelId } )
     } ) );
 
@@ -270,8 +289,25 @@ describe( "VertixBot/Managers/VoiceRole", () => {
             expect( [ ...jordan ] ).toEqual( [ VOICE_ROLE_ID ] );
         } );
 
-        // Anybody outside a dynamic channel already lost the role on leaving one, back when it was
-        // still the one that channel gave - so whatever they hold now is not the bot's to take.
+        // A pool and a lobby have no voice role of their own, so their channels follow the guild wide
+        // one - and a change to it reaches whoever sits in them, as it reaches a generator's.
+        it.each( [
+            [ "a pool's channel", POOL_CHANNEL_ID ],
+            [ "a team lobby", LOBBY_CHANNEL_ID ],
+            [ "a team lobby's room", LOBBY_ROOM_CHANNEL_ID ]
+        ] )( "should move a member in %s onto the new guild wide role", async( _kind, channelId ) => {
+            stubVoiceRoleSettings( { guildRoleId: TALKING_ROLE_ID } );
+
+            const { guild, seat } = aVoiceGuild(),
+                alex = seat( "alex", channelId, [ VOICE_ROLE_ID ] );
+
+            await VoiceRoleManager.$.resyncGuild( guild, [ VOICE_ROLE_ID ] );
+
+            expect( [ ...alex ] ).toEqual( [ TALKING_ROLE_ID ] );
+        } );
+
+        // Anybody outside a channel that gives the role already lost it on leaving one, back when it
+        // was still the one that channel gave - so whatever they hold now is not the bot's to take.
         it( "should not touch a member in a channel the bot did not make", async() => {
             stubVoiceRoleSettings( { guildRoleId: TALKING_ROLE_ID } );
 
@@ -289,7 +325,7 @@ describe( "VertixBot/Managers/VoiceRole", () => {
             stubVoiceRoleSettings( { guildRoleId: TALKING_ROLE_ID } );
 
             jest.spyOn( ChannelModel, "$", "get" ).mockReturnValue( asInstance( {
-                isDynamic: async() => {
+                getByChannelId: async() => {
                     throw new Error( "the database went away" );
                 }
             } ) );
@@ -299,6 +335,83 @@ describe( "VertixBot/Managers/VoiceRole", () => {
             seat( "alex", DYNAMIC_CHANNEL_ID, [ VOICE_ROLE_ID ] );
 
             await expect( VoiceRoleManager.$.resyncGuild( guild, [ VOICE_ROLE_ID ] ) ).resolves.toBeUndefined();
+        } );
+    } );
+
+    /**
+     * A member moving between channels. Only what the two states say is read, so a state here is the
+     * guild, the channel and the member - which is all a voice state is asked for.
+     */
+    describe( "syncMember()", () => {
+        const aMove = ( guild: Guild, member: GuildMember, from: string | null, to: string | null ) => [
+            asInstance<VoiceState>( { guild, member, channelId: from } ),
+            asInstance<VoiceState>( { guild, member, channelId: to } )
+        ] as const;
+
+        beforeEach( () => {
+            jest.spyOn( VoiceRoleManager.$, "ensureGuildReconciled" ).mockResolvedValue( undefined );
+        } );
+
+        it.each( [
+            [ "a pool's channel", POOL_CHANNEL_ID ],
+            [ "a team lobby", LOBBY_CHANNEL_ID ],
+            [ "a team lobby's room", LOBBY_ROOM_CHANNEL_ID ]
+        ] )( "should hand the guild wide role to a member who comes into %s", async( _kind, channelId ) => {
+            stubVoiceRoleSettings( { guildRoleId: VOICE_ROLE_ID } );
+
+            const { guild, seat } = aVoiceGuild(),
+                alex = seat( "alex", channelId ),
+                [ before, after ] = aMove( guild, guild.voiceStates.cache.get( "alex" )!.member!, null, channelId );
+
+            await VoiceRoleManager.$.syncMember( before, after );
+
+            expect( [ ...alex ] ).toEqual( [ VOICE_ROLE_ID ] );
+        } );
+
+        it( "should take the role back from a member who leaves a pool's channel", async() => {
+            stubVoiceRoleSettings( { guildRoleId: VOICE_ROLE_ID } );
+
+            const { guild, seat } = aVoiceGuild(),
+                alex = seat( "alex", null, [ VOICE_ROLE_ID ] ),
+                [ before, after ] = aMove( guild, guild.voiceStates.cache.get( "alex" )!.member!, POOL_CHANNEL_ID, null );
+
+            await VoiceRoleManager.$.syncMember( before, after );
+
+            expect( [ ...alex ] ).toEqual( [] );
+        } );
+
+        // A generator's own role is its own: walking from its channel into a lobby swaps it for the
+        // guild wide one the lobby gives.
+        it( "should swap a generator's own role for the guild wide one on a move into a lobby's room", async() => {
+            stubVoiceRoleSettings( {
+                guildRoleId: TALKING_ROLE_ID,
+                ownRoleIds: { [ OWN_ROLE_DYNAMIC_CHANNEL_ID ]: VOICE_ROLE_ID }
+            } );
+
+            const { guild, seat } = aVoiceGuild(),
+                jordan = seat( "jordan", LOBBY_ROOM_CHANNEL_ID, [ VOICE_ROLE_ID ] ),
+                [ before, after ] = aMove(
+                    guild,
+                    guild.voiceStates.cache.get( "jordan" )!.member!,
+                    OWN_ROLE_DYNAMIC_CHANNEL_ID,
+                    LOBBY_ROOM_CHANNEL_ID
+                );
+
+            await VoiceRoleManager.$.syncMember( before, after );
+
+            expect( [ ...jordan ] ).toEqual( [ TALKING_ROLE_ID ] );
+        } );
+
+        it( "should hand nothing out for a channel the bot did not make", async() => {
+            stubVoiceRoleSettings( { guildRoleId: VOICE_ROLE_ID } );
+
+            const { guild, seat } = aVoiceGuild(),
+                sam = seat( "sam", LOUNGE_CHANNEL_ID ),
+                [ before, after ] = aMove( guild, guild.voiceStates.cache.get( "sam" )!.member!, null, LOUNGE_CHANNEL_ID );
+
+            await VoiceRoleManager.$.syncMember( before, after );
+
+            expect( [ ...sam ] ).toEqual( [] );
         } );
     } );
 

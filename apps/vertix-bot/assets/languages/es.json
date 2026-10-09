@@ -908,7 +908,7 @@
           "selectOptions": [
             {
               "label": "Rol de voz",
-              "description": "El rol que reciben los miembros mientras están en un canal dinámico",
+              "description": "El rol en un canal dinámico, un canal auto-scaling o un team lobby",
               "value": "editVoiceRole"
             },
             {
@@ -918,7 +918,7 @@
             },
             {
               "label": "Roles del staff",
-              "description": "A quién ningún canal deja fuera ni ningún dueño bloquea o expulsa",
+              "description": "A quién ningún canal ni sala de lobby deja fuera, ni ningún dueño bloquea o expulsa",
               "value": "editStaffRoles"
             },
             {
@@ -2078,14 +2078,14 @@
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
         "title": "⚙️  Ajustes del servidor",
-        "description": "Ajustes que pertenecen a todo el servidor y no a un generador concreto.\n\n**Voice Role** — se da a los miembros mientras están en un canal dinámico.\n**Verified Roles** — para quién son los canales dinámicos.\n**Staff Roles** — a quién ningún canal puede dejar fuera, ni ningún dueño bloquear o expulsar.\n**Bad Words** — palabras que un miembro no puede poner en el nombre de un canal.\n**Claim** — cuánto espera un canal abandonado y cuánto dura la votación.\n\nElige uno para cambiarlo."
+        "description": "Ajustes que pertenecen a todo el servidor y no a un generador concreto.\n\n**Voice Role** — se da a los miembros mientras están en un canal dinámico, un canal auto-scaling o un team lobby.\n**Verified Roles** — para quién son los canales dinámicos.\n**Staff Roles** — a quién ningún canal puede dejar fuera, ni ningún dueño bloquear o expulsar. Las salas de un team lobby también les dejan entrar.\n**Bad Words** — palabras que un miembro no puede poner en el nombre de un canal.\n**Claim** — cuánto espera un canal abandonado y cuánto dura la votación.\n\nElige uno para cambiarlo."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
         "title": "🛡️  Roles del servidor",
-        "description": "A qué roles responden los canales dinámicos de este servidor.\n\n**Voice Role** — se da a los miembros mientras están en un canal dinámico y se retira cuando salen.\n**Verified Roles** — para quién son los canales. El resto queda fuera.\n**Staff Roles** — a quién ningún canal puede dejar fuera, ni ningún dueño bloquear o expulsar.\n\nElige uno para cambiarlo."
+        "description": "A qué roles responden los canales dinámicos, los canales auto-scaling y los team lobbies de este servidor.\n\n**Voice Role** — se da a los miembros mientras están en un canal dinámico, un canal auto-scaling o un team lobby, y se retira cuando salen.\n**Verified Roles** — para quién son los canales de un generador. El resto queda fuera.\n**Staff Roles** — a quién ningún canal puede dejar fuera, ni ningún dueño bloquear o expulsar. Las salas de un team lobby también les dejan entrar.\n\nElige uno para cambiarlo."
       }
     },
     {

@@ -107,7 +107,7 @@ export default function StaffRolesPage() {
                 <h2 className="text-h4 mb-4">Setup</h2>
                 <p className="text-vc-ice-dim mb-6">
                     The staff roles are set once for the server, and every generator follows them unless it has a list
-                    of its own.
+                    of its own. A team lobby has no list of its own, so it always follows the server&apos;s.
                 </p>
 
                 <ServerSettingsSteps option="editStaffRoles" label="Staff Roles"/>
@@ -128,7 +128,8 @@ export default function StaffRolesPage() {
                 </div>
                 <p className="text-vc-ice-dim mb-4">
                     It is saved the moment you pick, and reaches every generator that follows the server&apos;s list
-                    there and then - the rooms already open included. <strong>Clear</strong> empties the list again.
+                    there and then - the rooms already open included. A team lobby reads it at its next split.{ " " }
+                    <strong>Clear</strong> empties the list again.
                 </p>
                 <div className="discord-chat-container m-0">
                     <DiscordUIComponentMessage
@@ -250,6 +251,14 @@ export default function StaffRolesPage() {
                         attempt to block or kick a staff member is written there too.
                     </li>
                     <li>
+                        <strong>Team lobbies let staff into every room.</strong> When a{ " " }
+                        <RouterLink to="/features/team-lobby">team lobby</RouterLink> splits, the server&apos;s staff
+                        roles can enter every room it opens, the way its hosts can - and walking into one team&apos;s
+                        room does not shut them out of the others. The rooms are made with the list as it is at that
+                        moment; rooms already open keep what they were made with. A staff role does not make anybody a
+                        host - on its own, it does not let them split or call back.
+                    </li>
+                    <li>
                         <strong>Auto-scaling pools do not use it.</strong> An{ " " }
                         <RouterLink to="/features/auto-scaling">auto-scaling</RouterLink> pool&apos;s rooms take their
                         permissions from the pool&apos;s category, which you set in Discord.
@@ -265,6 +274,7 @@ export default function StaffRolesPage() {
                     <li>They hold a role on the list - the generator&apos;s own list, if it has one.</li>
                     <li>The room is not full - joining a full room takes Move Members.</li>
                     <li>The owner did not block them before they held the role.</li>
+                    <li>In a team lobby, the role was on the list before the split opened - its rooms keep the list they were made with.</li>
                 </ul>
             </section>
 

@@ -15,6 +15,7 @@ import { LobbyChannelDataModel } from "@vertix.gg/data/src/models/master-channel
 
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 
 import { ownsGuild } from "@vertix.gg/bot/src/definitions/sharding";
 import {
@@ -822,7 +823,8 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
 
     /**
      * Function onLeave() :: Somebody left a voice channel - if it was the last of a lobby and its
-     * rooms, the split is over.
+     * rooms, the split is over, and whoever left one of them gives back the server's voice role
+     * unless where they went gives it too.
      */
     private async onLeave( args: IChannelLeaveGenericArgs ) {
         const { oldState } = args;
@@ -840,6 +842,8 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
         }
 
         await this.chain( lobbyId, () => this.closeSplitIfAbandoned( oldState.guild, lobbyId ) );
+
+        await VoiceRoleManager.$.syncMember( oldState, args.newState );
     }
 
     /**
@@ -1016,7 +1020,10 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
 
         await LobbyChannelDataModel.$.setLobbySettings( lobbyDB.id, { lobbySessionCategoryId: category.id, lobbySplitMode: mode } );
 
-        const hostRoleIds = ( await LobbyChannelDataModel.$.getLobbySettings( lobbyDB.id ) )?.lobbyHostRoleIds ?? [];
+        const roamingRoleIds = await this.getRoamingRoleIds(
+            lobby.guild.id,
+            ( await LobbyChannelDataModel.$.getLobbySettings( lobbyDB.id ) )?.lobbyHostRoleIds ?? []
+        );
 
         const rooms: VoiceChannel[] = [];
 
@@ -1037,9 +1044,9 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
                 // split - and close the others on whoever walks in; dealt ones are shut to all but the
                 // members dealt into them from the start.
                 permissionOverwrites: TEAM_LOBBY_SPLIT_MODES.PICK_TEAMS !== mode
-                    ? this.getTeamRoomPermissions( lobby, roomPlan.memberIds, hostRoleIds )
+                    ? this.getTeamRoomPermissions( lobby, roomPlan.memberIds, roamingRoleIds )
                     : pickedIds.length
-                        ? this.getTeamRoomPermissions( lobby, pickedIds, hostRoleIds )
+                        ? this.getTeamRoomPermissions( lobby, pickedIds, roamingRoleIds )
                         : this.getRoomPermissions( lobby )
             } );
 
@@ -1275,13 +1282,13 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
 
     /**
      * Function getTeamRoomPermissions() :: The overwrites a dealt room is made with - shut to everybody
-     * but the members dealt into it and the lobby's hosts, so nobody walks into another team's room, or
-     * reads its chat, and takes what they learn back to their own.
+     * but the members dealt into it and the roles free to roam (`getRoamingRoleIds()`), so nobody walks
+     * into another team's room, or reads its chat, and takes what they learn back to their own.
      *
      * Everything else the lobby says is kept. Seeing and joining are taken out of every entry it has,
      * since a role it lets in would otherwise let every member holding it into every room.
      */
-    private getTeamRoomPermissions( lobby: VoiceChannel, memberIds: string[], hostRoleIds: string[] ): OverwriteResolvable[] {
+    private getTeamRoomPermissions( lobby: VoiceChannel, memberIds: string[], roamingRoleIds: string[] ): OverwriteResolvable[] {
         const everyoneId = lobby.guild.roles.everyone.id,
             botId = lobby.client.user.id;
 
@@ -1306,7 +1313,7 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
 
         set( everyoneId, OverwriteType.Role, 0n, ROOM_ACCESS );
 
-        hostRoleIds.forEach( ( roleId ) => set( roleId, OverwriteType.Role, ROOM_ACCESS, 0n ) );
+        roamingRoleIds.forEach( ( roleId ) => set( roleId, OverwriteType.Role, ROOM_ACCESS, 0n ) );
         memberIds.forEach( ( memberId ) => set( memberId, OverwriteType.Member, ROOM_ACCESS, 0n ) );
 
         return [ ... entries.values(), { id: botId, ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS } ];
@@ -1371,8 +1378,9 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function onJoin() :: Draw again the screens waiting on who is in this channel, and keep a member
-     * who has picked a team to that team's room.
+     * Function onJoin() :: Draw again the screens waiting on who is in this channel, keep a member who
+     * has picked a team to that team's room, and hand whoever came into a lobby or one of its rooms the
+     * server's voice role.
      */
     private async onJoin( args: IChannelEnterGenericArgs ) {
         const { newState } = args,
@@ -1386,13 +1394,15 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
 
         const roomDB = await ChannelModel.$.getByChannelId( channelId );
 
-        if ( ! roomDB?.isLobbyRoom || ! roomDB.ownerChannelId ) {
-            return;
+        if ( roomDB?.isLobbyRoom && roomDB.ownerChannelId ) {
+            const lobbyId = roomDB.ownerChannelId;
+
+            await this.chain( lobbyId, () => this.keepToPickedRoom( newState.guild, lobbyId, channelId, member ) );
         }
 
-        const lobbyId = roomDB.ownerChannelId;
-
-        await this.chain( lobbyId, () => this.keepToPickedRoom( newState.guild, lobbyId, channelId, member ) );
+        if ( this.getLobbyIdOf( roomDB ) ) {
+            await VoiceRoleManager.$.syncMember( args.oldState, newState );
+        }
     }
 
     /**
@@ -1400,8 +1410,8 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
      * team's room, for as long as the split lasts - so nobody listens in on the other side.
      *
      * Only picked teams: a dealt room is shut to all but its own members from the start. The lobby's
-     * hosts and the server's admins are left free to go between rooms, as a teacher goes between
-     * breakout groups. A member a host moves to another team is kept to that one instead.
+     * hosts, the server's staff and its admins are left free to go between rooms, as a teacher goes
+     * between breakout groups. A member a host moves to another team is kept to that one instead.
      */
     private async keepToPickedRoom( guild: Guild, lobbyId: string, roomId: string, member: GuildMember ) {
         const lobbyDB = await ChannelModel.$.getByChannelId( lobbyId );
@@ -1412,7 +1422,11 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
 
         const settings = await LobbyChannelDataModel.$.getLobbySettings( lobbyDB.id );
 
-        if ( TEAM_LOBBY_SPLIT_MODES.PICK_TEAMS !== settings?.lobbySplitMode || this.isFreeToRoam( member, settings.lobbyHostRoleIds ) ) {
+        if ( TEAM_LOBBY_SPLIT_MODES.PICK_TEAMS !== settings?.lobbySplitMode ) {
+            return;
+        }
+
+        if ( this.isFreeToRoam( member, await this.getRoamingRoleIds( guild.id, settings.lobbyHostRoleIds ) ) ) {
             return;
         }
 
@@ -1444,14 +1458,27 @@ export class TeamLobbyService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function isFreeToRoam() :: Whether this member may go between a split's rooms - the holders of a
-     * lobby's host roles, and the server's owner and administrators, whom discord lets past a room's
-     * overwrites in any case. The same who a dealt room lets in, so both kinds of split agree.
+     * Function getRoamingRoleIds() :: The roles a split's rooms never shut out - the lobby's host roles,
+     * and the server's staff roles, which are its promise that no room the bot makes keeps them out.
+     *
+     * The server wide staff list, as a pool's or a lobby's voice role is the server wide one: a lobby
+     * has no list of its own to put first.
      */
-    private isFreeToRoam( member: GuildMember, hostRoleIds: string[] ) {
+    private async getRoamingRoleIds( guildId: string, hostRoleIds: string[] ) {
+        const staffRoleIds = await GuildDataManager.$.getStaffRoleIds( guildId );
+
+        return [ ... new Set( [ ... hostRoleIds, ... staffRoleIds ] ) ];
+    }
+
+    /**
+     * Function isFreeToRoam() :: Whether this member may go between a split's rooms - the holders of a
+     * roaming role (`getRoamingRoleIds()`), and the server's owner and administrators, whom discord lets
+     * past a room's overwrites in any case. The same who a dealt room lets in, so both kinds of split agree.
+     */
+    private isFreeToRoam( member: GuildMember, roamingRoleIds: string[] ) {
         return member.id === member.guild.ownerId ||
             member.permissions.has( PermissionsBitField.Flags.Administrator ) ||
-            hostRoleIds.some( ( roleId ) => member.roles.cache.has( roleId ) );
+            roamingRoleIds.some( ( roleId ) => member.roles.cache.has( roleId ) );
     }
 
     /**

@@ -418,16 +418,16 @@
                                 "header": "New Master Channel",
                                 "selectOptions": [
                                     {
+                                        "label": "Dynamic Channel (V3)",
+                                        "value": "v3",
+                                        "emoji": "✨",
+                                        "description": "Recommended - enhanced dynamic channels with more features"
+                                    },
+                                    {
                                         "label": "Dynamic Channel (V2)",
                                         "value": "v2",
                                         "emoji": "➕",
                                         "description": "Classic dynamic voice channels"
-                                    },
-                                    {
-                                        "label": "Dynamic Channel (V3)",
-                                        "value": "v3",
-                                        "emoji": "✨",
-                                        "description": "Enhanced dynamic channels with more features"
                                     },
                                     {
                                         "label": "Auto-Scaling Channel",
@@ -496,16 +496,16 @@
                                 "header": "New Master Channel",
                                 "selectOptions": [
                                     {
+                                        "label": "Dynamic Channel (V3)",
+                                        "value": "v3",
+                                        "emoji": "✨",
+                                        "description": "Recommended - enhanced dynamic channels with more features"
+                                    },
+                                    {
                                         "label": "Dynamic Channel (V2)",
                                         "value": "v2",
                                         "emoji": "➕",
                                         "description": "Classic dynamic voice channels"
-                                    },
-                                    {
-                                        "label": "Dynamic Channel (V3)",
-                                        "value": "v3",
-                                        "emoji": "✨",
-                                        "description": "Enhanced dynamic channels with more features"
                                     },
                                     {
                                         "label": "Auto-Scaling Channel",

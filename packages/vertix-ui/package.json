@@ -14,7 +14,7 @@
     },
     "devDependencies": {
         "@types/react": "latest",
-        "typescript": "~5.7.2"
+        "typescript": "~7.0.2"
     },
     "peerDependencies": {
         "react": ">=18"

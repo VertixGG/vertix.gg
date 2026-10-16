@@ -143,7 +143,7 @@
         "jest-when": "latest",
         "ts-mockito": "latest",
         "tsx": "^4.23.13",
-        "typescript": "^5.9.3"
+        "typescript": "^7.0.2"
     },
     "packageManager": "bun@1.3.0"
 }

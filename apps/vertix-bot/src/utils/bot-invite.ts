@@ -17,8 +17,8 @@ export const BOT_INVITE_LINK_LABEL = "Add VoiceChannels";
 
 export const BOT_VOTE_LINK_LABEL = "Vote VoiceChannels";
 
-/** Where a vote is cast - discordbotlist's, since the bot is not public on top.gg yet. */
-export const BOT_VOTE_URL = "https://discordbotlist.com/bots/voicechannels/upvote";
+/** Where a vote is cast - on top.gg, the listing the bot's own vote reward reads. */
+export const BOT_VOTE_URL = "https://top.gg/bot/1538844311062581339/vote";
 
 /** Where in a description the line goes. */
 export const BOT_INVITE_LINE_PLACEMENTS = {

@@ -8,7 +8,18 @@ import HowToSetupStep1 from "@vertix.gg/website/src/vertix/posts/steps/how-to-se
 import HowToSetupStep2 from "@vertix.gg/website/src/vertix/posts/steps/how-to-setup-step-2";
 import HowToSetupStep3 from "@vertix.gg/website/src/vertix/posts/steps/how-to-setup-step-3";
 
+import {
+    DEMO_OWNER,
+    DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES
+} from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
+import {
+    DYNAMIC_CHANNEL_V3_BUTTON_ORDER,
+    useOpenDynamicChannelV3Feature
+} from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
 export default function HowToSetup() {
+    const openFeature = useOpenDynamicChannelV3Feature();
+
     return (
         <>
             <div>
@@ -76,35 +87,16 @@ export default function HowToSetup() {
                                 author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:33 PM"
-                                componentName="VertixBot/UI-V2/DynamicChannel"
+                                mentionUsername={ DEMO_OWNER }
+                                componentName="VertixBot/UI-V3/DynamicChannel"
                                 variables={ {
-                                    name: "iNewLegend's Office",
-                                    limit: "Unlimited",
-                                    state: "🌐 **Public**",
-                                    visibilityState: "😎 **Shown**",
-                                    region: "**Automatic**",
-                                    bitrate: "64",
-                                    displayText: "Private",
+                                    ...DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES,
+                                    // Step 1 renamed the template to `{user}'s Office`.
+                                    name: `${ DEMO_OWNER }'s Office`,
+                                    dynamicChannelButtonsTemplate: DYNAMIC_CHANNEL_V3_BUTTON_ORDER.join( "," ),
+                                    dynamicChannelButtonsRowBreaks: "",
                                 } }
-                                elementOverrides={ {
-                                    "VertixBot/UI-V2/DynamicChannelPermissionsStateButton": {
-                                        label: "Private",
-                                        emoji: "🚫",
-                                    },
-                                    "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton": {
-                                        label: "Hidden",
-                                        emoji: "🙈",
-                                    },
-                                    "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton": {
-                                        label: "Access",
-                                    },
-                                    "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton": {
-                                        label: "Reset Channel",
-                                    },
-                                    "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": {
-                                        label: "Claim Channel",
-                                    },
-                                } }
+                                onElementClick={ openFeature }
                             />
                         </div>
                     </li>

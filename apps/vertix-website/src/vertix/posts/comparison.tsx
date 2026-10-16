@@ -229,7 +229,7 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
             { capability: "Roles that can act on any room (server-wide)", cells: [ null, "Staff role", null, null ] },
             { capability: "A role while somebody is in a room (server-wide)", cells: [ "Voice role", "Paid", null, "One free" ] },
             { capability: "Keep chosen words out of room names (server-wide)", cells: [ "Badwords", "Blacklisted Words", null, null ] },
-            { capability: "Speak the member's own language", cells: [ "Seven languages", "Per server", "17 languages", null ] },
+            { capability: "Speak the member's own language", cells: [ "Eight languages", "Per server", "17 languages", null ] },
             { capability: "Reword every message it sends", cells: [ "Dashboard", "Paid", null, null ] },
             { capability: "How long a claim vote runs", cells: [ "Five timings", null, null, null ] },
         ],

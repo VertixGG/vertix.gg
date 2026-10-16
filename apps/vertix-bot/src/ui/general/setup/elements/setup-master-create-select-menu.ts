@@ -30,19 +30,21 @@ export class SetupMasterCreateSelectMenu extends UIElementStringSelectMenu {
         return 0;
     }
 
+    // V3 leads because people take the first option - with V2 on top, new servers kept setting up
+    // the older panel. The language files pair options by value, so the order here is the order shown.
     protected async getSelectOptions(): Promise<APISelectMenuOption[]> {
         return [
+            {
+                label: "Dynamic Channel (V3)",
+                value: MASTER_CHANNEL_TYPE_V3,
+                emoji: { name: "✨" },
+                description: "Recommended - enhanced dynamic channels with more features"
+            },
             {
                 label: "Dynamic Channel (V2)",
                 value: MASTER_CHANNEL_TYPE_V2,
                 emoji: { name: "➕" },
                 description: "Classic dynamic voice channels"
-            },
-            {
-                label: "Dynamic Channel (V3)",
-                value: MASTER_CHANNEL_TYPE_V3,
-                emoji: { name: "✨" },
-                description: "Enhanced dynamic channels with more features"
             },
             {
                 label: "Auto-Scaling Channel",

@@ -897,6 +897,10 @@
             {
               "label": "🇯🇵 Japonés",
               "value": "ja"
+            },
+            {
+              "label": "🇨🇳 Chino simplificado",
+              "value": "zh"
             }
           ]
         }
@@ -1888,7 +1892,8 @@
             "es": "Español",
             "fr": "Francés",
             "de": "Alemán",
-            "ja": "Japonés"
+            "ja": "Japonés",
+            "zh": "Chino simplificado"
           }
         }
       }

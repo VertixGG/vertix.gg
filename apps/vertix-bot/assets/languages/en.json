@@ -906,6 +906,10 @@
             {
               "label": "🇪🇸 Español",
               "value": "es"
+            },
+            {
+              "label": "🇨🇳 简体中文",
+              "value": "zh"
             }
           ]
         }
@@ -1892,7 +1896,8 @@
             "ru": "Русский",
             "fr": "Français",
             "el": "Ελληνικά",
-            "es": "Español"
+            "es": "Español",
+            "zh": "简体中文"
           }
         }
       }

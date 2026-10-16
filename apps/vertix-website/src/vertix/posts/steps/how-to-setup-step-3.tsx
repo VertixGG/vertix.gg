@@ -3,7 +3,11 @@ import { DiscordUIComponentMessage, DiscordRoleSelectDropdown } from "@vertix.gg
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
-import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+import {
+    SETUP_EMPTY_VARIABLES,
+    masterChannelV3ButtonEmojis
+} from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+import { DYNAMIC_CHANNEL_V3_BUTTON_ORDER } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
@@ -119,7 +123,9 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                         variables={ {
                             ...SETUP_EMPTY_VARIABLES,
                             masterChannelMessage: "{masterChannels}",
-                            masterChannels: "**#1**\n▷ Name: 🔊 🆕 New Channel\n▷ Channel ID: 1121075197588541460\n▷ Dynamic Channels Name: `{user}'s Channel`\n▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 🔀, 😈\n▷ Verified Roles: @Trusted Members",
+                            masterChannels: "**#1**\n▷ Name: 🔊 🆕 New Channel\n▷ Channel ID: 1121075197588541460\n▷ Dynamic Channels Name: `{user}'s Channel`\n"
+                                + `▷ Buttons: **${ masterChannelV3ButtonEmojis( DYNAMIC_CHANNEL_V3_BUTTON_ORDER ) }**\n`
+                                + "▷ Verified Roles: @Trusted Members",
                             badwordsMessage: "`badword`",
                         } }
                         ephemeral={ true }

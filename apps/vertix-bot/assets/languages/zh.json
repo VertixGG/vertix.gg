@@ -1,0 +1,4770 @@
+{
+  "code": "zh",
+  "name": "简体中文",
+  "flag": "🇨🇳",
+  "elements": {
+    "buttons": [
+      {
+        "name": "VertixBot/UI-General/BadwordsClearButton",
+        "content": {
+          "label": "全部移除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
+        "content": {
+          "label": "编辑频道名称"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultPrivacyResetButton",
+        "content": {
+          "label": "恢复默认"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+        "content": {
+          "label": "复制生成器频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DeleteButton",
+        "content": {
+          "label": "删除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DoneButton",
+        "content": {
+          "label": "✓ 完成"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
+        "content": {
+          "label": "邀请开发者"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackReportButton",
+        "content": {
+          "label": "报告问题"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackSuggestionButton",
+        "content": {
+          "label": "提出建议"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageChooseButton",
+        "content": {
+          "label": "选择语言"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/NoButton",
+        "content": {
+          "label": "👎 否"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "重新生成"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsBackButton",
+        "content": {
+          "label": "返回"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupBadwordsEditButton",
+        "content": {
+          "label": "编辑违禁词"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "返回"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimResetButton",
+        "content": {
+          "label": "恢复默认"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupServerOptionsEditButton",
+        "content": {
+          "label": "编辑服务器选项"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/StaffRolesClearButton",
+        "content": {
+          "label": "清除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesClearButton",
+        "content": {
+          "label": "清除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VoiceRoleClearButton",
+        "content": {
+          "label": "清除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeInviteButton",
+        "content": {
+          "label": "邀请 VoiceChannels"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSetupButton",
+        "content": {
+          "label": "设置"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSupportButton",
+        "content": {
+          "label": "社区服务器"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardBackButton",
+        "content": {
+          "label": "◀ 返回"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardFinishButton",
+        "content": {
+          "label": "✔ 完成"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardNextButton",
+        "content": {
+          "label": "下一步 ▶"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/YesButton",
+        "content": {
+          "label": "👍 是"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ClaimStartButton",
+        "content": {
+          "label": "认领"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ClaimVoteAddButton",
+        "content": {
+          "label": "投票给 {displayName}"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ClaimVoteStepInButton",
+        "content": {
+          "label": "介入"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionButton",
+        "content": {
+          "label": "区域"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
+        "content": {
+          "label": "清除聊天"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaLimitButton",
+        "content": {
+          "label": "上限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaRenameButton",
+        "content": {
+          "label": "重命名"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+        "content": {
+          "label": "状态"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
+        "content": {
+          "label": "访问权限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "publicText": "公开",
+            "privateText": "私密"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "shownText": "可见",
+            "hiddenText": "隐藏"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
+        "content": {
+          "label": "认领"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
+        "content": {
+          "label": "重置"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+        "content": {
+          "label": "转让"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
+        "content": {
+          "label": "对此身份组使用默认值"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
+        "content": {
+          "label": "更新现有频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+        "content": {
+          "label": "编辑时间"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ClaimStartButton",
+        "content": {
+          "label": "认领"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ClaimVoteAddButton",
+        "content": {
+          "label": "投票给 {displayName}"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ClaimVoteStepInButton",
+        "content": {
+          "label": "介入"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+        "content": {
+          "label": "认领"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelClearChatButton",
+        "content": {
+          "label": "清除聊天"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+        "content": {
+          "label": "邀请"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+        "content": {
+          "label": "敲门"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+        "content": {
+          "label": "上限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+        "content": {
+          "label": "访问权限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+        "content": {
+          "label": "编辑主消息"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
+        "content": {
+          "label": "编辑 ✏️"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
+        "content": {
+          "label": "编辑 ✏️"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
+        "content": {
+          "label": "隐私"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRegionButton",
+        "content": {
+          "label": "区域"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
+        "content": {
+          "label": "重命名"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+        "content": {
+          "label": "重置"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+        "content": {
+          "label": "状态"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
+        "content": {
+          "label": "应用模板"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
+        "content": {
+          "label": "应用所选"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
+        "content": {
+          "label": "◀ 返回"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+        "content": {
+          "label": "模板"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+        "content": {
+          "label": "保存为模板"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
+        "content": {
+          "label": "确认删除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
+        "content": {
+          "label": "删除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+        "content": {
+          "label": "转让"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "编辑设置"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
+        "content": {
+          "label": "对此身份组使用默认值"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
+        "content": {
+          "label": "更新现有频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpSupportButton",
+        "content": {
+          "label": "支持服务器"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpDashboardButton",
+        "content": {
+          "label": "控制台"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpWebsiteButton",
+        "content": {
+          "label": "官网"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpSetupGuideButton",
+        "content": {
+          "label": "设置"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpJoinToCreateButton",
+        "content": {
+          "label": "加入即创建"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpFeaturesButton",
+        "content": {
+          "label": "功能"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventJoinVoiceButton",
+        "content": {
+          "label": "🔊  加入语音"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsEnableButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "turnOnText": "开启",
+            "turnOffText": "关闭"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsSubPostsButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "subPostsOffText": "停止发布替补帖",
+            "subPostsOnText": "发布替补帖"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsDashboardButton",
+        "content": {
+          "label": "更多选项"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsChooseButton",
+        "content": {
+          "label": "活动"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/TrialEndingBillingButton",
+        "content": {
+          "label": "打开账单"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsButton",
+        "content": {
+          "label": "随机分队"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsButton",
+        "content": {
+          "label": "自选队伍"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsButton",
+        "content": {
+          "label": "小组"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRecallButton",
+        "content": {
+          "label": "召回"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGuideButton",
+        "content": {
+          "label": "使用说明"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsApplyButton",
+        "content": {
+          "label": "应用"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsApplyButton",
+        "content": {
+          "label": "应用"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsApplyButton",
+        "content": {
+          "label": "应用"
+        }
+      }
+    ],
+    "textInputs": [
+      {
+        "name": "VertixBot/UI-General/BadwordsInput",
+        "content": {
+          "label": "用 `,` 分隔，非精确匹配请用 `*`",
+          "placeholder": "无"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ChannelNameTemplateInput",
+        "content": {
+          "label": "设置动态频道的默认名称",
+          "placeholder": "{user} 的频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DeleteConfirmInput",
+        "content": {
+          "label": "输入 DELETE 以确认",
+          "placeholder": "DELETE"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInputDescription",
+        "content": {
+          "label": "描述"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInputTitle",
+        "content": {
+          "label": "标题"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInputUrl",
+        "content": {
+          "label": "邀请链接"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "秒数，留空则使用默认值",
+          "placeholder": "60"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "秒数，留空则使用默认值",
+          "placeholder": "600"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
+        "content": {
+          "label": "每个频道的最大成员数",
+          "placeholder": "10"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "频道名称前缀",
+          "placeholder": "### 房间 - {index} ###"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "秒数，留空则使用默认值",
+          "placeholder": "60"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "秒数，留空则使用默认值",
+          "placeholder": "60"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "你在找什么样的队友",
+          "placeholder": "排位还差 2 人，需要麦克风"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
+        "content": {
+          "label": "设置人数上限（0 为无限制）",
+          "placeholder": "0 - 99"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaRenameInput",
+        "content": {
+          "label": "为你的频道起个名字"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
+        "content": {
+          "label": "你的频道里正在做什么"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
+        "content": {
+          "label": "成员人数刷新延迟（秒）",
+          "placeholder": "1.5"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
+        "content": {
+          "label": "提及冷却时间（分钟，0 为无）",
+          "placeholder": "60"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
+        "content": {
+          "label": "发帖冷却时间（分钟，0 为无）",
+          "placeholder": "10"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
+        "content": {
+          "label": "帖子有效期（分钟）",
+          "placeholder": "30"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
+        "content": {
+          "label": "设置人数上限（0 为无限制）",
+          "placeholder": "0 - 99"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditModalDescription",
+        "content": {
+          "label": "描述"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditModalTitle",
+        "content": {
+          "label": "标题"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
+        "content": {
+          "label": "为你的频道起个名字"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusInput",
+        "content": {
+          "label": "你的频道里正在做什么"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveInput",
+        "content": {
+          "label": "模板名称",
+          "placeholder": "为你的模板输入一个名称..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "你在找什么样的队友",
+          "placeholder": "排位还差 2 人，需要麦克风"
+        }
+      }
+    ],
+    "selectMenus": [
+      {
+        "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
+        "content": {
+          "placeholder": "⌘ ∙ 配置",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelMentionableLabel} {state}",
+              "value": "dynamicChannelMentionable:1"
+            },
+            {
+              "label": "{dynamicChannelAutoSaveLabel} {state}",
+              "value": "dynamicChannelAutoSave:1"
+            },
+            {
+              "label": "{dynamicChannelAutoStatusLabel} {state}",
+              "value": "dynamicChannelAutoStatus:0"
+            },
+            {
+              "label": "{dynamicChannelLogsChannelLabel} {state}",
+              "value": "dynamicChannelLogsChannel:0"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 开",
+              "{stateOff}": "∙🔴 关"
+            },
+            "dynamicChannelMentionableLabel": "@ ∙ 在主消息中提及用户",
+            "dynamicChannelAutoSaveLabel": "⫸ ∙ 自动保存动态频道",
+            "dynamicChannelAutoStatusLabel": "📢 ∙ 自动设置频道状态",
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ 将日志发送到自定义频道"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ 选择隐私状态",
+          "selectOptions": [
+            {
+              "label": "∙ 公开",
+              "value": "public"
+            },
+            {
+              "label": "∙ 私密",
+              "value": "private"
+            },
+            {
+              "label": "∙ 隐藏",
+              "value": "hidden"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitMenu",
+        "content": {
+          "placeholder": "✋ ∙ 选择人数上限",
+          "selectOptions": [
+            {
+              "label": "∙ 无上限",
+              "value": "0"
+            },
+            {
+              "label": "∙ 2 人",
+              "value": "2"
+            },
+            {
+              "label": "∙ 3 人",
+              "value": "3"
+            },
+            {
+              "label": "∙ 4 人",
+              "value": "4"
+            },
+            {
+              "label": "∙ 5 人",
+              "value": "5"
+            },
+            {
+              "label": "∙ 6 人",
+              "value": "6"
+            },
+            {
+              "label": "∙ 8 人",
+              "value": "8"
+            },
+            {
+              "label": "∙ 10 人",
+              "value": "10"
+            },
+            {
+              "label": "∙ 15 人",
+              "value": "15"
+            },
+            {
+              "label": "∙ 20 人",
+              "value": "20"
+            },
+            {
+              "label": "∙ 25 人",
+              "value": "25"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageSelectMenu",
+        "content": {
+          "placeholder": "🌍 选择语言",
+          "selectOptions": [
+            {
+              "label": "🇺🇸 英语",
+              "value": "en"
+            },
+            {
+              "label": "🇯🇵 日语",
+              "value": "ja"
+            },
+            {
+              "label": "🇩🇪 德语",
+              "value": "de"
+            },
+            {
+              "label": "🇷🇺 俄语",
+              "value": "ru"
+            },
+            {
+              "label": "🇫🇷 法语",
+              "value": "fr"
+            },
+            {
+              "label": "🇬🇷 希腊语",
+              "value": "el"
+            },
+            {
+              "label": "🇪🇸 西班牙语",
+              "value": "es"
+            },
+            {
+              "label": "🇨🇳 简体中文",
+              "value": "zh"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+        "content": {
+          "placeholder": "⚙️ ∙ 选择要编辑的选项",
+          "selectOptions": [
+            {
+              "label": "语音身份组",
+              "value": "editVoiceRole"
+            },
+            {
+              "label": "认证身份组",
+              "value": "editVerifiedRoles"
+            },
+            {
+              "label": "管理人员身份组",
+              "value": "editStaffRoles"
+            },
+            {
+              "label": "违禁词",
+              "value": "editBadwords"
+            },
+            {
+              "label": "认领",
+              "value": "editClaim"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ 选择要编辑的值",
+          "selectOptions": [
+            {
+              "label": "∙ 所有者离开多久后可认领",
+              "value": "claim-owner-away"
+            },
+            {
+              "label": "∙ 认领检查间隔",
+              "value": "claim-check-interval"
+            },
+            {
+              "label": "∙ 投票时长",
+              "value": "vote-duration"
+            },
+            {
+              "label": "∙ 每位候选人增加的投票时间",
+              "value": "vote-time-per-candidate"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+        "content": {
+          "placeholder": "创建主频道",
+          "header": "新建主频道",
+          "selectOptions": [
+            {
+              "label": "动态频道（V2）",
+              "value": "v2"
+            },
+            {
+              "label": "动态频道（V3）",
+              "value": "v3"
+            },
+            {
+              "label": "Auto-Scaling 频道",
+              "value": "scaling"
+            },
+            {
+              "label": "Team Lobby",
+              "value": "lobby"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
+        "content": {
+          "placeholder": "编辑主频道",
+          "header": "主频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/StaffRolesMenu",
+        "content": {
+          "placeholder": "🔑 ∙ 选择管理人员身份组"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ @everyone 身份组",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}",
+              "value": "dynamicChannelIncludeEveryoneRole:1"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 开",
+              "{stateOff}": "∙🔴 关"
+            },
+            "dynamicChannelIncludeEveryoneRoleLabel": "包含 @everyone 身份组"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ 选择认证身份组"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VoiceRoleMenu",
+        "content": {
+          "placeholder": "🎙️ ∙ 选择语音身份组"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
+        "content": {
+          "placeholder": "🎚 选择按钮",
+          "header": "此组中的按钮",
+          "selectOptions": [
+            {
+              "label": "重命名",
+              "value": "0"
+            },
+            {
+              "label": "上限",
+              "value": "1"
+            },
+            {
+              "label": "清除聊天",
+              "value": "2"
+            },
+            {
+              "label": "公开/私密",
+              "value": "3"
+            },
+            {
+              "label": "可见/隐藏",
+              "value": "4"
+            },
+            {
+              "label": "访问权限",
+              "value": "5"
+            },
+            {
+              "label": "重置",
+              "value": "6"
+            },
+            {
+              "label": "转让",
+              "value": "12"
+            },
+            {
+              "label": "区域",
+              "value": "19"
+            },
+            {
+              "label": "状态",
+              "value": "13"
+            },
+            {
+              "label": "LFM",
+              "value": "15"
+            },
+            {
+              "label": "认领",
+              "value": "7"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 选择频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
+        "content": {
+          "placeholder": "🫵 屏蔽用户访问"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
+        "content": {
+          "placeholder": "👎 移除访问权限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
+        "content": {
+          "placeholder": "👍 授予访问权限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
+        "content": {
+          "placeholder": "👢 踢出用户"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
+        "content": {
+          "placeholder": "🤙 取消屏蔽用户访问"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
+        "content": {
+          "placeholder": "🔀 选择用户"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+        "content": {
+          "placeholder": "🔎 ∙ LFM 频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+        "content": {
+          "placeholder": "🔔 ∙ 要提及的身份组"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LogChannelSelectMenu",
+        "content": {
+          "placeholder": "❯❯ ∙ 日志频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "➕ 为身份组设置专属按钮",
+          "header": "身份组专属设置"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 正在编辑",
+          "header": "正在编辑",
+          "selectOptions": [
+            {
+              "label": "默认按钮",
+              "value": "default"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ 选择编辑选项",
+          "selectOptions": [
+            {
+              "label": "∙ 编辑频道名称",
+              "value": "edit-dynamic-channel-name"
+            },
+            {
+              "label": "∙ 编辑频道按钮",
+              "value": "edit-dynamic-channel-buttons"
+            },
+            {
+              "label": "∙ 编辑频道认证身份组",
+              "value": "edit-dynamic-channel-verified-roles"
+            },
+            {
+              "label": "∙ 编辑频道管理人员身份组",
+              "value": "edit-dynamic-channel-staff-roles"
+            },
+            {
+              "label": "∙ 编辑频道语音身份组",
+              "value": "edit-dynamic-channel-voice-role"
+            },
+            {
+              "label": "∙ 编辑 LFM",
+              "value": "edit-dynamic-channel-lfm-channels"
+            },
+            {
+              "label": "∙ 编辑隐私状态",
+              "value": "edit-dynamic-channel-default-privacy"
+            },
+            {
+              "label": "∙ 编辑人数上限",
+              "value": "edit-dynamic-channel-default-user-limit"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
+        "content": {
+          "placeholder": "🎚 选择按钮",
+          "header": "此组中的按钮",
+          "selectOptions": [
+            {
+              "label": "重命名",
+              "value": "rename"
+            },
+            {
+              "label": "上限",
+              "value": "limit"
+            },
+            {
+              "label": "访问权限",
+              "value": "access"
+            },
+            {
+              "label": "邀请",
+              "value": "invite"
+            },
+            {
+              "label": "隐私",
+              "value": "privacy"
+            },
+            {
+              "label": "区域",
+              "value": "region"
+            },
+            {
+              "label": "编辑主消息",
+              "value": "edit-primary-message"
+            },
+            {
+              "label": "清除聊天",
+              "value": "clear-chat"
+            },
+            {
+              "label": "重置",
+              "value": "rest-channel"
+            },
+            {
+              "label": "转让",
+              "value": "transfer"
+            },
+            {
+              "label": "模板",
+              "value": "templates"
+            },
+            {
+              "label": "状态",
+              "value": "status"
+            },
+            {
+              "label": "敲门",
+              "value": "knock"
+            },
+            {
+              "label": "LFM",
+              "value": "lfm"
+            },
+            {
+              "label": "认领",
+              "value": "claim-button"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ClaimCommandChannelMenu",
+        "content": {
+          "placeholder": "👑 ∙ 选择频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+        "content": {
+          "placeholder": "📨 选择频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+        "content": {
+          "placeholder": "📨 选择用户"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+        "content": {
+          "placeholder": "🚪 选择频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
+        "content": {
+          "placeholder": "🫵 屏蔽用户访问"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
+        "content": {
+          "placeholder": "👎 移除访问权限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
+        "content": {
+          "placeholder": "👍 授予访问权限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
+        "content": {
+          "placeholder": "👢 踢出用户"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
+        "content": {
+          "placeholder": "🤙 取消屏蔽用户访问"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
+        "content": {
+          "placeholder": "⛉ ∙ 选择隐私状态",
+          "selectOptions": [
+            {
+              "label": "公开",
+              "value": "public"
+            },
+            {
+              "label": "私密",
+              "value": "private"
+            },
+            {
+              "label": "隐藏",
+              "value": "hidden"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
+        "content": {
+          "placeholder": "⌖ ∙ 选择区域",
+          "selectOptions": [
+            {
+              "label": "自动",
+              "value": "auto"
+            },
+            {
+              "label": "巴西",
+              "value": "brazil"
+            },
+            {
+              "label": "香港",
+              "value": "hongkong"
+            },
+            {
+              "label": "印度",
+              "value": "india"
+            },
+            {
+              "label": "日本",
+              "value": "japan"
+            },
+            {
+              "label": "鹿特丹",
+              "value": "rotterdam"
+            },
+            {
+              "label": "俄罗斯",
+              "value": "russia"
+            },
+            {
+              "label": "新加坡",
+              "value": "singapore"
+            },
+            {
+              "label": "南非",
+              "value": "southafrica"
+            },
+            {
+              "label": "悉尼",
+              "value": "sydney"
+            },
+            {
+              "label": "美国中部",
+              "value": "us-central"
+            },
+            {
+              "label": "美国东部",
+              "value": "us-east"
+            },
+            {
+              "label": "美国南部",
+              "value": "us-south"
+            },
+            {
+              "label": "美国西部",
+              "value": "us-west"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
+        "content": {
+          "placeholder": "⌖ ∙ 选择区域",
+          "selectOptions": [
+            {
+              "label": "自动",
+              "value": "auto"
+            },
+            {
+              "label": "巴西",
+              "value": "brazil"
+            },
+            {
+              "label": "香港",
+              "value": "hongkong"
+            },
+            {
+              "label": "印度",
+              "value": "india"
+            },
+            {
+              "label": "日本",
+              "value": "japan"
+            },
+            {
+              "label": "鹿特丹",
+              "value": "rotterdam"
+            },
+            {
+              "label": "俄罗斯",
+              "value": "russia"
+            },
+            {
+              "label": "新加坡",
+              "value": "singapore"
+            },
+            {
+              "label": "南非",
+              "value": "southafrica"
+            },
+            {
+              "label": "悉尼",
+              "value": "sydney"
+            },
+            {
+              "label": "美国中部",
+              "value": "us-central"
+            },
+            {
+              "label": "美国东部",
+              "value": "us-east"
+            },
+            {
+              "label": "美国南部",
+              "value": "us-south"
+            },
+            {
+              "label": "美国西部",
+              "value": "us-west"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ∙ 选择比特率",
+          "selectOptions": [
+            {
+              "label": "生成器默认值",
+              "value": "inherit"
+            },
+            {
+              "label": "8 kbps",
+              "value": "8000"
+            },
+            {
+              "label": "16 kbps",
+              "value": "16000"
+            },
+            {
+              "label": "32 kbps",
+              "value": "32000"
+            },
+            {
+              "label": "64 kbps",
+              "value": "64000"
+            },
+            {
+              "label": "96 kbps",
+              "value": "96000"
+            },
+            {
+              "label": "128 kbps",
+              "value": "128000"
+            },
+            {
+              "label": "256 kbps",
+              "value": "256000"
+            },
+            {
+              "label": "384 kbps",
+              "value": "384000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ∙ 选择比特率",
+          "selectOptions": [
+            {
+              "label": "生成器默认值",
+              "value": "inherit"
+            },
+            {
+              "label": "8 kbps",
+              "value": "8000"
+            },
+            {
+              "label": "16 kbps",
+              "value": "16000"
+            },
+            {
+              "label": "32 kbps",
+              "value": "32000"
+            },
+            {
+              "label": "64 kbps",
+              "value": "64000"
+            },
+            {
+              "label": "96 kbps",
+              "value": "96000"
+            },
+            {
+              "label": "128 kbps",
+              "value": "128000"
+            },
+            {
+              "label": "256 kbps",
+              "value": "256000"
+            },
+            {
+              "label": "384 kbps",
+              "value": "384000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
+        "content": {
+          "placeholder": "📂 选择要应用的模板..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
+        "content": {
+          "placeholder": "🗑️ 选择要删除的模板..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
+        "content": {
+          "placeholder": "🔀 选择用户"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/LogChannelSelectMenu",
+        "content": {
+          "placeholder": "❯❯ ∙ 日志频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "➕ 为身份组单独设置按钮",
+          "header": "身份组专属设置"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 正在编辑",
+          "header": "正在编辑",
+          "selectOptions": [
+            {
+              "label": "默认按钮",
+              "value": "default"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ 选择编辑选项",
+          "selectOptions": [
+            {
+              "label": "∙ 编辑频道名称",
+              "value": "edit-dynamic-channel-name"
+            },
+            {
+              "label": "∙ 编辑频道按钮",
+              "value": "edit-dynamic-channel-buttons"
+            },
+            {
+              "label": "∙ 编辑频道认证身份组",
+              "value": "edit-dynamic-channel-verified-roles"
+            },
+            {
+              "label": "∙ 编辑频道管理人员身份组",
+              "value": "edit-dynamic-channel-staff-roles"
+            },
+            {
+              "label": "∙ 编辑频道语音身份组",
+              "value": "edit-dynamic-channel-voice-role"
+            },
+            {
+              "label": "∙ 编辑隐私状态",
+              "value": "edit-dynamic-channel-default-privacy"
+            },
+            {
+              "label": "∙ 编辑人数上限",
+              "value": "edit-dynamic-channel-default-user-limit"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 选择频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsChannelSelectMenu",
+        "content": {
+          "placeholder": "📅 ∙ 活动频道"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ 仅限这些成员（可选）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsMenu",
+        "content": {
+          "placeholder": "🎲 ∙ 分成几支队伍？",
+          "selectOptions": [
+            {
+              "label": "2 支队伍",
+              "value": "2"
+            },
+            {
+              "label": "3 支队伍",
+              "value": "3"
+            },
+            {
+              "label": "4 支队伍",
+              "value": "4"
+            },
+            {
+              "label": "5 支队伍",
+              "value": "5"
+            },
+            {
+              "label": "6 支队伍",
+              "value": "6"
+            },
+            {
+              "label": "7 支队伍",
+              "value": "7"
+            },
+            {
+              "label": "8 支队伍",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ 仅限这些成员（可选）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyPickTeamsMenu",
+        "content": {
+          "placeholder": "🙋 ∙ 分成几支队伍？",
+          "selectOptions": [
+            {
+              "label": "2 支队伍",
+              "value": "2"
+            },
+            {
+              "label": "3 支队伍",
+              "value": "3"
+            },
+            {
+              "label": "4 支队伍",
+              "value": "4"
+            },
+            {
+              "label": "5 支队伍",
+              "value": "5"
+            },
+            {
+              "label": "6 支队伍",
+              "value": "6"
+            },
+            {
+              "label": "7 支队伍",
+              "value": "7"
+            },
+            {
+              "label": "8 支队伍",
+              "value": "8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupsPlayersMenu",
+        "content": {
+          "placeholder": "👥 ∙ 仅限这些成员（可选）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyGroupSizeMenu",
+        "content": {
+          "placeholder": "👥 ∙ 每组几人？",
+          "selectOptions": [
+            {
+              "label": "每组 2 人",
+              "value": "2"
+            },
+            {
+              "label": "每组 3 人",
+              "value": "3"
+            },
+            {
+              "label": "每组 4 人",
+              "value": "4"
+            },
+            {
+              "label": "每组 5 人",
+              "value": "5"
+            },
+            {
+              "label": "每组 6 人",
+              "value": "6"
+            },
+            {
+              "label": "每组 7 人",
+              "value": "7"
+            },
+            {
+              "label": "每组 8 人",
+              "value": "8"
+            },
+            {
+              "label": "每组 9 人",
+              "value": "9"
+            },
+            {
+              "label": "每组 10 人",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/TeamLobbyHostRolesMenu",
+        "content": {
+          "placeholder": "🎮 ∙ 选择主持人身份组"
+        }
+      }
+    ]
+  },
+  "embeds": [
+    {
+      "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
+      "content": {
+        "title": "⚠️  无法创建你的频道",
+        "description": "加入 <#{masterChannelId}> 后未能为你创建频道。\n\n{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotCovered}": "此服务器的生成器数量超出了套餐允许的上限，而这个生成器属于超出的部分，所以它目前不会创建频道。\n\n最先设置的那些生成器仍在正常工作。服务器管理员可以升级套餐来重新启用它，或删除不再使用的生成器。",
+            "{reasonCategoryFull}": "此频道所在的分类已满。Discord 每个分类最多允许 50 个频道，该分类已达到上限。\n\n请告知服务器管理员——他们可以腾出一个频道，或将生成器移到其他分类。",
+            "{reasonGeneratorFull}": "此生成器已开启 {maxActiveDynamicChannels} 个频道，已达到可同时开启的上限。\n\n有频道空出来后就能再创建。如果频道都在使用中，服务器管理员可以再设置一个生成器。",
+            "{reasonUnknown}": "这通常意味着服务器达到了 Discord 的某项限制，或者机器人所需的某项权限被移除了。\n\n请告知服务器管理员。具体原因已写入机器人日志。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ChannelGoneEmbed",
+      "content": {
+        "title": "🕳  该频道已不存在",
+        "description": "此界面对应的频道已不存在——动态频道会在最后一个人离开后被删除。\n\n请重新运行命令，以管理你现在的频道。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ 该选择已过期",
+        "description": "没有做任何更改。\n\n请重新开始并再次选择。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
+      "content": {
+        "title": "😈  认领需在频道内进行",
+        "description": "此面板位于生成器旁边，而不在任何一个频道里，所以这里没有可认领的频道。\n\n请加入你想接管的语音频道，打开它的聊天，然后在那里等待的消息上按 **认领**。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/CommandFailedEmbed",
+      "content": {
+        "title": "⚠  操作失败",
+        "description": "运行该命令时出了点问题。\n\n问题已被记录。不妨再试一次——如果一直出现，请在支持服务器告诉我们。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
+      "content": {
+        "title": "😈 此操作已禁用",
+        "description": "认领进行期间无法执行此操作。\n\n请等待认领完成。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeatureMissingInV2Embed",
+      "content": {
+        "title": "⚠  此生成器的界面没有该功能",
+        "description": "此频道来自一个使用旧版界面的生成器，旧版界面没有该功能。\n\n服务器管理员可以升级该生成器来获得此功能。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "感谢你使用 VoiceChannels",
+        "description": "感谢你付出的时间和耐心。\n\n**你在 VoiceChannels 上的体验对我们很重要，我们非常期待听到你的反馈。**\n\n我们致力于提供最好的服务，你的意见能帮助我们做到这一点。\n\n如果你对改进 VoiceChannels 有任何建议、疑虑或想法，请随时与我们分享。\n\n我们非常重视你的反馈，它将帮助 VoiceChannels 变得更好。\n\n感谢你使用 VoiceChannels，期待听到你的想法！"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/InvalidChannelTypeEmbed",
+      "content": {
+        "title": "# 哎呀！此组件不能在这种频道类型中使用。",
+        "description": "此操作不能在这种频道类型中使用，可用的频道类型有：\n\n{allowedTypes}\n\n请在其他频道中重试。",
+        "arrayOptions": {
+          "allowedTypes": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/LanguageEmbed",
+      "content": {
+        "title": "🌍  选择语言",
+        "description": "__当前语言__：**{currentLanguage}**\n\n没有找到你的语言？\n\n你可以亲自把机器人翻译成你的语言！\n来我们的支持服务器联系我们，成为那个人吧！\n\n发现翻译有误？请告诉我们！",
+        "options": {
+          "currentLanguage": {
+            "en": "英语",
+            "ja": "日语",
+            "de": "德语",
+            "ru": "俄语",
+            "fr": "法语",
+            "el": "希腊语",
+            "es": "西班牙语",
+            "zh": "简体中文"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/MissingAdminPermissionsEmbed",
+      "content": {
+        "title": "⛔  你无法配置此服务器",
+        "description": "此命令仅供服务器管理员使用。\n\n需要 **管理服务器**、**管理频道** 和 **管理身份组** 权限。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/MissingPermissionsEmbed",
+      "content": {
+        "title": "🔐  哎呀！需要特定权限",
+        "description": "继续操作需要一些权限，**{omitterDisplayName}** 缺少以下权限：\n\n{missingPermissions}",
+        "arrayOptions": {
+          "missingPermissions": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  没有活跃的动态频道",
+        "description": "你没有正在使用的动态频道。{masterChannelMessage}",
+        "options": {
+          "masterChannelMessage": {
+            "{masterChannelId}": "\n\n请先加入 <#{masterChannelId}> 来创建你自己的频道。",
+            "{masterChannelMessageDefault}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NotClaimableEmbed",
+      "content": {
+        "title": "🔒  这里没有可认领的频道",
+        "description": "此频道目前无法认领。\n\n频道所有者离开后，频道才可被认领。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NothingChangedEmbed",
+      "content": {
+        "title": "🤷  没有任何更改",
+        "description": "当你尝试更改无法更改的内容，或新值与之前相同时，就会出现这种情况。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NotInAServerEmbed",
+      "content": {
+        "title": "🏠  请在服务器中运行",
+        "description": "这些命令作用于服务器的语音频道，而私信里两者都没有。\n\n请打开你想要的服务器，在那里运行。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NotYourChannelEmbed",
+      "content": {
+        "title": "⛔  这不是你的频道！",
+        "description": "不过你可以开一个自己的频道 :)\n\n 点击这里即可：<#{masterChannelId}>"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupBadwordsEmbed",
+      "content": {
+        "title": "🙅  违禁词",
+        "description": "在此服务器中，动态频道名称里不能出现的词语。\n\n成员若将频道重命名为包含这些词语的名称，会被拒绝，名称保持不变。此检查只针对名称——不会读取任何人说的话。\n\n_**当前列表**_：\n{badwordsMessage}\n\n`(🙅 编辑违禁词)` 会用你输入的内容替换整个列表，词语之间用逗号分隔。\n`(🧹 全部移除)` 会清空列表，所有名称都将再次被允许。\n",
+        "options": {
+          "badwordsMessage": {
+            "{badwords}": "`{badwords}`",
+            "{badwordsMessageDefault}": "**无**——允许所有名称。"
+          }
+        },
+        "arrayOptions": {
+          "badwords": {
+            "format": "{value}{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  认领配置",
+        "description": "动态频道的所有者离开后，VoiceChannels 会等待一段时间，再把频道交给仍在频道内的成员。随后由他们投票决定由谁接管。\n\n在下方选择一个值进行更改。标有 {defaultMarker} 的值沿用机器人自身的配置，而不是在这里做出的选择；留空即可恢复为该配置。\n\n**🚪 所有者离开多久后可认领** ∙ {valueClaimTimeout}\n所有者离开多久后，频道会交给其他人。\n\n**🔁 认领检查间隔** ∙ {valueClaimInterval}\nVoiceChannels 检查无人管理频道的频率，这也决定了实际开放认领的时间与上方等待时间的接近程度。\n\n**🗳️ 投票时长** ∙ {valueVoteTimeout}\n认领投票开始后持续开放的时间。\n\n**➕ 每位候选人增加的投票时间** ∙ {valueVoteAddTime}\n每当有新人自荐参选时，为进行中的投票增加的时间。\n",
+        "options": {
+          "defaultMarker": "*（默认）*"
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupEmbed",
+      "content": {
+        "title": "🛠  设置 VoiceChannels",
+        "description": "探索 **VoiceChannels** 的无限可能！\n随心定制并优化你的服务器。\n\n主频道是动态语音频道的生成器，每个都有自己独立的配置。\n\n违禁词功能可在服务器级别限制动态频道的名称。\n\n_**当前主频道**_：\n{masterChannelMessage}\n\n_**服务器违禁词**_：\n{badwordsMessage}\n\n_**服务器语音身份组**_：\n{voiceRoleMessage}\n\n_**服务器认证身份组**_：\n{verifiedRolesMessage}\n\n_**服务器管理人员身份组**_：\n{staffRolesMessage}",
+        "footer": "{tipMessage}",
+        "options": {
+          "masterChannelMessage": {
+            "{masterChannels}": "\n{masterChannels}",
+            "{masterChannelMessageDefault}": "**无**"
+          },
+          "tipMessage": {
+            "{tip-logs-channel}": "💡 编辑主频道即可设置日志频道。",
+            "{tip-badwords}": "💡 违禁词只需为服务器设置一次，就会限制所有动态频道的名称。",
+            "{tip-inherited-roles}": "💡 在你为生成器单独设置身份组之前，它会显示 *（来自服务器选项）*。",
+            "{tip-templates}": "💡 成员可以将频道的名称、人数上限和隐私设置保存为模板，以后再次使用。",
+            "{tip-autosave}": "💡 开启自动保存后，成员的下一个频道会沿用他们上一个频道离开时的设置。",
+            "{tip-lfm-pings}": "💡 LFM 招人帖只会提及你允许的身份组——一个都不选，就永远不会提及任何人。",
+            "{tip-privacy-default}": "💡 选择新频道的初始状态：公开、私密或隐藏。"
+          },
+          "badwordsMessage": {
+            "{badwords}": "`{badwords}`",
+            "{badwordsMessageDefault}": "**无**"
+          },
+          "voiceRoleMessage": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleMessageDefault}": "**无**"
+          },
+          "verifiedRolesMessage": {
+            "{verifiedRoleIds}": "{verifiedRoleIds}",
+            "{verifiedRolesMessageDefault}": "**@everyone** *（默认）*"
+          },
+          "staffRolesMessage": {
+            "{staffRoleIds}": "{staffRoleIds}",
+            "{staffRolesMessageDefault}": "**无**"
+          },
+          "none": "**无**",
+          "inherited": "*（来自服务器选项）*",
+          "privacyPublic": "🌐 公开",
+          "privacyPrivate": "🚫 私密",
+          "privacyHidden": "🙈 隐藏",
+          "autoSaveOn": "`🟢∙开`",
+          "autoSaveOff": "`🔴∙关`"
+        },
+        "arrayOptions": {
+          "masterChannels": {
+            "format": "{value}{separator}",
+            "separator": "\n",
+            "multiSeparator": "\n\n"
+          },
+          "badwords": {
+            "format": "{value}{separator}",
+            "separator": ", "
+          },
+          "verifiedRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
+      "content": {
+        "title": "➕  创建频道生成器",
+        "description": "生成器是一个语音频道：成员加入后会得到一个属于自己的频道，频道为他们而建，离开时自动删除。\n\n**✨ 动态频道 (V3)** — 当前的界面。没有特别的理由，就选这个。\n**➕ 动态频道 (V2)** — 旧版界面，适合已经在使用它的服务器。\n**📈 Auto-Scaling 频道** — 一个频道，人满后会扩展成多个。\n**🎮 Team Lobby** — 大家先聚在一个频道里，再分到各队伍房间或小组，之后还能召回。\n\n在下方选择，接下来只需回答几个问题。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupMasterEditEmbed",
+      "content": {
+        "title": "🔧  编辑频道生成器",
+        "description": "选择你要修改的生成器。\n\n接下来会打开它的设置——新频道的名称、谁能看到它们、频道所有者有哪些按钮，以及其他选项。\n\n*这里什么都没有？说明服务器还没有生成器——用 `/manage new-generator` 创建一个。*"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
+      "content": {
+        "title": "🤷  你已达到主频道数量上限",
+        "description": "你最多总共可以创建 **{maxMasterChannels}** 个主频道。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
+      "content": {
+        "title": "⚙️  服务器设置",
+        "description": "这些设置作用于整个服务器，而不是某一个生成器。\n\n**语音身份组** — 成员在动态频道、Auto-Scaling 频道或 Team Lobby 中时获得的身份组。\n**认证身份组** — 动态频道是为哪些人准备的。\n**管理人员身份组** — 任何频道都无法将其拒之门外，所有者也无法屏蔽或踢出他们。Team Lobby 的房间同样允许他们进入。\n**违禁词** — 成员不能在频道名称中使用的词。\n**认领** — 被遗弃的频道等待多久，以及投票持续多久。\n\n选择一项进行修改。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
+      "content": {
+        "title": "🛡️  服务器身份组",
+        "description": "本服务器的动态频道、Auto-Scaling 频道和 Team Lobby 所依据的身份组。\n\n**语音身份组** — 成员在动态频道、Auto-Scaling 频道或 Team Lobby 中时获得，离开时收回。\n**认证身份组** — 生成器的频道是为哪些人准备的，其他人都无法进入。\n**管理人员身份组** — 任何频道都无法将其拒之门外，所有者也无法屏蔽或踢出他们。Team Lobby 的房间同样允许他们进入。\n\n选择一项进行修改。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SomethingWentWrongEmbed",
+      "content": {
+        "title": "🤷 哎呀，出了点问题",
+        "description": "出错了"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "content": {
+        "title": "🔑  管理人员",
+        "description": "**{staffMemberDisplayName}** 拥有本服务器的管理人员身份组。\n\n无论频道所有者选择哪种状态，管理人员身份组都能访问每一个动态频道，因此无法将其从你的频道中屏蔽或踢出。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 为我们投票即可解锁此功能！",
+        "description": "这是一项高级功能，但你可以免费解锁！[**在 top.gg 上为我们投票！**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/UnassignableRoleEmbed",
+      "content": {
+        "title": "🎙️  无法使用该身份组",
+        "description": "身份组 <@&{roleId}> 已保存，但机器人无法分配它 - {reason}。\n\n请在 **服务器设置 → 身份组** 中把机器人自己的身份组移到它上方，或者选择其他身份组。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WelcomeEmbed",
+      "content": {
+        "title": "༄ VoiceChannels 来啦，我们开始吧！",
+        "description": "欢迎使用 VoiceChannels，它会让你的服务器如虎添翼！\n让我们一起把你的服务器打造得更好。\n\n**机器人设置**\n- 输入 `/setup` 或按下 `(🛠 设置)` 按钮。\n- 点击 `(➕ 创建主频道)`\n- 按照步骤操作。\n\n还是不太确定？查看我们的[分步](https://voicechannels.online/posts/how-to-setup)指南。\n\n你随时可以使用 `/setup` 命令修改配置。\n\n如果你需要帮助或有任何建议，欢迎加入我们的 Discord 社区服务器！我们很乐意为你提供帮助并听取你的反馈。\n\n加入我们：https://discord.gg/dEwKeQefUU"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
+      "content": {
+        "title": "👑  你重新掌管频道了！",
+        "description": "请注意，如果你在 **{absentMinutes}** 分钟内没有回来，该频道将再次开放给其他成员认领。\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed",
+      "content": {
+        "title": "🤷  你已经报名了",
+        "description": "你的意图很明确 - 你已经提名自己为这个频道的候选所有者了。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultStepInEmbed",
+      "content": {
+        "title": "😈  频道可能归你了",
+        "description": "你已报名成为这个频道的候选所有者。\n祝你好运！\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVotedEmbed",
+      "content": {
+        "title": "🗳️  你已投票给 {userDisplayName}",
+        "description": "你已投票支持 <@{userId}> 成为这个频道的所有者。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbed",
+      "content": {
+        "title": "🗳️  你已经投票给 {userDisplayName} 了",
+        "description": "你已经投票支持 <@{userId}>，如果改变了主意，可以改投给其他人。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed",
+      "content": {
+        "title": "🤷  你不能给自己投票",
+        "description": "相信自己是好事，但这次选举不允许给自己投票。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
+      "content": {
+        "title": "🗳️  你的投票已更新",
+        "description": "你刚刚把频道所有权的投票从 <@{prevUserId}> 改投给了 <@{currentUserId}>。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimStartEmbed",
+      "content": {
+        "title": "👋  {ownerDisplayName} 丢下了自己的频道！",
+        "description": "<@{ownerId}> 已经离开超过 {absentMinutes} 分钟。\n你愿意来接管吗？站出来认领它吧！"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteEmbed",
+      "content": {
+        "title": "👑  {candidatesCount} 位候选人想要认领这个频道",
+        "description": "倒计时开始！\n投票将在 `{elapsedTimeFormatFraction}` 后结束。\n如果平票，<@{userInitiatorId}> 将成为新的所有者。\n\n{candidatesState}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "candidatesState": {
+            "{candidates}": "🏅 {candidates}",
+            "{candidatesDefault}": "目前还没有候选人。"
+          }
+        },
+        "arrayOptions": {
+          "candidates": {
+            "format": "{value}{separator}",
+            "separator": " - ",
+            "multiSeparator": "\n",
+            "options": {
+              "userId": "<@{userId}>",
+              "votes": "{votes} 票"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
+      "content": {
+        "title": "👑  {userInitiatorDisplayName} 想要认领这个频道",
+        "description": "除非有其他人站出来，否则 <@{userInitiatorId}> 将在 `{elapsedTimeFormatFraction}` 后成为这个频道的新所有者。",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteWonEmbed",
+      "content": {
+        "title": "👑  {userWonDisplayName} 认领了这个频道",
+        "description": "{wonMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "wonMessage": {
+            "{wonSomeoneElse}": "<@{userWonId}> 认领了这个频道的所有权，取代 ~~{previousOwnerDisplayName}~~ 成为新的所有者！{results}",
+            "{wonSameOwner}": "<@{userWonId}> 认领了这个频道的所有权，而且本来就是所有者！😊{results}"
+          },
+          "results": {
+            "{resultsDefault}": "",
+            "{resultsLink}": "\n\n点击[这里]({resultsLink})查看详情"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelEmbed",
+      "content": {
+        "title": "༄ 管理你的动态频道",
+        "description": "肩负起管理动态频道的责任，按照你的喜好精心定制它吧。\n\n请注意，只有频道所有者才有权进行修改。\n\n_当前设置_：\n- 名称：**{name}**\n- 人数上限：✋ **{limit}**\n- 状态：{state}\n- 可见状态：{visibilityState}\n- 区域：🌍 **{region}**\n- 比特率：🎚 **{bitrate} kbps**",
+        "options": {
+          "limit": {
+            "{limitDisplayValue}": "{limitValue}",
+            "{limitDisplayUnlimited}": "无限制"
+          },
+          "state": {
+            "{statePublic}": "🌐 **公开**",
+            "{statePrivate}": "🚫 **私密**"
+          },
+          "visibilityState": {
+            "{visibilityStateShown}": "🐵 **可见**",
+            "{visibilityStateHidden}": "🙈 **隐藏**"
+          },
+          "region": {
+            "{region-auto}": "自动",
+            "{region-brazil}": "巴西",
+            "{region-hongkong}": "香港",
+            "{region-india}": "印度",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "鹿特丹",
+            "{region-russia}": "俄罗斯",
+            "{region-singapore}": "新加坡",
+            "{region-southafrica}": "南非",
+            "{region-sydney}": "悉尼",
+            "{region-us-central}": "美国中部",
+            "{region-us-east}": "美国东部",
+            "{region-us-south}": "美国南部",
+            "{region-us-west}": "美国西部"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  还不行",
+        "description": "本服务器限制了这些频道发布招募的频率，而上一条刚发布不久。大约 {retryMinutes} 分钟后才能发布下一条。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  你的频道已登上招募板",
+        "description": "已发布到 <#{lfmChannelId}>。\n\n它会实时更新成员人数，并在你的频道满员或清空时自动撤下。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostEmbed",
+      "content": {
+        "title": "🔎  {channelName} 正在寻找成员",
+        "description": "{noteLine}{gameLine}**成员** {occupancy}\n**主持人** <@{ownerId}>\n\n在 <#{channelId}> 加入他们 · `{elapsedTimeFormatFraction}` 后关闭",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "gameLine": {
+            "{gameKnown}": "**正在玩** {gameName}\n",
+            "{gameUnknown}": ""
+          },
+          "noteLine": {
+            "{noteKnown}": "> {note}\n\n",
+            "{noteUnknown}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  要发布到哪里？",
+        "description": "选择招募帖要发布到的频道。\n\n帖子会显示主持人、正在玩的游戏和当前人数，并在你的频道满员或清空时撤下。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  无法发布",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "还没有人设置这项功能。需要管理员运行 `/setup`，在频道界面中开启 **LFM** 按钮，并选择这些帖子要发布到的频道。",
+            "{reasonDestinationUnavailable}": "这些帖子要发布到的频道你看不到。管理员可以在设置界面中选择它们。",
+            "{reasonHidden}": "你的频道是隐藏的，反正也没人能找到它。请先将它设为可见。",
+            "{reasonPrivate}": "你的频道是私密的，你邀请的人也进不来。请先将它设为公开。",
+            "{reasonFull}": "你的频道已经满员了。",
+            "{reasonAlreadyPosted}": "你的频道已经在招募板上了。",
+            "{reasonFailed}": "发布时出了点问题，请稍后再试。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
+      "content": {
+        "title": "🧹  没有可以清除的消息",
+        "description": "请注意，只能删除非嵌入式消息。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
+      "content": {
+        "title": "🧹  {ownerDisplayName} 清除了聊天记录！",
+        "description": "共 {totalMessages} 条消息。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
+      "content": {
+        "title": "🙅  人数上限必须在 {minValue} 到 {maxValue} 之间"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
+      "content": {
+        "title": "✋  你的频道人数上限已更改为 {userLimit}",
+        "options": {
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "无限制"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
+      "content": {
+        "title": "🙅  频道重命名失败",
+        "description": "`{badword}` 一词已被服务器管理员列为不当用语。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
+      "content": {
+        "title": "🙅 你重命名频道太频繁了！",
+        "description": "请等待 `{elapsedTimeFormatFraction}` 后再重命名{masterChannelMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "masterChannelMessage": {
+            "{masterChannelId}": " 或者开一个新频道：<#{masterChannelId}>",
+            "{masterChannelMessageDefault}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed",
+      "content": {
+        "title": "✏️  你的频道名称已更改为“{channelName}”"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+      "content": {
+        "title": "🙅  频道状态设置失败",
+        "description": "`{badword}` 一词已被服务器管理员列为不当用语。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+      "content": {
+        "title": "📣  你的频道状态已恢复为自动",
+        "description": "现在显示为“{channelStatus}”，并会随频道变化自动更新。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+      "content": {
+        "title": "📣  你的频道状态现在是“{channelStatus}”",
+        "description": "它会一直保留，直到你清除为止。提交空状态即可恢复为自动。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ 管理你的动态频道",
+        "description": "肩负起管理动态频道的责任，按照你的喜好精心定制它吧。\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed",
+      "content": {
+        "title": "👥  管理你的频道权限",
+        "description": "**允许的用户**：{allowedUsersDisplay}\n**已屏蔽用户**：{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有已授权的用户。",
+            "{allowedUsers}": "{allowedUsers}"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽的用户。",
+            "{blockedUsers}": "{blockedUsers}"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          },
+          "blockedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
+      "content": {
+        "title": "🫵  已屏蔽用户",
+        "description": "已成功屏蔽 **{userBlockedDisplayName}**，对方无法再访问这个频道！\n\n**允许的用户**：{allowedUsersDisplay}\n**已屏蔽用户**：{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有已授权的用户。",
+            "{allowedUsers}": "{allowedUsers}"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽的用户。",
+            "{blockedUsers}": "{blockedUsers}"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          },
+          "blockedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
+      "content": {
+        "title": "👎  已取消访问权限",
+        "description": "已成功撤销 **{userDeniedDisplayName}** 的访问权限，对方无法再访问这个频道！\n\n**允许的用户**：{allowedUsersDisplay}\n**已屏蔽用户**：{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有已授权的用户。",
+            "{allowedUsers}": "{allowedUsers}"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽的用户。",
+            "{blockedUsers}": "{blockedUsers}"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          },
+          "blockedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
+      "content": {
+        "title": "👍  已授予访问权限",
+        "description": "已成功添加 **{userGrantedDisplayName}**，对方现在可以访问这个频道了！\n\n**允许的用户**：{allowedUsersDisplay}\n**已屏蔽用户**：{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有已授权的用户。",
+            "{allowedUsers}": "{allowedUsers}"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽的用户。",
+            "{blockedUsers}": "{blockedUsers}"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          },
+          "blockedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed",
+      "content": {
+        "title": "🙈  频道现已隐藏",
+        "description": "请注意，只有已授权的用户才能看到你的频道。\n\n{allowedUsersDisplay}\n{message}",
+        "options": {
+          "message": {
+            "{messageDefault}": "你可以使用 **(`👥 访问权限`)** - _按钮_ 来管理频道的访问权限。",
+            "{messageAccessNotAvailable}": "目前无法为新成员授予你频道的访问权限。\n\n这是因为管理员已禁用 **(👥 访问权限)** 按钮"
+          },
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前除了你之外，没有其他用户拥有访问权限。\n",
+            "{allowedUsers}": "**_允许的用户_**：\n{allowedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
+      "content": {
+        "title": "👢  已踢出用户",
+        "description": "已成功踢出 **{userKickedDisplayName}**！\n\n**允许的用户**：{allowedUsersDisplay}\n**已屏蔽用户**：{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有已授权的用户。",
+            "{allowedUsers}": "{allowedUsers}"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽的用户。",
+            "{blockedUsers}": "{blockedUsers}"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          },
+          "blockedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed",
+      "content": {
+        "title": "🚫  频道现已设为私密",
+        "description": "请注意，只有已授权的用户才能进入你的频道。\n\n{allowedUsersDisplay}\n{message}",
+        "options": {
+          "message": {
+            "{messageDefault}": "你可以使用 **(`👥 访问权限`)** - _按钮_ 来管理频道的访问权限。",
+            "{messageAccessNotAvailable}": "目前无法为新成员授予你频道的访问权限。\n\n这是因为管理员已禁用 **(👥 访问权限)** 按钮"
+          },
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前除了你之外，没有其他用户拥有访问权限。\n",
+            "{allowedUsers}": "**_允许的用户_**：\n{allowedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed",
+      "content": {
+        "title": "🌐  频道现已公开",
+        "description": "请注意，你的房间现在任何人都可以进入。\n\n除非房间被隐藏或设为私密，否则**没有**访问权限的成员也能进入。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed",
+      "content": {
+        "title": "🐵  频道现已可见"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
+      "content": {
+        "title": "🤙  已取消屏蔽用户",
+        "description": "已成功取消屏蔽 **{userUnBlockedDisplayName}**！\n\n**允许的用户**：{allowedUsersDisplay}\n**已屏蔽用户**：{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有已授权的用户。",
+            "{allowedUsers}": "{allowedUsers}"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽的用户。",
+            "{blockedUsers}": "{blockedUsers}"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          },
+          "blockedUsers": {
+            "format": "• <@{value}>{separator}",
+            "separator": " "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed",
+      "content": {
+        "title": "🔃  动态频道已恢复为默认设置！ ",
+        "description": "设置已恢复为默认：\n\n- 名称：**{name}** {nameChanged}\n- 人数上限：✋**{userLimit}** {userLimitChanged}\n- 状态：{state} {stateChanged}\n- 可见状态：{visibilityState} {visibilityStateChanged}\n- 允许的用户：{allowedUsers} {allowedUsersChanged}\n- 已屏蔽用户：{blockedUsers} {blockedUsersChanged}{rateLimited}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "changedDisplay": "（__已恢复__）",
+          "unchangedDisplay": "（__未更改__）",
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "无限制"
+          },
+          "state": {
+            "{statePublic}": "🌐 **公开**",
+            "{statePrivate}": "🚫 **私密**"
+          },
+          "visibilityState": {
+            "{visibilityStateShown}": "🐵 **可见**",
+            "{visibilityStateHidden}": "🙈 **隐藏**"
+          },
+          "rateLimited": {
+            "{rateLimitedNone}": "",
+            "{rateLimitedDisplay}": "\n\n⚠️ 由于速率限制，目前无法重命名。\n\n请等待 {elapsedTimeFormatFraction} 秒，或者直接创建一个新频道。"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          },
+          "blockedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed",
+      "content": {
+        "title": "🔀  转让频道所有权",
+        "description": "将频道所有权转让给其他用户。\n\n选择你要将频道转让给的用户。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
+      "content": {
+        "title": "🔀  频道所有权转让成功！",
+        "description": "你已不再是此频道的所有者。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
+      "content": {
+        "title": "🔀  转让频道所有权",
+        "description": "将频道所有权转让给 {userDisplayName}。\n\n⚠️ 将频道所有权转让给其他用户后，你将失去所有者权限。\n\n确定要将频道所有权转让给 **{userDisplayName}？**"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
+      "content": {
+        "title": "🎚  主频道 #{index} 的按钮",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "每次选择都会立即保存。已开启的频道会保留原有按钮，直到你点击“更新现有频道”。",
+        "options": {
+          "buttonsNone": "> - *无。所有者将看到一个没有任何按钮的面板。*",
+          "rosterHeading": "**拥有专属按钮的身份组**",
+          "rosterButtonsWord": "按钮",
+          "panelNote": "身份组的按钮组只作用于语音频道内的面板。**control-panel** 频道始终显示默认按钮组。",
+          "rosterMore": "> - *… 还有 {rosterMoreCount} 个。它们全部都在顶部菜单中。*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**你正在编辑 <#{masterChannelId}> 的默认按钮。**\n在这里创建的频道，其所有者都会看到这些按钮——除非他们拥有下方列出的某个身份组，那样该身份组的按钮组会替代这一组。",
+            "{scopeDefaultVerified}": "**你正在编辑 <#{masterChannelId}> 的默认按钮。**\n只有 {verifiedRolesList} 可以在这里开启频道，因此这些就是频道所有者看到的按钮——除非他们还拥有下方列出的某个身份组，那样该身份组的按钮组会替代这一组。",
+            "{scopeRoleOwn}": "**你正在编辑 <@&{roleId}> 的按钮。**\n拥有此身份组的所有者会看到这些按钮，**而不是**默认按钮组。其他所有者仍使用默认按钮组，默认按钮组也不会被更改。\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> 还没有专属按钮。**\n拥有它的所有者沿用默认按钮组，也就是按钮菜单中当前勾选的内容。只要勾选或取消勾选任意一项，此身份组从那一刻起就会拥有自己的按钮组——默认按钮组保持原样。\n{panelNote}",
+            "{scopeRoleMissing}": "**此身份组已不存在于本服务器。**\n没有人能拥有它，因此为它保存的按钮不会对任何人生效。点击 **对此身份组使用默认值** 即可将其清除。"
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**显示在所有面板上**",
+            "{listRoleOwn}": "**拥有此身份组的所有者的面板上**",
+            "{listRoleNew}": "**默认按钮组——在这里更改，即可将其变为此身份组的专属按钮组**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *暂无。每位所有者都使用默认按钮组。*\n> - *例如：让某个身份组可以认领和重置频道，而其他人只能重命名。*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\n同时拥有其中两个身份组的所有者，会获得在 **服务器设置 → 身份组** 中排位更高的那个身份组的按钮组。"
+          },
+          "hintDisplay": {
+            "{hintDefault}": "要为某个身份组设置不同的按钮组，请在 **➕ 为身份组设置专属按钮** 中选择它。",
+            "{hintRoleOwn}": "**对此身份组使用默认值** 会删除此按钮组，并让其所有者恢复使用默认按钮组。",
+            "{hintRoleNew}": "在你更改任意按钮之前，不会为此身份组保存任何内容。",
+            "{hintEveryone}": "⚠️ **@everyone** 不能拥有专属按钮组——每个成员都拥有该身份组，它的按钮组会替代每一位所有者的默认按钮组。请改为编辑默认按钮组，或选择一个范围更小的身份组。",
+            "{hintPushed}": "✅ 已发送到此主频道开启的所有频道。每个频道现在都会显示其所有者应得的按钮组。"
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "0": "✏️ ∙ **重命名**",
+              "1": "✋ ∙ **人数上限**",
+              "2": "🧹 ∙ **清除聊天**",
+              "3": "🚫 ∙ **私密** / 🌐 ∙ **公开**",
+              "4": "🙈 ∙ **隐藏** / 🐵 ∙ **可见**",
+              "5": "👥 ∙ **访问权限**",
+              "6": "🔃 ∙ **重置**",
+              "7": "😈 ∙ **认领**",
+              "12": "🔀 ∙ **转让**",
+              "13": "📣 ∙ **状态**",
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **区域**"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  编辑主频道 #{index} 的默认隐私",
+        "description": "这是**新创建的**动态频道的初始状态。它不会影响已存在的频道，所有者之后仍可以更改自己的频道。\n\n**公开** - 受众中的任何人都能看到并加入。\n**私密** - 可见，但只有所有者能放人进入。\n**隐藏** - 完全不可见，直到所有者将其显示。\n\n开启自动保存后，回来的所有者会沿用自己上次的状态，而不是这里的设置。\n\n**_当前默认_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **公开**",
+            "{privacyPrivate}": "🚫 **私密**",
+            "{privacyHidden}": "🙈 **隐藏**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  编辑主频道 #{index} 的默认人数上限",
+        "description": "这是**新创建的**动态频道的初始人数上限。它不会影响已存在的频道，所有者之后仍可以更改自己的频道。\n\n复制生成器频道的上限是旧的做法。通常在这里设置一个数字会更好，因为生成器自身的上限也会限制同时在其中等待的人数。\n\n开启自动保存后，回来的所有者会沿用自己上次的上限，而不是这里的设置。\n\n**_当前默认_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitUnlimited}": "**无上限**",
+            "{userLimitValue}": "**{userLimit} 人**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditEmbed",
+      "content": {
+        "title": "🔧  配置主频道 #{index}",
+        "description": "按你的喜好配置主频道。\n\n**_🎛️ 常规_**\n\n➤ ∙ 名称：<#{masterChannelId}>\n➤ ∙ 频道 ID：`{masterChannelId}`\n➤ ∙ 动态频道名称：`{dynamicChannelNameTemplate}`\n➤ ∙ 新频道隐私：{newChannelPrivacy}\n➤ ∙ 新频道上限：{newChannelLimit}\n➤ ∙ 日志频道：{dynamicChannelLogsChannelDisplay}\n\n**_🎚 按钮界面_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 认证身份组_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 管理人员身份组_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ 语音身份组_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 配置_**\n\n@ ∙ 在主消息中提及用户：{configUserMention}\n⫸ ∙ 自动保存动态频道：{configAutoSave}\n📢 ∙ 自动频道状态：{configAutoStatus}\n❯❯ ∙ 将日志发送到自定义频道：{configLogs}\n▥ ∙ 自动创建控制面板频道：{configControlChannelAutoCreate}\n\n",
+        "footer": "注意：更改用户提及不会影响已创建的动态频道。",
+        "options": {
+          "on": "`🟢∙开`",
+          "off": "`🔴∙关`",
+          "dynamicChannelLogsChannelDisplay": {
+            "{dynamicChannelLogsChannelDefault}": "**无**",
+            "{dynamicChannelLogsChannelSelected}": "<#{dynamicChannelLogsChannelId}>"
+          },
+          "configUserMention": {
+            "{configUserMentionEnabled}": "{on}",
+            "{configUserMentionDisabled}": "{off}"
+          },
+          "configAutoSave": {
+            "{configAutoSaveEnabled}": "{on}",
+            "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
+          },
+          "configLogs": {
+            "{configLogsEnabled}": "{on}",
+            "{configLogsDisabled}": "{off}"
+          },
+          "configControlChannelAutoCreate": {
+            "{configControlChannelAutoCreateEnabled}": "{on}",
+            "{configControlChannelAutoCreateDisabled}": "{off}"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *（来自服务器选项）*"
+          },
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesGuild}": "{staffRoles} *（来自服务器选项）*",
+            "{staffRolesNone}": "**无** *（来自服务器选项）*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "无上限",
+            "{newChannelLimitValue}": "{newChannelLimitCount} 人"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 公开",
+            "{privacyPrivate}": "🚫 私密",
+            "{privacyHidden}": "🙈 隐藏"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *（来自服务器选项）*",
+            "{voiceRoleNone}": "**无** *（来自服务器选项）*"
+          }
+        },
+        "arrayOptions": {
+          "dynamicChannelButtonsTemplate": {
+            "format": "- ( {value} ){separator}",
+            "separator": "\n",
+            "options": {
+              "0": "✏️ ∙ **重命名**",
+              "1": "✋ ∙ **人数上限**",
+              "2": "🧹 ∙ **清除聊天**",
+              "3": "🚫 ∙ **私密** / 🌐 ∙ **公开**",
+              "4": "🙈 ∙ **隐藏** / 🐵 ∙ **可见**",
+              "5": "👥 ∙ **访问权限**",
+              "6": "🔃 ∙ **重置**",
+              "7": "😈 ∙ **认领**",
+              "12": "🔀 ∙ **转让**",
+              "13": "📣 ∙ **状态**",
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **区域**"
+            }
+          },
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmChannelsEmbed",
+      "content": {
+        "title": "🔎  编辑主频道 #{index} 的 LFM",
+        "description": "频道所有者可以把自己的频道宣传到这里选择的文字频道中，这样正在看聊天的成员就能看到正在找人的房间并加入。\n\n成员发帖时只能从这些频道中选择，无法发到其他频道。\n\n留空则会为此主频道关闭该功能。\n\n**_当前 LFM 频道_**\n\n> {lfmChannelsDisplay}\n\n**_会被提及的身份组_**\n\n> {pingRolesDisplay}\n\n**_时间_**\n\n> 发帖冷却：{postCooldown}\n> 提及冷却：{pingCooldown}\n> 帖子过期：{postExpiry}\n> 人数刷新：{occupancyDebounce}",
+        "footer": "注意：机器人需要在这里选择的每个频道中拥有查看频道、发送消息和嵌入链接权限。",
+        "options": {
+          "lfmChannelsDisplay": {
+            "{lfmChannels}": "{lfmChannels}",
+            "{lfmChannelsNone}": "**无** *（该功能已关闭）*"
+          },
+          "pingRolesDisplay": {
+            "{pingRoles}": "{pingRoles}",
+            "{pingRolesNone}": "**无** *（帖子会静默发布）*"
+          }
+        },
+        "arrayOptions": {
+          "lfmChannels": {
+            "format": "<#{value}>{separator}",
+            "separator": ", "
+          },
+          "pingRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  编辑主频道 #{index} 的管理人员身份组",
+        "description": "管理人员身份组与认证身份组正好相反：认证身份组是频道可以拒之门外的受众，而管理人员身份组则永远不会被拒之门外。\n\n在这里选择的身份组可以访问主频道 #{index} 的每个动态频道，无论其所有者选择了哪种隐私状态——这样版主无需被逐一放行，就能进入私密或隐藏的频道。\n\n留空则使用全服务器的管理人员身份组。\n\n**_当前管理人员身份组_**\n\n> {staffRolesDisplay}",
+        "footer": "注意：更改会立即应用到现有的动态频道。",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesGuild}": "{staffRoles} *（来自服务器选项）*",
+            "{staffRolesNone}": "**无** *（来自服务器选项）*"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
+      "content": {
+        "title": "🛡️  编辑主频道 #{index} 的认证身份组",
+        "description": "编辑认证身份组会影响主频道 #{index} 创建的动态频道。\n\n留空则使用全服务器的认证身份组。\n\n**_当前认证身份组_**\n\n> {verifiedRolesDisplay}",
+        "footer": "注意：更改会立即应用到现有的动态频道。",
+        "options": {
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *（来自服务器选项）*",
+            "{verifiedRolesDefault}": "**无** *（来自服务器选项）*"
+          }
+        },
+        "arrayOptions": {
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  编辑主频道 #{index} 的语音身份组",
+        "description": "成员只有待在此主频道的动态频道中时才拥有此身份组，一离开就会失去它。\n\n可以用它向当前在语音中的成员显示某个文字频道，或在成员列表中将他们单独分组显示。\n\n留空则使用全服务器的语音身份组。\n\n**_当前语音身份组_**\n\n> {voiceRoleDisplay}",
+        "footer": "注意：机器人自己的身份组必须高于它要分配的身份组，否则 Discord 会拒绝。",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *（来自服务器选项）*",
+            "{voiceRoleNone}": "**无** *（来自服务器选项）*"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupStep1Embed",
+      "content": {
+        "title": "第 1 步 - 设置动态频道名称模板",
+        "description": "你可以为动态频道指定一个默认名称，频道开启时就会使用它。\n\n_当前模板名称_：\n`{dynamicChannelNameTemplate}`\n\n点击 **( `下一步 ▶` )** 按钮即可保留默认设置。\n\n不清楚它如何运作？查看[说明](https://voicechannels.online/setup/1)。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupStep2Embed",
+      "content": {
+        "title": "第 2 步 - 动态频道设置",
+        "description": "设置动态频道管理界面。\n\n**_🎚 按钮界面_**\n\n{message}\n**_⚙️ 配置_**\n\n> @ ∙ 在主消息中提及用户：{configUserMention}\n> ⫸ ∙ 自动保存动态频道：{configAutoSave}\n> 📢 ∙ 自动频道状态：{configAutoStatus}\n> ▥ ∙ 自动创建面板频道：{configControlChannelAutoCreate}\n\n点击 **( `下一步 ▶` )** 按钮即可保留默认设置。\n\n不清楚这些按钮的作用？查看[说明](https://voicechannels.online/features/dynamic-channel-v2)。",
+        "footer": "{footer}",
+        "options": {
+          "on": "`🟢∙开`",
+          "off": "`🔴∙关`",
+          "message": {
+            "{defaultMessage}": "{dynamicChannelButtonsTemplate}\n",
+            "{noButtonsMessage}": "没有选择任何按钮！\n"
+          },
+          "configUserMention": {
+            "{configUserMentionEnabled}": "{on}",
+            "{configUserMentionDisabled}": "{off}"
+          },
+          "configAutoSave": {
+            "{configAutoSaveEnabled}": "{on}",
+            "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
+          },
+          "configControlChannelAutoCreate": {
+            "{configControlChannelAutoCreateEnabled}": "{on}",
+            "{configControlChannelAutoCreateDisabled}": "{off}"
+          },
+          "footer": {
+            "{defaultFooter}": "通过此主频道新创建的动态频道将使用你所选的配置。",
+            "{noButtonsFooter}": "注意：没有按钮，成员将无法管理自己的动态频道，也不会向他们显示任何嵌入消息或界面。\n"
+          }
+        },
+        "arrayOptions": {
+          "dynamicChannelButtonsTemplate": {
+            "format": "- ( {value} ){separator}",
+            "separator": "\n",
+            "options": {
+              "0": "✏️ ∙ **重命名**",
+              "1": "✋ ∙ **人数上限**",
+              "2": "🧹 ∙ **清除聊天**",
+              "3": "🚫 ∙ **私密** / 🌐 ∙ **公开**",
+              "4": "🙈 ∙ **隐藏** / 🐵 ∙ **可见**",
+              "5": "👥 ∙ **访问权限**",
+              "6": "🔃 ∙ **重置**",
+              "7": "😈 ∙ **认领**",
+              "12": "🔀 ∙ **转让**",
+              "13": "📣 ∙ **状态**",
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **区域**"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupStep3Embed",
+      "content": {
+        "title": "第 3 步 - 选择认证身份组",
+        "description": "认证身份组是隐私按钮所作用的身份组。\n\n当频道所有者点击**私密**或**隐藏**时，机器人会更改这些身份组的权限。它们决定谁能看到频道、谁能加入频道。\n\n⚠️ **不确定选什么？保留 `@everyone` 即可。**这几乎对所有服务器都是正确的选择。\n\n**_什么时候需要其他身份组_**\n\n只有当新成员在被授予某个身份组之前看不到你的频道时才需要。\n\n_示例_：一位新成员加入你的服务器后什么都看不到，直到获得 `成员` 身份组。如果认证身份组仍为 `@everyone`，公开的动态频道也会对这位新成员显示。改选 `成员`，就只有通过你审核的成员才能看到并加入。\n\n**_🛡️ 认证身份组_**\n\n> {verifiedRolesDisplay}\n\n仍然不确定？查看[说明](https://voicechannels.online/setup/3)。\n\n点击 **( `✓ 完成` )** 按钮即可保留默认设置。",
+        "options": {
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesDefault}": "**无**"
+          }
+        },
+        "arrayOptions": {
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimCommandPointedAtEmbed",
+      "content": {
+        "title": "👑  在这里认领",
+        "description": "**{claimedChannelName}** 正在等待新的所有者。\n\n{claimMessageUrl}\n\n在那里点击 **认领** 报名参选，仍在频道内的所有人将投票决定。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimCommandSelectEmbed",
+      "content": {
+        "title": "👑  你可以认领的频道",
+        "description": "有 {claimableCount} 正在等待新的所有者。\n\n当频道的所有者离开且没有回来时，这个频道就可以被认领。仍在频道内的成员会投票决定由谁接手。\n\n选择一个频道，你将被带到投票所在的位置。",
+        "options": {
+          "claimableCount": {
+            "1": "**一个频道**",
+            "many": "**{count} 个频道**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultOwnerStopEmbed",
+      "content": {
+        "title": "👑  你重新掌管了频道！",
+        "description": "请注意，如果你在 **{absentMinutes}** 分钟内没有回来，其他成员将可以再次认领此频道。\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbed",
+      "content": {
+        "title": "🤷  你已经参选了",
+        "description": "你的意图很明确——你已经报名成为此频道的候选所有者了。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultStepInEmbed",
+      "content": {
+        "title": "😈  这个频道可能归你了",
+        "description": "你已报名成为此频道的候选所有者。\n祝你好运！\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVotedEmbed",
+      "content": {
+        "title": "🗳️  你已投票给 {userDisplayName}",
+        "description": "你已投票支持 <@{userId}> 成为此频道的所有者。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVotedSameEmbed",
+      "content": {
+        "title": "🗳️  你已经投票给 {userDisplayName} 了",
+        "description": "你已经投票支持 <@{userId}>，如果改变主意，可以改投其他人。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVoteSelfEmbed",
+      "content": {
+        "title": "🤷  你不能投票给自己",
+        "description": "相信自己是好事，但这次选举不允许给自己投票。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbed",
+      "content": {
+        "title": "🗳️  你的投票已更新",
+        "description": "你刚刚将频道所有者的投票从 <@{prevUserId}> 改为了 <@{currentUserId}>。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimStartEmbed",
+      "content": {
+        "title": "👋  {ownerDisplayName} 离开了自己的频道！",
+        "description": "<@{ownerId}> 已离开超过 {absentMinutes} 分钟。\n你愿意接手吗？快来认领吧！"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteEmbed",
+      "content": {
+        "title": "👑  {candidatesCount} 位候选人想要认领此频道",
+        "description": "倒计时开始！\n投票将在 `{elapsedTimeFormatFraction}` 后结束。\n如果票数相同，<@{userInitiatorId}> 将成为新的所有者。\n\n{candidatesState}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "candidatesState": {
+            "{candidates}": "🏅 {candidates}",
+            "{candidatesDefault}": "目前还没有候选人。"
+          }
+        },
+        "arrayOptions": {
+          "candidates": {
+            "format": "{value}{separator}",
+            "separator": " - ",
+            "multiSeparator": "\n",
+            "options": {
+              "userId": "<@{userId}>",
+              "votes": "{votes} 票"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteStepInEmbed",
+      "content": {
+        "title": "👑  {userInitiatorDisplayName} 想要认领此频道",
+        "description": "除非有其他人介入，否则 <@{userInitiatorId}> 将在 `{elapsedTimeFormatFraction}` 后成为此频道的所有者。",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteWonEmbed",
+      "content": {
+        "title": "👑  {userWonDisplayName} 已认领此频道",
+        "description": "{wonMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "wonMessage": {
+            "{wonSomeoneElse}": "<@{userWonId}> 已认领此频道，取代 ~~{previousOwnerDisplayName}~~ 成为新的所有者！{results}",
+            "{wonSameOwner}": "<@{userWonId}> 认领了此频道，而且本来就是所有者！😊{results}"
+          },
+          "results": {
+            "{resultsDefault}": "",
+            "{resultsLink}": "\n\n点击[这里]({resultsLink})查看详情"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed",
+      "content": {
+        "title": "{clearEmoji}  没有可以清除的消息",
+        "description": "请注意，只能删除非嵌入式消息。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbed",
+      "content": {
+        "title": "{clearEmoji}  {ownerDisplayName} 清除了聊天记录！",
+        "description": "共 {totalMessages} 条消息。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+      "content": {
+        "title": "{inviteEmoji}  邀请他人加入你的频道",
+        "description": "选择你想邀请的用户，无论此频道如何设置，对方都可以加入。\n\n对方会收到频道的位置，所以即使是私密频道也无需另外说明。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  哪个频道？",
+        "description": "你在这里开了不止一个频道。请选择要邀请他人加入的频道。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+      "content": {
+        "title": "{inviteEmoji}  邀请已发送",
+        "description": "**{invitedDisplayName}** 现在可以加入此频道了。\n\n{deliveryDisplay}",
+        "options": {
+          "deliveryDisplay": {
+            "{deliveryDelivered}": "已向对方发送了频道链接。",
+            "{deliveryBlocked}": "对方未开放私信，请你亲自通知对方——对方已经拥有访问权限。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+      "content": {
+        "title": "{knockEmoji}  请求已处理",
+        "description": "{answerDisplay}",
+        "options": {
+          "answerDisplay": {
+            "{answerAllowed}": "**{knockerDisplayName}** 已获准进入。",
+            "{answerDenied}": "**{knockerDisplayName}** 未获准进入。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+      "content": {
+        "title": "{knockEmoji}  申请加入频道",
+        "description": "选择你想加入的频道，系统会请求其所有者让你进入。\n\n由对方决定，无论结果如何你都会收到通知。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+      "content": {
+        "title": "{knockEmoji}  没有可以敲门的频道",
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "这里的每个频道要么已经对你开放，要么是你自己的。\n\n你看不到的频道不会列出——如果朋友有这样的频道，请让对方邀请你。",
+            "{openChannels}": "这里没有对你关闭的频道——以下频道都已开放，直接进去吧：\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+      "content": {
+        "title": "{knockEmoji}  有人想加入",
+        "description": "<@{knockerId}> 请求加入此频道。\n\n允许后，对方将获得与访问权限菜单相同的访问权限。不理会也是一种回答——请求会自动过期。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+      "content": {
+        "title": "{knockEmoji}  你的请求已发送",
+        "description": "已请求 **{knockedChannelName}** 的所有者让你进入。\n\n对方一回复，你就会收到通知。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+      "content": {
+        "title": "{knockEmoji}  你已经请求过了",
+        "description": "该频道的所有者已收到你的请求，但还没有回复。\n\n请等几分钟再重新请求。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed",
+      "content": {
+        "title": "🙅  人数上限必须在 {minValue} 到 {maxValue} 之间"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbed",
+      "content": {
+        "title": "✋  你的频道人数上限已改为 {userLimit}",
+        "options": {
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "无限制"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ 管理你的动态频道",
+        "description": "担起管理动态频道的责任，按照你的喜好精心定制它。\n\n**可用功能：**\n\n",
+        "arrayOptions": {
+          "dynamicChannelButtonsTemplate": {
+            "format": "{value}{separator}",
+            "separator": ",",
+            "options": {}
+          },
+          "dynamicChannelButtonsRowBreaks": {
+            "format": "{value}{separator}",
+            "separator": ",",
+            "options": {}
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed",
+      "content": {
+        "title": "{permissionsEmoji}  管理你的频道权限",
+        "description": "\n**_信任用户_**：\n{allowedUsersDisplay}\n**_已屏蔽用户_**：\n{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有信任用户。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽用户。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbed",
+      "content": {
+        "title": "🫵  用户已屏蔽",
+        "description": "已成功屏蔽 **{userBlockedDisplayName}**，对方将无法再访问此频道！\n\n**_信任用户_**：\n{allowedUsersDisplay}\n**_已屏蔽用户_**：\n{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有信任用户。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽用户。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbed",
+      "content": {
+        "title": "👎  访问权限已撤销",
+        "description": "已成功撤销 **{userDeniedDisplayName}** 的访问权限，对方将无法再访问此频道！\n\n**_信任用户_**：\n{allowedUsersDisplay}\n**_已屏蔽用户_**：\n{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有信任用户。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽用户。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbed",
+      "content": {
+        "title": "👍  已授予访问权限",
+        "description": "已成功添加 **{userGrantedDisplayName}**，对方现在可以访问此频道了！\n\n**_信任用户_**：\n{allowedUsersDisplay}\n**_已屏蔽用户_**：\n{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有信任用户。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽用户。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbed",
+      "content": {
+        "title": "👢  用户已踢出",
+        "description": "已成功踢出 **{userKickedDisplayName}**！\n\n**_信任用户_**：\n{allowedUsersDisplay}\n**_已屏蔽用户_**：\n{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有信任用户。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽用户。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbed",
+      "content": {
+        "title": "🤙  用户已取消屏蔽",
+        "description": "已成功取消屏蔽 **{userUnBlockedDisplayName}**！\n\n**_信任用户_**：\n{allowedUsersDisplay}\n**_已屏蔽用户_**：\n{blockedUsersDisplay}",
+        "footer": "使用下方菜单管理你的频道权限。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有信任用户。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽用户。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed",
+      "content": {
+        "title": "{editPrimaryMessageEmoji}  •  编辑你的频道描述",
+        "description": "\n _描述_：\n `{description}`\n\n### 要修改吗？",
+        "options": {
+          "description": {
+            "{descriptionDisplayValue}": "{descriptionValue}",
+            "{descriptionDisplayDefault}": "担起管理动态频道的责任，按照你的喜好精心定制它。\n\n请注意，只有频道所有者才有权进行修改。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbed",
+      "content": {
+        "title": "{editPrimaryMessageEmoji}  •  编辑你的频道主消息",
+        "description": "\n _当前_：\n\n• 标题：`{title}`\n\n• 描述：`{description}`\n\n### 要修改吗？"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed",
+      "content": {
+        "title": "{editPrimaryMessageEmoji}  •  编辑你的频道标题",
+        "description": "\n _标题_：\n `{title}`\n\n### 要修改吗？",
+        "options": {
+          "title": {
+            "{titleDisplayValue}": "{titleValue}",
+            "{titleDisplayDefault}": "༄ 管理你的动态频道"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed",
+      "content": {
+        "title": "{title}",
+        "description": "{description}\n\n{renameEmoji} ・ 名称：**{name}**\n\n{limitEmoji} ・ 人数上限：**{limit}**\n\n{privacyEmoji} ・ 隐私状态：**{state}**\n\n{regionEmoji} ・ 区域：**{region}**\n\n🎚 ・ 比特率：**{bitrate} kbps**\n",
+        "options": {
+          "limit": {
+            "{limitDisplayValue}": "{limitValue}",
+            "{limitDisplayUnlimited}": "无限制"
+          },
+          "state": {
+            "{statePublic}": "🌐 公开",
+            "{statePrivate}": "🚫 私密",
+            "{stateShown}": "🐵 可见",
+            "{stateHidden}": "🙈 隐藏"
+          },
+          "region": {
+            "{region-auto}": "自动",
+            "{region-brazil}": "巴西",
+            "{region-hongkong}": "香港",
+            "{region-india}": "印度",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "鹿特丹",
+            "{region-russia}": "俄罗斯",
+            "{region-singapore}": "新加坡",
+            "{region-southafrica}": "南非",
+            "{region-sydney}": "悉尼",
+            "{region-us-central}": "美国中部",
+            "{region-us-east}": "美国东部",
+            "{region-us-south}": "美国南部",
+            "{region-us-west}": "美国西部"
+          }
+        },
+        "arrayOptions": {
+          "dynamicChannelButtonsTemplate": {
+            "format": "{value}{separator}",
+            "separator": ",",
+            "options": {}
+          },
+          "dynamicChannelButtonsRowBreaks": {
+            "format": "{value}{separator}",
+            "separator": ",",
+            "options": {}
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrivacyEmbed",
+      "content": {
+        "title": "{privacyEmoji}  管理你的频道隐私",
+        "description": "**_状态_**：`{state}`\n**_含义_**：`{stateMessage}`\n\n**_信任用户_**：\n{allowedUsersDisplay}\n**_已屏蔽用户_**：\n{blockedUsersDisplay}\n-# 无论频道处于哪种状态，已屏蔽用户都无法加入。",
+        "footer": "使用下方菜单管理你的频道隐私状态。",
+        "options": {
+          "state": {
+            "{statePublic}": "🌐 公开",
+            "{statePrivate}": "🚫 私密",
+            "{stateShown}": "🐵 可见",
+            "{stateHidden}": "🙈 隐藏"
+          },
+          "stateMessage": {
+            "{stateMessagePublic}": "所有人都可以加入你的频道。",
+            "{stateMessagePrivate}": "只有信任用户可以加入你的频道。",
+            "{stateMessageShown}": "所有人都可以看到并加入你的频道。",
+            "{stateMessageHidden}": "只有信任用户可以看到并加入你的频道。"
+          },
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "目前没有信任用户。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "目前没有已屏蔽用户。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRegionEmbed",
+      "content": {
+        "title": "{regionEmoji}  设置你的频道语音区域和音质",
+        "description": "-# 区域决定语音服务器所在的位置。\n-# 应选择离所有语音频道成员最近的区域。\n-# 推荐使用 `自动`\n-# 比特率越高，音质越好，但对每个人的网络要求也越高。\n\n当前语音区域：`{region}`\n当前比特率：`{bitrate} kbps`",
+        "options": {
+          "region": {
+            "{region-auto}": "自动",
+            "{region-brazil}": "巴西",
+            "{region-hongkong}": "香港",
+            "{region-india}": "印度",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "鹿特丹",
+            "{region-russia}": "俄罗斯",
+            "{region-singapore}": "新加坡",
+            "{region-southafrica}": "南非",
+            "{region-sydney}": "悉尼",
+            "{region-us-central}": "美国中部",
+            "{region-us-east}": "美国东部",
+            "{region-us-south}": "美国南部",
+            "{region-us-west}": "美国西部"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelRegionEmbed",
+      "content": {
+        "title": "🌍  设置你的频道语音区域和音质",
+        "description": "-# 区域决定语音服务器所在的位置。\n-# 应选择离所有语音频道成员最近的区域。\n-# 推荐使用 `自动`\n-# 比特率越高，音质越好，但对每个人的网络要求也越高。\n\n当前语音区域：`{region}`\n当前比特率：`{bitrate} kbps`",
+        "options": {
+          "region": {
+            "{region-auto}": "自动",
+            "{region-brazil}": "巴西",
+            "{region-hongkong}": "香港",
+            "{region-india}": "印度",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "鹿特丹",
+            "{region-russia}": "俄罗斯",
+            "{region-singapore}": "新加坡",
+            "{region-southafrica}": "南非",
+            "{region-sydney}": "悉尼",
+            "{region-us-central}": "美国中部",
+            "{region-us-east}": "美国东部",
+            "{region-us-south}": "美国南部",
+            "{region-us-west}": "美国西部"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbed",
+      "content": {
+        "title": "🙅  频道重命名失败",
+        "description": "词语 `{badword}` 已被服务器管理员列为违禁词。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbed",
+      "content": {
+        "title": "🙅 你重命名频道太频繁了！",
+        "description": "请等待 `{elapsedTimeFormatFraction}` 后再重命名{masterChannelMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "masterChannelMessage": {
+            "{masterChannelId}": " 或者加入 <#{masterChannelId}> 新建一个频道",
+            "{masterChannelMessageDefault}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed",
+      "content": {
+        "title": "✏️  你的频道名称已改为“{channelName}”"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelResetChannelEmbed",
+      "content": {
+        "title": "{resetEmoji}  动态频道已恢复为默认设置！ ",
+        "description": "设置已恢复为默认值：\n\n- 名称：**{name}** {nameChanged}\n- 人数上限：✋**{userLimit}** {userLimitChanged}\n- 状态：{state} {stateChanged}\n- 可见状态：{visibilityState} {visibilityStateChanged}\n- 区域：{region} {regionChanged}\n- 主消息：{primaryMessageChanged}\n- 允许的用户：{allowedUsers} {allowedUsersChanged}\n- 已屏蔽用户：{blockedUsers} {blockedUsersChanged}{rateLimited}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分钟",
+            "units": "分钟"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "changedDisplay": "（__已恢复__）",
+          "unchangedDisplay": "（__未更改__）",
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "无限制"
+          },
+          "state": {
+            "{statePublic}": "🌐 **公开**",
+            "{statePrivate}": "🚫 **私密**"
+          },
+          "visibilityState": {
+            "{visibilityStateShown}": "🐵 **可见**",
+            "{visibilityStateHidden}": "🙈 **隐藏**"
+          },
+          "rateLimited": {
+            "{rateLimitedNone}": "",
+            "{rateLimitedDisplay}": "\n\n⚠️ 由于速率限制，目前无法重命名。\n\n请等待 {elapsedTimeFormatFraction}，或者新建一个频道。"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          },
+          "blockedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+      "content": {
+        "title": "频道状态设置失败",
+        "description": "词语 `{badword}` 已被服务器管理员列为违禁词。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+      "content": {
+        "title": "你的频道状态已恢复为自动",
+        "description": "现在显示为“{channelStatus}”，并会随频道变化自动更新。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+      "content": {
+        "title": "你的频道状态现在是“{channelStatus}”",
+        "description": "该状态会一直保留，直到你清除它。提交空状态即可恢复为自动。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  模板已应用！",
+        "description": "模板 **“{templateName}”** 已应用到你的频道！\n\n**已应用的设置：**\n{appliedSettings}\n\n-# 注意：由于速率限制，频道名称的更改可能需要一点时间才能生效。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  模板已删除",
+        "description": "模板 **“{templateName}”** 已删除。\n\n**模板**：`{templatesCount}/{maxTemplates}`"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  频道模板",
+        "description": "将当前频道配置保存为模板，之后一键即可应用。\n\n**模板**：`{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}",
+        "footer": "使用下方按钮管理你的模板。",
+        "options": {
+          "templatesListDisplay": {
+            "{templatesListDefault}": "-# 你还没有保存任何模板。",
+            "{templatesList}": "**你的模板：**\n{templatesList}"
+          }
+        },
+        "arrayOptions": {
+          "templatesList": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  管理模板",
+        "description": "从下方菜单中选择要删除的模板。\n\n**模板**：`{templatesCount}/{maxTemplates}`\n\n-# ⚠️ 此操作无法撤销。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  模板已保存！",
+        "description": "你的模板 **“{templateName}”** 已成功保存！\n\n**模板**：`{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# 你可以随时通过 **应用模板** 按钮应用此模板。",
+        "options": {
+          "templatesListDisplay": {
+            "{templatesListDefault}": "",
+            "{templatesList}": "**你的模板：**\n{templatesList}\n"
+          }
+        },
+        "arrayOptions": {
+          "templatesList": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerEmbed",
+      "content": {
+        "title": "🔀  转让频道所有权",
+        "description": "将频道所有权转让给其他用户。\n\n请选择频道的新所有者。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbed",
+      "content": {
+        "title": "🔀  频道所有权转让成功！",
+        "description": "你已不再是此频道的所有者。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelectedEmbed",
+      "content": {
+        "title": "🔀  转让频道所有权",
+        "description": "将频道所有权转让给 {userDisplayName}。\n\n⚠️ 将频道所有权转让给其他用户后，你将失去所有者权限。\n\n确定要将频道所有权转让给 **{userDisplayName}** 吗？"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
+      "content": {
+        "title": "📈  Auto-Scaling 频道 #{scalingIndex}",
+        "description": "配置你的 Auto-Scaling 语音频道。\n\n➤ ∙ 主频道：<#{masterChannelId}>\n➤ ∙ 频道 ID：`{masterChannelId}`\n➤ ∙ 前缀：`{scalingPrefix}`\n➤ ∙ 最大成员数：`{scalingMaxMembers}`\n\n占位符：`{index}`\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
+      "content": {
+        "title": "🎚  主频道 #{index} 的按钮",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "每次选择都会立即保存。已开启的频道会保留原有按钮，直到你按下“更新现有频道”。",
+        "options": {
+          "buttonsNone": "> - *无。所有者将看到一个没有任何按钮的面板。*",
+          "rosterHeading": "**拥有专属按钮的身份组**",
+          "rosterButtonsWord": "按钮",
+          "panelNote": "身份组的按钮组只作用于语音频道内的面板。**control-panel** 频道始终显示默认按钮组。",
+          "rosterMore": "> - *… 以及另外 {rosterMoreCount} 个。它们全部都在顶部菜单中。*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**你正在编辑 <#{masterChannelId}> 的默认按钮。**\n在这里创建的频道，其所有者都会看到这些按钮——除非他们拥有下方列出的某个身份组，那样该身份组的按钮组会替换此按钮组。",
+            "{scopeDefaultVerified}": "**你正在编辑 <#{masterChannelId}> 的默认按钮。**\n只有 {verifiedRolesList} 可以在这里开启频道，因此这些就是其所有者看到的按钮——除非他们还拥有下方列出的某个身份组，那样该身份组的按钮组会替换此按钮组。",
+            "{scopeRoleOwn}": "**你正在编辑 <@&{roleId}> 的按钮。**\n拥有此身份组的所有者会看到这些按钮，**而不是**默认按钮组。其他所有者仍使用默认按钮组，默认按钮组不会被更改。\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> 还没有专属按钮。**\n拥有它的所有者使用默认按钮组，也就是按钮菜单中当前勾选的内容。只要勾选或取消勾选任意一项，此身份组就会从那一刻起拥有专属按钮组——默认按钮组保持原样不变。\n{panelNote}",
+            "{scopeRoleMissing}": "**此身份组已不在此服务器上。**\n没有人能拥有它，因此它保存的按钮不会对任何人生效。按下 **对此身份组使用默认值** 即可将其清除。"
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**显示在所有面板上**",
+            "{listRoleOwn}": "**显示在拥有此身份组的所有者的面板上**",
+            "{listRoleNew}": "**默认按钮组——在此更改即可将其变为此身份组的专属按钮组**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *暂无。每位所有者都使用默认按钮组。*\n> - *例如：让某个身份组可以认领和重置频道，而其他人只能重命名。*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\n同时拥有其中两个身份组的所有者，会获得在 **服务器设置 → 身份组** 中排位更高的那个身份组的按钮组。"
+          },
+          "hintDisplay": {
+            "{hintDefault}": "要为某个身份组设置不同的按钮组，请在 **➕ 为身份组设置专属按钮** 中选择它。",
+            "{hintRoleOwn}": "**对此身份组使用默认值** 会删除此按钮组，并让其所有者恢复使用默认按钮组。",
+            "{hintRoleNew}": "在你更改按钮之前，不会为此身份组保存任何内容。",
+            "{hintEveryone}": "⚠️ **@everyone** 不能拥有专属按钮组——每位成员都拥有该身份组，因此它的按钮组会替换所有所有者的默认按钮组。请改为编辑默认按钮组，或选择一个范围更小的身份组。",
+            "{hintPushed}": "✅ 已发送到此主频道开启的所有频道。每个频道现在都会显示其所有者应得的按钮组。"
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **重命名**",
+              "limit": "<emoji name='UserLimit'> ∙ **人数上限**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **访问权限**",
+              "invite": "<emoji name='InviteChannel'> ∙ **邀请**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **隐私**",
+              "region": "<emoji name='ChannelRegion'> ∙ **区域**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **编辑主消息**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **清除聊天**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **重置**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **转让**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **模板**",
+              "status": "<emoji name='Megaphone'> ∙ **状态**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **认领**",
+              "knock": "<emoji name='KnockChannel'> ∙ **敲门**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  编辑主频道 #{index} 的默认隐私",
+        "description": "这是 **新创建的** 动态频道的初始状态。它不会影响已存在的频道，所有者之后仍可更改自己的频道。\n\n**公开** - 受众中的任何人都能看到并加入。\n**私密** - 可见，但只有所有者能放人进入。\n**隐藏** - 在所有者将其显示之前完全不可见。\n\n开启自动保存时，再次开启频道的所有者会使用自己上次的状态，而不是此默认值。\n\n**_当前默认值_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **公开**",
+            "{privacyPrivate}": "🚫 **私密**",
+            "{privacyHidden}": "🙈 **隐藏**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  编辑主频道 #{index} 的默认人数上限",
+        "description": "这是 **新创建的** 动态频道的初始人数上限。它不会影响已存在的频道，所有者之后仍可更改自己的频道。\n\n沿用生成器频道的上限是旧的行为。通常在这里设置一个数字会更好，因为生成器自身的上限也会限制同时在其中等待的人数。\n\n开启自动保存时，再次开启频道的所有者会使用自己上次的上限，而不是此默认值。\n\n**_当前默认值_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitUnlimited}": "**无上限**",
+            "{userLimitValue}": "**{userLimit} 人**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditEmbed",
+      "content": {
+        "title": "🔧  配置主频道 #{index}",
+        "description": "按照你的偏好配置主频道。\n\n**_🎛️ 常规_**\n\n➤ ∙ 名称：<#{masterChannelId}>\n➤ ∙ 频道 ID：`{masterChannelId}`\n➤ ∙ 动态频道名称：`{dynamicChannelNameTemplate}`\n➤ ∙ 新频道隐私：{newChannelPrivacy}\n➤ ∙ 新频道人数上限：{newChannelLimit}\n➤ ∙ 日志频道：{dynamicChannelLogsChannelDisplay}\n\n**_🎚 按钮界面_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 认证身份组_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 管理人员身份组_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ 语音身份组_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 配置_**\n\n@ ∙ 在主消息中提及用户：{configUserMention}\n⫸ ∙ 自动保存动态频道：{configAutoSave}\n📢 ∙ 自动频道状态：{configAutoStatus}\n❯❯ ∙ 将日志发送到自定义频道：{configLogs}\n▥ ∙ 自动创建控制面板频道：{configControlChannelAutoCreate}\n\n",
+        "options": {
+          "on": "`🟢∙开`",
+          "off": "`🔴∙关`",
+          "dynamicChannelLogsChannelDisplay": {
+            "{dynamicChannelLogsChannelDefault}": "**无**",
+            "{dynamicChannelLogsChannelSelected}": "<#{dynamicChannelLogsChannelId}>"
+          },
+          "configUserMention": {
+            "{configUserMentionEnabled}": "{on}",
+            "{configUserMentionDisabled}": "{off}"
+          },
+          "configAutoSave": {
+            "{configAutoSaveEnabled}": "{on}",
+            "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
+          },
+          "configLogs": {
+            "{configLogsEnabled}": "{on}",
+            "{configLogsDisabled}": "{off}"
+          },
+          "configControlChannelAutoCreate": {
+            "{configControlChannelAutoCreateEnabled}": "{on}",
+            "{configControlChannelAutoCreateDisabled}": "{off}"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *（来自服务器选项）*"
+          },
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesGuild}": "{staffRoles} *（来自服务器选项）*",
+            "{staffRolesNone}": "**无** *（来自服务器选项）*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "无上限",
+            "{newChannelLimitValue}": "{newChannelLimitCount} 人"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 公开",
+            "{privacyPrivate}": "🚫 私密",
+            "{privacyHidden}": "🙈 隐藏"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *（来自服务器选项）*",
+            "{voiceRoleNone}": "**无** *（来自服务器选项）*"
+          }
+        },
+        "arrayOptions": {
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  编辑主频道 #{index} 的管理人员身份组",
+        "description": "管理人员身份组与认证身份组正好相反：认证身份组是频道可以拒之门外的受众，而管理人员身份组则永远不会被拒之门外。\n\n在这里选择的身份组，无论频道所有者选择哪种隐私状态，都能始终访问主频道 #{index} 的所有动态频道——这样版主无需被逐个放行，也能进入私密或隐藏的频道。\n\n留空则使用全服务器的管理人员身份组。\n\n**_当前管理人员身份组_**\n\n> {staffRolesDisplay}",
+        "footer": "注意：更改会立即应用到现有的动态频道。",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesGuild}": "{staffRoles} *（来自服务器选项）*",
+            "{staffRolesNone}": "**无** *（来自服务器选项）*"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
+      "content": {
+        "title": "🛡️  编辑主频道 #{index} 的认证身份组",
+        "description": "编辑认证身份组会影响由主频道 #{index} 创建的动态频道。\n\n留空则使用全服务器的认证身份组。\n\n**_当前认证身份组_**\n\n> {verifiedRolesDisplay}",
+        "footer": "注意：更改会立即应用到现有的动态频道。",
+        "options": {
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *（来自服务器选项）*"
+          }
+        },
+        "arrayOptions": {
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  编辑主频道 #{index} 的语音身份组",
+        "description": "成员只有待在此主频道的动态频道中时才会拥有此身份组，一离开就会失去它。\n\n可以用它向当前在语音中的成员显示某个文字频道，或在成员列表中将他们归为一组。\n\n留空则使用全服务器的语音身份组。\n\n**_当前语音身份组_**\n\n> {voiceRoleDisplay}",
+        "footer": "注意：机器人自己的身份组必须排在它所分配的身份组之上，否则 Discord 会拒绝。",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *（来自服务器选项）*",
+            "{voiceRoleNone}": "**无** *（来自服务器选项）*"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupNewStep1Embed",
+      "content": {
+        "title": "第 1 步 - 设置动态频道名称模板",
+        "description": "你可以为动态频道指定一个默认名称，在频道开启时使用。\n\n_当前名称模板_：\n`{dynamicChannelNameTemplate}`\n\n按下 **( `下一步 ▶` )** 按钮即可保留默认设置。\n\n不确定如何使用？请查看[说明](https://voicechannels.online/setup/1)。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupNewStep2Embed",
+      "content": {
+        "title": "第 2 步 - 动态频道设置",
+        "description": "设置动态频道管理界面。\n\n**_🎚 按钮界面_**\n\n{message}\n**_⚙️ 配置_**\n\n> @ ∙ 在主消息中提及用户：{configUserMention}\n> ⫸ ∙ 自动保存动态频道：{configAutoSave}\n> 📢 ∙ 自动频道状态：{configAutoStatus}\n> ▥ ∙ 自动创建面板频道：{configControlChannelAutoCreate}\n\n按下 **( `下一步 ▶` )** 按钮即可保留默认设置。\n\n不确定这些按钮有什么用？请查看[说明](https://voicechannels.online/features/dynamic-channel-v3)。",
+        "options": {
+          "on": "`🟢∙开`",
+          "off": "`🔴∙关`",
+          "message": {
+            "{defaultMessage}": "{dynamicChannelButtonsTemplate}\n",
+            "{noButtonsMessage}": "尚未选择任何按钮！\n"
+          },
+          "configUserMention": {
+            "{configUserMentionEnabled}": "{on}",
+            "{configUserMentionDisabled}": "{off}"
+          },
+          "configAutoSave": {
+            "{configAutoSaveEnabled}": "{on}",
+            "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
+          },
+          "configControlChannelAutoCreate": {
+            "{configControlChannelAutoCreateEnabled}": "{on}",
+            "{configControlChannelAutoCreateDisabled}": "{off}"
+          },
+          "footer": {
+            "{defaultFooter}": "通过此主频道新创建的动态频道将使用你所选择的配置。",
+            "{noButtonsFooter}": "注意：没有按钮的话，成员将无法管理自己的动态频道，也不会向他们显示任何嵌入消息或界面。\n"
+          }
+        },
+        "arrayOptions": {
+          "dynamicChannelButtonsTemplate": {
+            "format": "- ( {value} ){separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **重命名**",
+              "limit": "<emoji name='UserLimit'> ∙ **人数上限**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **访问权限**",
+              "invite": "<emoji name='InviteChannel'> ∙ **邀请**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **隐私**",
+              "region": "<emoji name='ChannelRegion'> ∙ **区域**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **编辑主消息**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **清除聊天**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **重置**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **转让**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **模板**",
+              "status": "<emoji name='Megaphone'> ∙ **状态**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **认领**",
+              "knock": "<emoji name='KnockChannel'> ∙ **敲门**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupNewStep3Embed",
+      "content": {
+        "title": "第 3 步 - 选择认证身份组",
+        "description": "认证身份组是隐私按钮所作用的身份组。\n\n当频道所有者按下 **私密** 或 **隐藏** 时，机器人会更改这些身份组的权限。它们决定了谁能看到频道、谁能加入频道。\n\n⚠️ **不确定选什么？保留 `@everyone` 即可。** 这几乎适用于所有服务器。\n\n**_何时需要选择其他身份组_**\n\n仅当新成员在获得某个身份组之前看不到你的频道时才需要。\n\n_示例_：新成员加入你的服务器后什么都看不到，直到获得 `Member` 身份组。如果认证身份组保持为 `@everyone`，公开的动态频道也会对这位新成员显示。改选 `Member`，就只有通过了你的验证的成员才能看到并加入。\n\n**_🛡️ 认证身份组_**\n\n> {verifiedRolesDisplay}\n\n仍然不确定？请查看[说明](https://voicechannels.online/setup/3)。\n\n按下 **( `✓ 完成` )** 按钮即可保留默认设置。",
+        "options": {
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesEveryone}": "**所有人**",
+            "{verifiedRolesDefault}": "**无**"
+          }
+        },
+        "arrayOptions": {
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  暂时还不行",
+        "description": "本服务器限制了这类频道发布招募的频率，而上一条帖子刚发出不久。大约 {retryMinutes} 分钟后才能再发布。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  你的频道已发布招募",
+        "description": "已发布到 <#{lfmChannelId}>。\n\n帖子会实时更新成员人数，并在你的频道满员或清空时自动撤下。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  要发布到哪里？",
+        "description": "选择招募成员的帖子要发布到的频道。\n\n帖子会显示发起人、正在玩的游戏和当前人数，并在你的频道满员或清空时撤下。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  无法发布",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "还没有人设置这项功能。需要管理员运行 `/setup`，在频道界面中开启 **LFM** 按钮，并选择这些帖子要发布到的频道。",
+            "{reasonDestinationUnavailable}": "这些帖子要发布到的频道你无法查看。管理员可以在设置界面中选择这些频道。",
+            "{reasonHidden}": "你的频道处于隐藏状态，反正也没人能找到它。请先将它设为可见。",
+            "{reasonPrivate}": "你的频道是私密的，你邀请的人也进不来。请先将它设为公开。",
+            "{reasonFull}": "你的频道已经满员了。",
+            "{reasonAlreadyPosted}": "你的频道已经发布过招募了。",
+            "{reasonFailed}": "发布时出了点问题，请稍后再试。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/HelpEmbed",
+      "content": {
+        "title": "❔ VoiceChannels 帮助",
+        "description": "VoiceChannels 为你的服务器提供会自动创建的语音频道。加入生成器频道，你就会得到一个属于自己的频道，最后一个人离开时它会被删除。\n\n**你的频道**\n以下命令在你身处自己拥有的频道时可用。\n`/voice rename` ∙ 为频道命名\n`/voice limit` ∙ 可加入的人数\n`/voice privacy` ∙ 公开、私密或隐藏\n`/voice status` ∙ 频道上显示的状态\n`/voice access` ∙ 允许、拒绝或踢出成员\n\n**所有人**\n`/voice invite` ∙ 邀请他人加入频道\n`/voice claim` ∙ 认领所有者已离开的频道\n\n**服务器管理员**\n`/setup` ∙ 设置和配置机器人\n`/manage new-generator` ∙ 添加新的生成器\n`/manage edit` ∙ 编辑现有的生成器\n`/manage roles` ∙ 语音、认证和管理人员身份组\n`/manage server-options` ∙ 身份组、违禁词和认领时间\n`/manage language` ∙ 机器人在本服务器使用的语言\n`/manage events` ∙ 预定活动的签到和出席\n\n第一次使用？从下方的 **设置** 开始，几分钟就能走完全部流程。**控制台** 无需输入命令即可配置所有内容；如果所有指南都帮不上忙，**支持服务器** 里有真人为你解答。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventBoardEmbed",
+      "content": {
+        "title": "📅  {eventName} · {stateTitle}",
+        "description": "{stateLine}{checkedInBlock}{waitingBlock}{onTimeBlock}{lateBlock}{noShowBlock}{walkInsBlock}",
+        "options": {
+          "stateTitle": {
+            "{stateCheckIn}": "签到",
+            "{stateRunning}": "进行中",
+            "{stateEnded}": "出席情况",
+            "{stateCanceled}": "已取消",
+            "{stateMoved}": "已改期"
+          },
+          "stateLine": {
+            "{stateCheckIn}": "将于 <t:{startsAt}:F>（<t:{startsAt}:R>）在 <#{voiceChannelId}> 开始。\n说了要来？加入语音频道即可签到，在 <t:{lateAt}:t> 前签到才算准时。",
+            "{stateRunning}": "已于 <t:{startsAt}:R> 在 <#{voiceChannelId}> 开始。\n签到已结束，名单上的人现在到场都算迟到。",
+            "{stateEnded}": "于 <t:{startsAt}:F> 在 <#{voiceChannelId}> 举行。\n时间为在语音中的时长（时:分）。{minVoiceLine}",
+            "{stateCanceled}": "已取消，原定于 <t:{startsAt}:F>。",
+            "{stateMoved}": "已改期至 <t:{movedToAt}:F>。在那之前会发布新的签到板。"
+          },
+          "checkedInBlock": {
+            "{blockShown}": "\n\n**✅ 已到（{checkedInCount}）**\n{checkedIn}{checkedInMore}",
+            "{blockHidden}": ""
+          },
+          "waitingBlock": {
+            "{blockShown}": "\n\n**⏳ 未到（{waitingCount}）**\n{waiting}{waitingMore}",
+            "{blockHidden}": ""
+          },
+          "onTimeBlock": {
+            "{blockShown}": "\n\n**✅ 到场（{onTimeCount}）**\n{onTime}{onTimeMore}",
+            "{blockHidden}": ""
+          },
+          "lateBlock": {
+            "{blockShown}": "\n\n**🕒 迟到（{lateCount}）**\n{late}{lateMore}",
+            "{blockHidden}": ""
+          },
+          "noShowBlock": {
+            "{blockShown}": "\n\n**❌ 缺席（{noShowCount}）**\n{noShow}{noShowMore}",
+            "{blockHidden}": ""
+          },
+          "walkInsBlock": {
+            "{blockShown}": "\n\n**👋 临时加入（{walkInsCount}）**\n{walkIns}{walkInsMore}",
+            "{blockHidden}": ""
+          },
+          "checkedInMore": {
+            "{moreShown}": "\n还有 {checkedInHidden} 人",
+            "{moreHidden}": ""
+          },
+          "waitingMore": {
+            "{moreShown}": "\n还有 {waitingHidden} 人",
+            "{moreHidden}": ""
+          },
+          "onTimeMore": {
+            "{moreShown}": "\n还有 {onTimeHidden} 人",
+            "{moreHidden}": ""
+          },
+          "lateMore": {
+            "{moreShown}": "\n还有 {lateHidden} 人",
+            "{moreHidden}": ""
+          },
+          "noShowMore": {
+            "{moreShown}": "\n还有 {noShowHidden} 人",
+            "{moreHidden}": ""
+          },
+          "walkInsMore": {
+            "{moreShown}": "\n还有 {walkInsHidden} 人",
+            "{moreHidden}": ""
+          },
+          "minVoiceLine": {
+            "{minVoiceShown}": "\n在语音中不足 {minVoiceMinutes} 分钟视为未到场。",
+            "{minVoiceHidden}": ""
+          }
+        },
+        "arrayOptions": {
+          "checkedIn": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "waiting": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "onTime": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "late": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "noShow": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "walkIns": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventNeedSubEmbed",
+      "content": {
+        "title": "{stateTitle}",
+        "description": "{stateLine}",
+        "options": {
+          "stateTitle": {
+            "{stateOpen}": "🙋  {eventName} 还需要 {stillNeeded} 人",
+            "{stateFilled}": "✅  {eventName} 人数已补满"
+          },
+          "stateLine": {
+            "{stateOpen}": "活动已于 <t:{startsAt}:R> 开始，但有些说要来的人没有到。\n加入 <#{voiceChannelId}> 即可顶上空位。",
+            "{stateFilled}": "所有位置都已坐满，感谢每一位及时顶上的人！"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventsEmbed",
+      "content": {
+        "title": "📅  活动",
+        "description": "语音频道中的预定活动即将开始时，会发布一个签到板。标记了 **感兴趣** 的人加入语音频道即可签到。签到结束后，未到的人会被标记，一条帖子会征集替补来顶上他们的位置，签到板最终会变成出席记录。\n\n**活动** {statusLine}\n**发布于** {channelLine}\n**“需要替补”帖子** {subPostsLine}\n**签到** 在开始前 {checkInLeadMinutes} 分钟开启，开始后 {lateAfterMinutes} 分钟关闭{errorLine}\n\n先选择频道，再开启此功能。时间、提及通知、哪些活动计入以及出席记录复制到哪里，都在 **更多选项** 中设置。在生成器举办的活动会统计它开设的每个房间。",
+        "options": {
+          "statusLine": {
+            "{enabledOn}": "🟢 开",
+            "{enabledOff}": "⚪ 关"
+          },
+          "channelLine": {
+            "{channelSet}": "<#{eventsChannelId}>",
+            "{channelUnset}": "尚未选择"
+          },
+          "subPostsLine": {
+            "{subPostsOn}": "开",
+            "{subPostsOff}": "关"
+          },
+          "errorLine": {
+            "{errorNone}": "",
+            "{errorPostChannelMissing}": "\n\n⚠️ 用于发布的频道已不存在，请另选一个。",
+            "{errorPostChannelForbidden}": "\n\n⚠️ 机器人无法在该频道发布消息。它需要该频道的“查看频道”、“发送消息”和“嵌入链接”权限。",
+            "{errorEventChannelForbidden}": "\n\n⚠️ 机器人看不到某个活动的语音频道，因此无法为任何人签到。请在该频道授予它“查看频道”权限。",
+            "{errorLogChannelMissing}": "\n\n⚠️ 出席记录要复制到的频道已不存在，请在“更多选项”中另选一个。",
+            "{errorLogChannelForbidden}": "\n\n⚠️ 机器人无法发布出席记录副本。它需要该频道的“查看频道”、“发送消息”和“嵌入链接”权限。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TrialEndingEmbed",
+      "content": {
+        "title": "⏳  你的 {planName} 免费试用即将结束",
+        "description": "**{guildName}** 的 {planName} 免费试用将于 <t:{endsAt}:R>（<t:{endsAt}:f>）结束。\n\n结束后：\n- **自定义机器人形象**：机器人在你的服务器中使用的名称、头像、横幅和简介将被移除。\n- **生成器**：只有你最早设置的 {maxMasterChannels} 个生成器会继续创建房间。\n\n在控制台以每月 ${monthlyPriceUsd} 的价格继续使用 {planName}。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "将大厅分成各个队伍房间或小组，一键就能把所有人召回。\n👉 **加入 <#{lobbyId}> 即可参与**，分组只会带走大厅里的人。\n\n🎲 **随机分队** - 大厅里的所有人会被平均打乱分到各个队伍，并移动过去。\n🙋 **自选队伍** - 开启各个队伍房间，每个人自己走进想去的那个。\n👥 **小组** - 大厅里的所有人会按你选择的人数分成小组，并移动过去。\n↩️ **召回** - 所有人回到大厅，房间随之关闭。\n\n{splitMessage}\n{hostsMessage}",
+        "options": {
+          "splitMessage": {
+            "{roomIds}": "**已分为：** {roomIds}",
+            "{splitMessageDefault}": "**未分组**：所有人都在大厅里。"
+          },
+          "hostsMessage": {
+            "{hostRoleIds}": "**主持人：** {hostRoleIds}",
+            "{hostsMessageDefault}": "**主持人：** 大厅里的任何人"
+          }
+        },
+        "arrayOptions": {
+          "roomIds": {
+            "format": "<#{value}>{separator}",
+            "separator": " · "
+          },
+          "hostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRandomTeamsEmbed",
+      "content": {
+        "title": "🎲  随机分队",
+        "description": "要分几队？大厅里的所有人会被平均打乱分配，并移动到各自队伍的房间。\n\n只有部分人参加？先在第一个菜单中选择参加的人，再选择队伍数量。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPickTeamsEmbed",
+      "content": {
+        "title": "🙋  自选队伍",
+        "description": "要分几队？各个队伍房间开启时是空的，每个房间容纳大厅中相应份额的人数，每个人自己走进想去的那个。\n\n只有部分人参加？先在第一个菜单中选择参加的人，再选择队伍数量，房间将只对他们开放。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyGroupsEmbed",
+      "content": {
+        "title": "👥  小组",
+        "description": "每组几个人？大厅里的所有人会按这个人数分到各个房间，并移动过去。\n\n只有部分人参加？先在第一个菜单中选择参加的人，再选择每组人数。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyPlayersEmbed",
+      "content": {
+        "description": "{playersMessage}\n{applyMessage}",
+        "options": {
+          "playersMessage": {
+            "{players}": "**参加者：** {players}",
+            "{playersMessageDefault}": "**参加者：** 大厅里的所有人"
+          },
+          "applyMessage": {
+            "{applyMessageWaiting}": "-# ❌ 尚未进入大厅，或是机器人。所选的人全部进入大厅后才能点击“应用”。",
+            "{applyMessageNoCount}": "-# 选择数量，然后点击“应用”。",
+            "{applyMessageNobody}": "-# ❌ 大厅里还没有可以分组的人。",
+            "{applyMessageTooFew}": "-# ❌ 大厅里的人数不够，请选择更小的数字，或等待更多人加入。",
+            "{applyMessageTooManyRooms}": "-# ❌ 这样会开启超过 {roomsLimit} 个房间，请把每组人数调大。",
+            "{applyMessageReady}": "-# 准备就绪，点击“应用”即可为大厅分组。"
+          }
+        },
+        "arrayOptions": {
+          "players": {
+            "format": "{value}{separator}",
+            "separator": " · "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySplitEmbed",
+      "content": {
+        "title": "🎮  分组",
+        "description": "{splitResult}\n\n在面板上按 **↩️ 召回** 即可把所有人带回来。",
+        "options": {
+          "splitResult": {
+            "{splitDealt}": "已开启 **{roomsCount}** 个房间，并将 **{moved}** 名成员移入其中。",
+            "{splitPicked}": "已开启 **{roomsCount}** 个队伍房间，每个人自己走进想去的那个。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbyRefusedEmbed",
+      "content": {
+        "title": "🎮  Team Lobby",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotCovered}": "此服务器的生成器数量超出了套餐允许的上限（一个大厅也算一个），而这个大厅属于超出的部分，因此目前无法分组。**↩️ 召回** 仍然可用。\n\n最早设置的那些仍在正常运行。服务器管理员可以升级套餐来重新启用它，或删除不再使用的生成器。",
+            "{reasonNotHost}": "这个大厅由主持人管理；如果未指定主持人，则由大厅里的任何人管理。",
+            "{reasonAlreadySplit}": "这个大厅已经分组了。请先按 **↩️ 召回**。",
+            "{reasonNotSplit}": "没有需要召回的人，所有人都在大厅里。",
+            "{reasonNobodyToSplit}": "大厅里没有可以分组的人。",
+            "{reasonTooFewMembers}": "大厅里的人数不够。",
+            "{reasonInvalidCount}": "这个大厅不支持该队伍数量或小组人数。",
+            "{reasonTooManyRooms}": "这样会同时开启超过 **{roomsLimit}** 个房间。请把每组人数调大。",
+            "{reasonMissingPermissions}": "机器人在这个大厅缺少 **{missingPermissions}** 权限。",
+            "{reasonFailed}": "Discord 拒绝创建房间。请稍后再试。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/TeamLobbySetupEditEmbed",
+      "content": {
+        "title": "🎮  Team Lobby #{lobbyIndex}",
+        "description": "一个供大家集合的语音频道，可以从这里分到各个队伍房间或小组，再召回到这里。\n\n➤ ∙ 大厅：<#{lobbyChannelId}>\n➤ ∙ 频道 ID：`{lobbyChannelId}`\n➤ ∙ {hostsMessage}\n\n选择管理这个大厅的身份组。如果不选，大厅里的任何人都可以分组和召回。管理员始终可以。",
+        "options": {
+          "hostsMessage": {
+            "{lobbyHostRoleIds}": "主持人：{lobbyHostRoleIds}",
+            "{hostsMessageDefault}": "主持人：大厅里的任何人"
+          }
+        },
+        "arrayOptions": {
+          "lobbyHostRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    }
+  ],
+  "markdowns": [
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteResultsMarkdown",
+      "content": {
+        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName} 已认领该频道，成为新的所有者！\n\n前任所有者：~~{previousOwnerDisplayName}~~\n\n本次投票耗时 {elapsedTimeSeconds} 秒，共有 {resultsLength} 名候选人。\n\n## 候选人\n\\# | 用户 | 票数\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## 投票\n投票人 | 投给\n:----: | :----:\n{votesForMembersResults}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteResultsMarkdown",
+      "content": {
+        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName} 已认领该频道，成为新的所有者！\n\n前任所有者：~~{previousOwnerDisplayName}~~\n\n本次投票耗时 {elapsedTimeSeconds} 秒，共有 {resultsLength} 名候选人。\n\n## 候选人\n\\# | 用户 | 票数\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## 投票\n投票人 | 投给\n:----: | :----:\n{votesForMembersResults}\n"
+      }
+    }
+  ],
+  "modals": [
+    {
+      "name": "VertixBot/UI-General/BadwordsModal",
+      "content": {
+        "title": "设置违禁词"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ChannelNameTemplateModal",
+      "content": {
+        "title": "设置动态频道名称"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/DeleteConfirmModal",
+      "content": {
+        "title": "确认删除"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackInviteDeveloperModal",
+      "content": {
+        "title": "邀请开发者"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackModal",
+      "content": {
+        "title": "提交反馈"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackReportModal",
+      "content": {
+        "title": "提交问题"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ 认领检查间隔"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ 所有者离开多久后可认领"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingConfigModal",
+      "content": {
+        "title": "📈 配置 Auto-Scaling 频道"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ 每位候选人增加的投票时间"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ 投票时长"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "招募成员"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
+      "content": {
+        "title": "设置人数上限"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameModal",
+      "content": {
+        "title": "重命名动态频道"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+      "content": {
+        "title": "设置动态频道状态"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
+      "content": {
+        "title": "⏱️ LFM 时间设置"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
+      "content": {
+        "title": "设置人数上限"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
+      "content": {
+        "title": "编辑描述"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
+      "content": {
+        "title": "编辑标题"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
+      "content": {
+        "title": "重命名动态频道"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusModal",
+      "content": {
+        "title": "设置动态频道状态"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+      "content": {
+        "title": "保存模板"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "招募成员"
+      }
+    }
+  ]
+}

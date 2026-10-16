@@ -4,6 +4,10 @@ import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
 import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+import {
+    SETUP_MASTER_CREATE_V3,
+    setupMasterCreateOptions
+} from "@vertix.gg/website/src/vertix/shared/setup-master-create-options";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
@@ -58,29 +62,10 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                 <br/>
                 <p>After clicking the menu, you will see the available options:</p>
                 <div style={ { maxWidth: "450px" } }>
-                    <DiscordSelectMenuDropdown
-                        options={ [
-                            {
-                                iconEmoji: "➕",
-                                label: "Dynamic Channel (V2)",
-                                description: "Classic dynamic voice channels",
-                                highlighted: true,
-                            },
-                            {
-                                iconEmoji: "✨",
-                                label: "Dynamic Channel (V3)",
-                                description: "Enhanced dynamic channels with more features",
-                            },
-                            {
-                                iconEmoji: "📈",
-                                label: "Auto-Scaling Channel",
-                                description: "Automatically scales based on member count",
-                            },
-                        ] }
-                    />
+                    <DiscordSelectMenuDropdown options={ setupMasterCreateOptions( SETUP_MASTER_CREATE_V3 ) } />
                 </div>
                 <br/>
-                <p>Select <b>Dynamic Channel (V2)</b> to continue with the classic setup.</p>
+                <p>Select <b>Dynamic Channel (V3)</b> - the newest room panel, with every feature.</p>
 
                 <br/></section>
             <section>

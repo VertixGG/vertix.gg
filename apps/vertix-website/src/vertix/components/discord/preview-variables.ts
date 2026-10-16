@@ -60,6 +60,57 @@ export function editButtonsList( ids: readonly string[] ): string {
     return ids.map( ( id ) => `> - ${ DYNAMIC_CHANNEL_BUTTON_LABELS[ id ] }` ).join( "\n" );
 }
 
+/** The emoji each V3 button carries, keyed by the id the bot stores it under. */
+export const DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS: Record<string, string> = {
+    "rename": "<emoji name='ChannelRename'>",
+    "limit": "<emoji name='UserLimit'>",
+    "access": "<emoji name='ChannelPermissions'>",
+    "invite": "<emoji name='InviteChannel'>",
+    "privacy": "<emoji name='ChannelPrivacy'>",
+    "region": "<emoji name='ChannelRegion'>",
+    "edit-primary-message": "<emoji name='EditChannelMessage'>",
+    "clear-chat": "<emoji name='ClearChat'>",
+    "rest-channel": "<emoji name='ResetChannel'>",
+    "transfer": "<emoji name='TransferChannel'>",
+    "templates": "<emoji name='ChannelTemplates'>",
+    "status": "<emoji name='Megaphone'>",
+    "knock": "<emoji name='KnockChannel'>",
+    "lfm": "<emoji name='LfmChannel'>",
+    "claim-button": "<emoji name='ClaimChannel'>"
+};
+
+/**
+ * Copied from the `dynamicChannelButtonsTemplate` array options of `VertixBot/UI-V3/SetupNewStep2Embed`,
+ * double spaces included.
+ */
+export const DYNAMIC_CHANNEL_V3_BUTTON_LABELS: Record<string, string> = {
+    "rename": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "rename" ] }  ∙ **Rename**`,
+    "limit": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "limit" ] } ∙ **User Limit**`,
+    "access": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "access" ] } ∙ **Access**`,
+    "invite": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "invite" ] } ∙ **Invite**`,
+    "privacy": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "privacy" ] } ∙ **Privacy**`,
+    "region": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "region" ] } ∙ **Region**`,
+    "edit-primary-message": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "edit-primary-message" ] } ∙ **Edit Primary Message**`,
+    "clear-chat": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "clear-chat" ] } ∙ **Clear Chat**`,
+    "rest-channel": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "rest-channel" ] }  ∙ **Reset**`,
+    "transfer": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "transfer" ] } ∙ **Transfer**`,
+    "templates": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "templates" ] } ∙ **Templates**`,
+    "status": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "status" ] } ∙ **Status**`,
+    "knock": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "knock" ] } ∙ **Knock**`,
+    "lfm": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "lfm" ] } ∙ **LFM**`,
+    "claim-button": `${ DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ "claim-button" ] } ∙ **Claim**`
+};
+
+/** How the V3 setup wizard's buttons step prints the list. */
+export function setupV3ButtonList( ids: readonly string[] ): string {
+    return ids.map( ( id ) => `- ( ${ DYNAMIC_CHANNEL_V3_BUTTON_LABELS[ id ] } )` ).join( "\n" );
+}
+
+/** How `/setup`'s list of master channels prints a V3 set: its emojis, comma separated. */
+export function masterChannelV3ButtonEmojis( ids: readonly string[] ): string {
+    return ids.map( ( id ) => DYNAMIC_CHANNEL_V3_BUTTON_EMOJIS[ id ] ).join( ", " );
+}
+
 /** The master channel every preview is written around. */
 export const MASTER_CHANNEL_ID = "1120213539064385597";
 

@@ -291,6 +291,10 @@
                                         "value": "en"
                                     },
                                     {
+                                        "label": "🇨🇳 简体中文",
+                                        "value": "zh"
+                                    },
+                                    {
                                         "label": "🇯🇵 日本語",
                                         "value": "ja"
                                     },
@@ -348,6 +352,7 @@
                             "options": {
                                 "currentLanguage": {
                                     "en": "English",
+                                    "zh": "简体中文",
                                     "ja": "日本語",
                                     "de": "Deutsch",
                                     "ru": "Русский",

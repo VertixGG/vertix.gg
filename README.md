@@ -200,7 +200,7 @@ Discord bot UIs get ugly fast. Six months in, you've got a `switch` statement on
 - **Edit your bot UI without redeploying.** Every flow, embed, button label, and modal is exportable to JSON, editable per guild and per language, and reloaded by the bot at next render.
 - **Visual editor for free.** Your code is the source of truth — but the dashboard auto-renders it as an `@xyflow/react` node graph: flows are nodes, transitions are edges, modals are child nodes. PMs, designers, and translators can tweak text without ever opening VS Code.
 - **Discord's 100-char `custom_id` limit becomes a non-issue.** Hash-based ids let you nest component trees as deep as you want.
-- **i18n is the default, not a v2 problem.** Seven languages ship out of the box (en, ru, el, es, fr, de, ja); add a JSON file for any other.
+- **i18n is the default, not a v2 problem.** Eight languages ship out of the box (en, ru, el, es, fr, de, ja, zh); add a JSON file for any other.
 
 ### Built for bots like these
 
@@ -419,7 +419,7 @@ Manage your VoiceChannels setup from a web-based dashboard at **[dashboard.voice
 VoiceChannels gives you control exactly where you need it.
 
 ### Server Level
-- 🌐 **Language Select** — English, Russian, Greek, Spanish, French, German, Japanese.
+- 🌐 **Language Select** — English, Russian, Greek, Spanish, French, German, Japanese, Chinese (Simplified).
 - 🚫 **Bad-Words Filter** — Keep your channel names clean.
 
 ### Master Channel Level

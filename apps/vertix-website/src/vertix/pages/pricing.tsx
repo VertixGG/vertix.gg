@@ -159,7 +159,7 @@ const IN_EVERY_PLAN = [
     "Every control a channel owner has - rename, limit, privacy, access, region, bitrate and the rest",
     "Auto-scaling pools, which count as generators like any other setup",
     "The dashboard, the interface editor and per-language wording",
-    "Seven languages",
+    "Eight languages",
     "Twenty channels open at once, on every generator",
     "Nothing locked behind a vote"
 ];

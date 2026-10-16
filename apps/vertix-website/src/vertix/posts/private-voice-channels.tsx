@@ -243,7 +243,7 @@ export default function PrivateVoiceChannels() {
 
             <p className="text-vc-ice-dim">
                 The dashboard&apos;s interface editor rewords every screen the bot shows - the room&apos;s panel
-                included - in any of its seven languages, if the defaults do not sound like your server.
+                included - in any of its eight languages, if the defaults do not sound like your server.
             </p>
 
             <h2 className="text-h4 mt-12 mb-4">A private room, start to finish</h2>

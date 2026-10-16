@@ -10,6 +10,10 @@ import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
 import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+import {
+    SETUP_MASTER_CREATE_SCALING,
+    setupMasterCreateOptions
+} from "@vertix.gg/website/src/vertix/shared/setup-master-create-options";
 
 export default function AutoScalingPage() {
     return (
@@ -112,26 +116,7 @@ export default function AutoScalingPage() {
 
                 <p className="text-vc-ice-dim mb-4">Select <strong>Auto-Scaling Channel</strong> from the menu:</p>
                 <div style={ { maxWidth: "450px" } } className="mb-6">
-                    <DiscordSelectMenuDropdown
-                        options={ [
-                            {
-                                iconEmoji: "➕",
-                                label: "Dynamic Channel (V2)",
-                                description: "Classic dynamic voice channels",
-                            },
-                            {
-                                iconEmoji: "✨",
-                                label: "Dynamic Channel (V3)",
-                                description: "Enhanced dynamic channels with more features",
-                            },
-                            {
-                                iconEmoji: "📈",
-                                label: "Auto-Scaling Channel",
-                                description: "Automatically scales based on member count",
-                                highlighted: true,
-                            },
-                        ] }
-                    />
+                    <DiscordSelectMenuDropdown options={ setupMasterCreateOptions( SETUP_MASTER_CREATE_SCALING ) } />
                 </div>
 
                 <h3 className="text-h5 text-vc-cyan mb-4">Step 2: Configure scaling options</h3>

@@ -6,13 +6,29 @@ import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
 import { ArrowDown } from "@vertix.gg/website/src/vertix/ui/arrows";
+import RouterLink from "@vertix.gg/website/src/vertix/ui/router-link";
 
-// The embed's footer is a display variable; the renderer substitutes only from the map it is
-// handed, so it is given the text the bot resolves it to.
+import { setupV3ButtonList } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+import {
+    DYNAMIC_CHANNEL_V3_BUTTON_ORDER,
+    DYNAMIC_CHANNEL_V3_FEATURES,
+    DYNAMIC_CHANNEL_V3_FEATURES_PATH,
+    toDynamicChannelFeatureHref
+} from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
+// The embed's list and settings are display variables. The renderer substitutes only from the map
+// it is handed, so it gets the text the bot resolves them to on a new generator - every button on,
+// which is V3's default set.
 const STEP_VARIABLES = {
-    footer: "Newly created dynamic channels through this master channel will be affected by the "
-        + "configuration you have selected."
+    message: setupV3ButtonList( DYNAMIC_CHANNEL_V3_BUTTON_ORDER ) + "\n",
+    configUserMention: "`🟢∙On`",
+    configAutoSave: "`🔴∙Off`",
+    configAutoStatus: "`🟢∙On`",
+    configControlChannelAutoCreate: "`🟢∙On`"
 };
+
+// The first entry is the page's own overview, not a button.
+const BUTTON_FEATURES = DYNAMIC_CHANNEL_V3_FEATURES.filter( ( feature ) => "buttons-interface" !== feature.value );
 
 interface IHowToSetupStep2Props {
     displayStep?: boolean
@@ -42,26 +58,20 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                         avatar={ VertixAvatar }
                         timestamp="Today at 9:35 AM"
                         variables={ STEP_VARIABLES }
-                        componentName="VertixBot/UI-V2/SetupNewWizardComponent"
-                        preferredElementsGroup="VertixBot/UI-V2/SetupStep2Component/ElementsGroup"
-                        preferredEmbedsGroup="VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
-                        embedOverrides={ {
-                            "VertixBot/UI-V2/SetupStep2Embed": {
-                                title: "Step 2 - Dynamic Channels Setup",
-                                description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
-                            },
-                        } }
+                        componentName="VertixBot/UI-V3/SetupNewWizardComponent"
+                        preferredElementsGroup="VertixBot/UI-V3/SetupStep2Component/ElementsGroup"
+                        preferredEmbedsGroup="VertixBot/UI-V3/SetupStep2Component/EmbedsGroup"
                         ephemeral={ true }
                         interactionUser="iNewLegend"
                         interactionUserAvatar={ UserAvatar }
                         interactionCommand="/setup"
                         elementOverrides={ {
-                            "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu": { highlighted: true },
+                            "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu": { highlighted: true },
                             "VertixBot/UI-General/WizardFinishButton": { hidden: true },
                         } }
                         expandedSelectMenu={ {
-                            elementName: "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                            selectedValues: [ "4", "5", "6", "7" ],
+                            elementName: "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
+                            selectedValues: [ ...DYNAMIC_CHANNEL_V3_BUTTON_ORDER ],
                         } }
                     />
                 </div>
@@ -73,36 +83,14 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
             </p>
             <h3 className="text-h5">What the buttons do?</h3>
 
-            <p><b>Basic Controls:</b></p>
             <ul>
-                <li>✏️ <b>Rename</b> - Allow the channel owner to rename his channel.</li>
-                <li>✋ <b>User Limit</b> - Allow the channel owner to set members limit.</li>
-                <li>🧹 <b>Clear Chat</b> - Clear basic messages (not including embeds).</li>
-            </ul>
-
-            <p><b>Privacy & Visibility:</b></p>
-            <ul>
-                <li>🚫/🌐 <b>Private/Public</b> - Toggle channel connectivity.</li>
-                <li>🙈/🐵 <b>Hidden/Shown</b> - Toggle channel visibility.</li>
-            </ul>
-
-            <p><b>Access Management:</b></p>
-            <ul>
-                <li>👥 <b>Access</b> - Edit channel permissions with 4 sub-options:
-                    <ul>
-                        <li>👍 Grant Access - Allow user to see/connect even when private.</li>
-                        <li>👎 Remove Access - Revoke previously granted access.</li>
-                        <li>🫵 Block User - Kick and prevent user from connecting.</li>
-                        <li>🤙 Un-Block User - Remove the block.</li>
-                    </ul>
-                </li>
-            </ul>
-
-            <p><b>Advanced:</b></p>
-            <ul>
-                <li>🔃 <b>Reset Channel</b> - Restore default state (name, limit, visibility, permissions).</li>
-                <li>🔀 <b>Transfer Ownership</b> - Transfer channel ownership to another user.</li>
-                <li>😈 <b>Claim Channel</b> - Claim ownership after owner leaves for 10 minutes.</li>
+                { BUTTON_FEATURES.map( ( feature ) => (
+                    <li key={ feature.value }>
+                        <RouterLink to={ toDynamicChannelFeatureHref( DYNAMIC_CHANNEL_V3_FEATURES_PATH, feature.value ) }>
+                            { feature.title }
+                        </RouterLink>
+                    </li>
+                ) ) }
             </ul>
 
             <p className="pt-12">
@@ -114,16 +102,10 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                     author="VoiceChannels"
                     avatar={ VertixAvatar }
                     timestamp="Today at 9:35 AM"
-                    componentName="VertixBot/UI-V2/SetupNewWizardComponent"
-                    preferredElementsGroup="VertixBot/UI-V2/SetupStep2Component/ElementsGroup"
-                    preferredEmbedsGroup="VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
+                    componentName="VertixBot/UI-V3/SetupNewWizardComponent"
+                    preferredElementsGroup="VertixBot/UI-V3/SetupStep2Component/ElementsGroup"
+                    preferredEmbedsGroup="VertixBot/UI-V3/SetupStep2Component/EmbedsGroup"
                     variables={ STEP_VARIABLES }
-                    embedOverrides={ {
-                        "VertixBot/UI-V2/SetupStep2Embed": {
-                            title: "Step 2 - Dynamic Channels Setup",
-                            description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
-                        },
-                    } }
                     ephemeral={ true }
                     interactionUser="iNewLegend"
                     interactionUserAvatar={ UserAvatar }

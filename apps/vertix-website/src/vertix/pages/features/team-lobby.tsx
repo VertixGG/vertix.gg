@@ -18,6 +18,10 @@ import {
 } from "@vertix.gg/website/src/vertix/pages/features/team-lobby/team-lobby-walkthrough";
 
 import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+import {
+    SETUP_MASTER_CREATE_LOBBY,
+    setupMasterCreateOptions
+} from "@vertix.gg/website/src/vertix/shared/setup-master-create-options";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
@@ -213,19 +217,7 @@ export default function TeamLobbyPage() {
                     />
                 </div>
                 <div style={ { maxWidth: "450px" } } className="mb-6">
-                    <DiscordSelectMenuDropdown
-                        options={ [
-                            { iconEmoji: "➕", label: "Dynamic Channel (V2)", description: "Classic dynamic voice channels" },
-                            { iconEmoji: "✨", label: "Dynamic Channel (V3)", description: "Enhanced dynamic channels with more features" },
-                            { iconEmoji: "📈", label: "Auto-Scaling Channel", description: "Automatically scales based on member count" },
-                            {
-                                iconEmoji: "🎮",
-                                label: "Team Lobby",
-                                description: "Split one channel into team rooms or groups",
-                                highlighted: true
-                            }
-                        ] }
-                    />
+                    <DiscordSelectMenuDropdown options={ setupMasterCreateOptions( SETUP_MASTER_CREATE_LOBBY ) } />
                 </div>
 
                 <h3 className="text-h5 text-vc-cyan mb-4">Step 2: The lobby and its panel</h3>

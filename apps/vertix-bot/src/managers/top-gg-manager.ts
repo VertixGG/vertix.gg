@@ -12,6 +12,8 @@ import { Api } from "@top-gg/sdk";
 
 import { getOwnedShardIds, getShardCount } from "@vertix.gg/bot/src/definitions/sharding";
 
+import { BOT_VOTE_URL } from "@vertix.gg/bot/src/utils/bot-invite";
+
 import type TopGG from "@top-gg/sdk";
 
 import type { Client, CommandInteraction, MessageComponentInteraction } from "discord.js";
@@ -51,7 +53,7 @@ export class TopGGManager extends CacheBase<Date> {
     }
 
     public static getVoteUrl() {
-        return process.env.TOP_GG_VOTE_URL ?? "404_URL_NOT_FOUND";
+        return BOT_VOTE_URL;
     }
 
     public constructor(

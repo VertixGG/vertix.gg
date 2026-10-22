@@ -17,7 +17,7 @@
         "vertix-bot-e2e:typecheck": "bunx --bun tsc --noEmit"
     },
     "devDependencies": {
-        "@playwright/test": "^1.62.1",
+        "@playwright/test": "^1.64.1",
         "@vertix.gg/bot": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
         "bun-types": "latest"

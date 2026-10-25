@@ -62,6 +62,8 @@ describe( "VertixDefinitions/DiscordInvite", () => {
             expect( isInstallSource( "listing-discordlistgg" ) ).toBe( true );
             expect( isInstallSource( "listing-voidbots" ) ).toBe( true );
             expect( isInstallSource( "listing-del" ) ).toBe( true );
+            expect( isInstallSource( "listing-botsondiscord" ) ).toBe( true );
+            expect( isInstallSource( "listing-listcord" ) ).toBe( true );
             expect( isInstallSource( "site-home " ) ).toBe( false );
             expect( isInstallSource( "" ) ).toBe( false );
             expect( isInstallSource( null ) ).toBe( false );

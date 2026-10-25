@@ -589,14 +589,14 @@
       {
         "name": "VertixBot/UI-General/BadwordsInput",
         "content": {
-          "label": "SEPARAR CON `,` PARA COINCIDENCIAS NO EXACTAS USE `*`",
+          "label": "SEPARE CON `,`, `*` PARA COINCIDENCIA PARCIAL",
           "placeholder": "Ninguno"
         }
       },
       {
         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
         "content": {
-          "label": "ESTABLECER NOMBRE PREDETERMINADO DE CANALES DINÁMICOS",
+          "label": "NOMBRE PREDETERMINADO DE CANALES DINÁMICOS",
           "placeholder": "Canal de {user}"
         }
       },
@@ -672,7 +672,7 @@
       {
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
         "content": {
-          "label": "ESTABLECER LÍMITE DE USUARIOS (0 PARA ILIMITADO)",
+          "label": "LÍMITE DE USUARIOS (0 PARA ILIMITADO)",
           "placeholder": "0 - 99"
         }
       },
@@ -691,7 +691,7 @@
       {
         "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
         "content": {
-          "label": "Retraso de actualización del recuento (segundos)"
+          "label": "Retraso del recuento de miembros (segundos)"
         }
       },
       {
@@ -703,7 +703,7 @@
       {
         "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
         "content": {
-          "label": "Espera entre publicaciones (minutos, 0 = ninguna)"
+          "label": "Espera entre publicaciones (min, 0 = ninguna)"
         }
       },
       {
@@ -715,7 +715,7 @@
       {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
-          "label": "ESTABLECER LÍMITE DE USUARIOS (0 PARA ILIMITADO)",
+          "label": "LÍMITE DE USUARIOS (0 PARA ILIMITADO)",
           "placeholder": "0 - 99"
         }
       },

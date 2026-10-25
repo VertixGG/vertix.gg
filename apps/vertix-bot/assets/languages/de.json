@@ -589,7 +589,7 @@
       {
         "name": "VertixBot/UI-General/BadwordsInput",
         "content": {
-          "label": "MIT `,` TRENNEN, FÜR UNGENAUE ÜBEREINSTIMMUNGEN `*` VERWENDEN",
+          "label": "MIT `,` TRENNEN, `*` FÜR UNGENAUE TREFFER",
           "placeholder": "Keine"
         }
       },

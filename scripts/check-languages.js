@@ -5,6 +5,7 @@
 //   2. every entry in en.json exists in each other locale
 //   3. every baked select menu holds the same options as the menu it translates, in every locale
 //   4. every baked list holds an entry per item of the list it translates, in every locale
+//   5. every baked text input label and modal title is within what discord accepts, in every locale
 //
 // Exits non-zero when something is missing, so it can gate CI. Pass --json for
 // machine-readable output, or --locale=<code> to list one locale's gaps.
@@ -20,6 +21,16 @@ const EXPORTS_DIR = join( ROOT, "exports/ui" );
 // ending in "Group" is a structural wrapper (ElementsGroup, EmbedGroup, ...)
 // and holds no copy of its own.
 const TRANSLATABLE_SUFFIXES = [ "Button", "Input", "SelectMenu", "Menu", "Modal", "Embed", "Markdown" ];
+
+// What discord accepts for the copy a modal is made of - `BASE_TYPE_BAD_LENGTH` past it, and the
+// modal never opens. Counted in UTF-16 units as discord.js counts them, so a locale that fits here
+// fits there. The english label is written against the cap; its translations are written against
+// the english, and a label is the one string that routinely grows in translation - four locales
+// carried one over the cap for eight months, and no server in those languages could open it.
+const COPY_LIMITS = {
+    textInputs: { label: 45, placeholder: 100 },
+    modals: { title: 45 }
+};
 
 // Only entity names are namespaced; a bare "name" also appears inside select
 // options and embed fields ("English", "▹ Name: <#{id}>") and must not count.
@@ -200,6 +211,31 @@ function compareArrayOptionMaps( expected, actual ) {
     ].filter( Boolean ).join( " and " );
 }
 
+/**
+ * Function collectOverlongCopy() :: The baked strings of one locale that discord would refuse.
+ *
+ * Read off the locale's own file rather than walked from en: what is over the cap is the string as
+ * baked, and a string missing altogether is already counted as missing above.
+ */
+function collectOverlongCopy( language, locale, acc = [] ) {
+    const entries = [
+        ...( language?.elements?.textInputs || [] ).map( ( entity ) => [ entity, COPY_LIMITS.textInputs ] ),
+        ...( language?.modals || [] ).map( ( entity ) => [ entity, COPY_LIMITS.modals ] )
+    ];
+
+    for ( const [ entity, limits ] of entries ) {
+        for ( const [ key, limit ] of Object.entries( limits ) ) {
+            const value = entity?.content?.[ key ];
+
+            if ( typeof value === "string" && value.length > limit ) {
+                acc.push( { locale, name: entity.name, key, length: value.length, limit } );
+            }
+        }
+    }
+
+    return acc;
+}
+
 // A flow names its states and transitions after what they open, so a transition to a modal is
 // called "...Transitions/OpenNameModal" and ends in a translatable suffix while being a node in a
 // state machine rather than anything with copy. Matched on the path rather than the suffix,
@@ -295,6 +331,10 @@ for ( const [ id, { name, key, options } ] of enLists ) {
     }
 }
 
+// 5. every locale -> discord's limits, en included: nothing above reads a string's length, so a
+// label that grew past the cap has its entry, its value and its place, and counts as covered.
+const overlongCopy = collectOverlongCopy( enLanguage, "en" );
+
 // 2. en.json -> every other locale
 const locales = {};
 
@@ -370,6 +410,8 @@ for ( const file of readdirSync( LANG_DIR ).sort() ) {
         }
     }
 
+    collectOverlongCopy( language, code, overlongCopy );
+
     locales[ code ] = {
         present: enNames.size - missing.length,
         total: enNames.size,
@@ -383,10 +425,11 @@ const failed = missingFromEn.length > 0
     || untranslatedMenus.length > 0
     || listDrift.length > 0
     || untranslatedLists.length > 0
+    || overlongCopy.length > 0
     || Object.values( locales ).some( ( locale ) => locale.missing.length > 0 );
 
 if ( asJson ) {
-    console.log( JSON.stringify( { missingFromEn, menuDrift, untranslatedMenus, positionalMenus, listDrift, untranslatedLists, locales, ok: ! failed }, null, 2 ) );
+    console.log( JSON.stringify( { missingFromEn, menuDrift, untranslatedMenus, positionalMenus, listDrift, untranslatedLists, overlongCopy, locales, ok: ! failed }, null, 2 ) );
 } else {
     if ( missingFromEn.length ) {
         console.error( `\nMissing from en.json (${ missingFromEn.length }) - defined in the UI but has no copy:` );
@@ -415,6 +458,12 @@ if ( asJson ) {
         console.error( `\nLists with untranslated items (${ untranslatedLists.length }) - the embed is translated, its items are not:` );
         untranslatedLists.forEach( ( { locale, name, key, count } ) =>
             console.error( `  [${ locale }] ${ name } [${ key }] - ${ count } item(s) left in english` ) );
+    }
+
+    if ( overlongCopy.length ) {
+        console.error( `\nCopy past discord's limit (${ overlongCopy.length }) - the modal carrying it never opens:` );
+        overlongCopy.forEach( ( { locale, name, key, length, limit } ) =>
+            console.error( `  [${ locale }] ${ name } ${ key } is ${ length } long, discord takes ${ limit }` ) );
     }
 
     // Not a failure: every one of these is a menu whose options have not moved, and failing on

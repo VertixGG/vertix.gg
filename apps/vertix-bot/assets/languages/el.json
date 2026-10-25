@@ -589,14 +589,14 @@
       {
         "name": "VertixBot/UI-General/BadwordsInput",
         "content": {
-          "label": "ΔΙΑΧΩΡΙΣΜΟΣ ΜΕ `,` ΓΙΑ ΜΗ ΑΚΡΙΒΕΙΣ ΑΝΤΙΣΤΟΙΧΙΣΕΙΣ ΧΡΗΣΙΜΟΠΟΙΗΣΤΕ `*`",
+          "label": "ΧΩΡΙΣΤΕ ΜΕ `,`, `*` ΓΙΑ ΜΕΡΙΚΗ ΑΝΤΙΣΤΟΙΧΙΣΗ",
           "placeholder": "Κανένα"
         }
       },
       {
         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
         "content": {
-          "label": "ΟΡΙΣΜΟΣ ΠΡΟΕΠΙΛΕΓΜΕΝΟΥ ΟΝΟΜΑΤΟΣ ΔΥΝΑΜΙΚΩΝ ΚΑΝΑΛΙΩΝ",
+          "label": "ΠΡΟΕΠΙΛΕΓΜΕΝΟ ΟΝΟΜΑ ΔΥΝΑΜΙΚΩΝ ΚΑΝΑΛΙΩΝ",
           "placeholder": "Κανάλι του {user}"
         }
       },

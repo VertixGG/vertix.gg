@@ -589,14 +589,14 @@
       {
         "name": "VertixBot/UI-General/BadwordsInput",
         "content": {
-          "label": "РАЗДЕЛЯЙТЕ `,` ДЛЯ НЕТОЧНЫХ СОВПАДЕНИЙ ИСПОЛЬЗУЙТЕ `*`",
+          "label": "РАЗДЕЛЯЙТЕ `,`, `*` ДЛЯ НЕТОЧНЫХ СОВПАДЕНИЙ",
           "placeholder": "Нет"
         }
       },
       {
         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
         "content": {
-          "label": "УСТАНОВИТЕ НАЗВАНИЕ ДИНАМИЧЕСКИХ КАНАЛОВ ПО УМОЛЧАНИЮ",
+          "label": "НАЗВАНИЕ ДИНАМИЧЕСКИХ КАНАЛОВ ПО УМОЛЧАНИЮ",
           "placeholder": "Канал {user}"
         }
       },
@@ -672,7 +672,7 @@
       {
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
         "content": {
-          "label": "УСТАНОВИТЕ ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 ДЛЯ БЕЗЛИМИТА)",
+          "label": "ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 — БЕЗ ЛИМИТА)",
           "placeholder": "0 - 99"
         }
       },
@@ -691,7 +691,7 @@
       {
         "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
         "content": {
-          "label": "Задержка обновления числа участников (секунды)"
+          "label": "Задержка обновления числа участников (сек.)"
         }
       },
       {
@@ -715,7 +715,7 @@
       {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
-          "label": "УСТАНОВИТЕ ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 ДЛЯ БЕЗЛИМИТА)",
+          "label": "ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 — БЕЗ ЛИМИТА)",
           "placeholder": "0 - 99"
         }
       },

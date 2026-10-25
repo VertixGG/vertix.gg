@@ -589,14 +589,14 @@
       {
         "name": "VertixBot/UI-General/BadwordsInput",
         "content": {
-          "label": "SÉPARER PAR `,` POUR LES CORRESPONDANCES NON EXACTES UTILISEZ `*`",
+          "label": "`,` POUR SÉPARER, `*` POUR UN MOT PARTIEL",
           "placeholder": "Aucun"
         }
       },
       {
         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
         "content": {
-          "label": "DÉFINIR LE NOM PAR DÉFAUT DES CANAUX DYNAMIQUES",
+          "label": "NOM PAR DÉFAUT DES CANAUX DYNAMIQUES",
           "placeholder": "Canal de {user}"
         }
       },
@@ -672,7 +672,7 @@
       {
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
         "content": {
-          "label": "DÉFINIR LA LIMITE D'UTILISATEURS (0 POUR ILLIMITÉ)",
+          "label": "LIMITE D'UTILISATEURS (0 POUR ILLIMITÉ)",
           "placeholder": "0 - 99"
         }
       },
@@ -691,7 +691,7 @@
       {
         "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
         "content": {
-          "label": "Délai de rafraîchissement du compte (secondes)"
+          "label": "Délai d'actualisation du compte (secondes)"
         }
       },
       {
@@ -715,7 +715,7 @@
       {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
-          "label": "DÉFINIR LA LIMITE D'UTILISATEURS (0 POUR ILLIMITÉ)",
+          "label": "LIMITE D'UTILISATEURS (0 POUR ILLIMITÉ)",
           "placeholder": "0 - 99"
         }
       },

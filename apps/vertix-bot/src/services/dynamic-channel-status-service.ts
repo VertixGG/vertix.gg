@@ -25,7 +25,7 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import { ActivityType, Routes } from "discord.js";
+import { ActivityType, PermissionsBitField, Routes } from "discord.js";
 
 import {
     DYNAMIC_CHANNEL_STATUS_LIMITS,
@@ -444,6 +444,22 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
     }
 
     private async write( channel: VoiceChannel, status: string ) {
+        // Discord takes a status only from a member holding Set Voice Channel Status in the channel.
+        // The invite asks for it since 2026-10-25; before that the bot had it from the everyone role,
+        // which grants it by default, and the first server to switch that off refused every write
+        // with 403 - on every join, leave and game change in the room, each one logged as an error.
+        // Nothing here can get the permission back, so the room is left saying what it says.
+        const me = channel.guild.members.me;
+
+        if ( me && !channel.permissionsFor( me ).has( PermissionsBitField.Flags.SetVoiceChannelStatus ) ) {
+            this.debugger.log(
+                this.write,
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Missing Set Voice Channel Status, status not written`
+            );
+
+            return;
+        }
+
         const body: RESTPutAPIChannelVoiceStatusJSONBody = { status };
 
         const route = `${ Routes.channel( channel.id ) }${ DYNAMIC_CHANNEL_STATUS_ROUTE_SUFFIX }` as `/${ string }`;

@@ -18,6 +18,12 @@ export const DISCORD_APP_ID = "1538844311062581339";
  *
  * `minimal` drops that, and is otherwise identical.
  *
+ * Both carry `SetVoiceChannelStatus` (bit 48, 281474976710656) since 2026-10-25. The automatic
+ * voice channel status is written through it, and until then the bot had it only from the everyone
+ * role, which grants it by default - the first server to switch that off refused every status write
+ * with 403, on every join, leave and game change in the room. The two numbers before it were
+ * 286354576 and 286354448.
+ *
  * Neither is Administrator, which the site used to recommend. Administrator satisfies every
  * permission check the bot makes, so a server granting it hides any permission the bot asks for but
  * was never given - which is exactly how a set the bot could not actually run on shipped unnoticed
@@ -26,8 +32,8 @@ export const DISCORD_APP_ID = "1538844311062581339";
  * mark it down.
  */
 export const DISCORD_INVITE_PERMISSIONS = {
-    recommended: "286354576",
-    minimal: "286354448"
+    recommended: "281475263065232",
+    minimal: "281475263065104"
 } as const;
 
 export type TDiscordInvitePermissionsType = keyof typeof DISCORD_INVITE_PERMISSIONS;

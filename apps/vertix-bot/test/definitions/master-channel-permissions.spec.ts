@@ -23,9 +23,9 @@ import {
  */
 const SHIPPED_INVITES = {
     // Welcome message invite button, discordbots.net listing, Discord default install settings.
-    "286354576 (default)": 286354576n,
+    "281475263065232 (default)": 281475263065232n,
     // Website invite page, "Minimal Permissions".
-    "286354448 (minimal)": 286354448n
+    "281475263065104 (minimal)": 281475263065104n
 };
 
 const nameOf = ( flag: bigint ) => new PermissionsBitField( flag ).toArray()[ 0 ] ?? String( flag );

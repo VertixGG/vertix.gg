@@ -56,7 +56,7 @@ describe( "VertixBot/Utils/BotInvite", () => {
             // Assert.
             expect( url.searchParams.get( "state" ) ).toBe( "bot-welcome" );
             expect( url.searchParams.get( "redirect_uri" ) ).toBe( CALLBACK_URL );
-            expect( url.searchParams.get( "permissions" ) ).toBe( "286354576" );
+            expect( url.searchParams.get( "permissions" ) ).toBe( "281475263065232" );
         } );
 
         it( "should stay the plain invite while the callback is not set", () => {

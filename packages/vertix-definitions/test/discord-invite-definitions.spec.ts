@@ -12,7 +12,7 @@ describe( "VertixDefinitions/DiscordInvite", () => {
             // Act & Assert.
             expect( buildBotInviteUrl() ).toBe(
                 `https://discord.com/oauth2/authorize?client_id=${ DISCORD_APP_ID }` +
-                "&permissions=286354576&scope=bot%20applications.commands"
+                "&permissions=281475263065232&scope=bot%20applications.commands"
             );
         } );
 
@@ -35,7 +35,7 @@ describe( "VertixDefinitions/DiscordInvite", () => {
             expect( url.searchParams.get( "response_type" ) ).toBe( "code" );
             expect( url.searchParams.get( "redirect_uri" ) ).toBe( CALLBACK_URL );
             expect( url.searchParams.get( "state" ) ).toBe( "site-pricing" );
-            expect( url.searchParams.get( "permissions" ) ).toBe( "286354448" );
+            expect( url.searchParams.get( "permissions" ) ).toBe( "281475263065104" );
         } );
 
         it( "should stay the plain invite while the callback is not set", () => {

@@ -56,11 +56,11 @@ describe( "VertixAPI/Services/InstallAttribution", () => {
         const { dependencies, recorded, exchange } = makeDependencies();
 
         // Act.
-        const result = await handleInstallCallback( { code: "code", state: "site-home", permissions: "286354576" }, dependencies );
+        const result = await handleInstallCallback( { code: "code", state: "site-home", permissions: "281475263065232" }, dependencies );
 
         // Assert.
         expect( exchange ).toHaveBeenCalledWith( "code", CALLBACK_URL );
-        expect( recorded ).toEqual( [ { guildId: GUILD_ID, source: "site-home", permissions: "286354576" } ] );
+        expect( recorded ).toEqual( [ { guildId: GUILD_ID, source: "site-home", permissions: "281475263065232" } ] );
         expect( result ).toEqual( { redirectTo: `${ WEBSITE_URL }/welcome?src=site-home`, recorded: true } );
     } );
 

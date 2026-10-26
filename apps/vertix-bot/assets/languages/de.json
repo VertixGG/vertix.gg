@@ -1812,7 +1812,14 @@
             "{reasonNotCovered}": "Dieser Server hat mehr Generatoren, als sein Tarif erlaubt, und dies ist einer der zusätzlichen - deshalb erstellt er gerade keine Kanäle.\n\nDie zuerst eingerichteten Generatoren funktionieren weiterhin. Ein Server-Admin kann den Tarif erweitern, um diesen wieder einzuschalten, oder einen nicht mehr genutzten Generator löschen.",
             "{reasonCategoryFull}": "Die Kategorie, in der dieser Kanal liegt, ist voll. Discord erlaubt 50 Kanäle pro Kategorie, und diese Grenze ist erreicht.\n\nBitte informiere einen Server-Admin - er kann einen Kanal freigeben oder den Generator in eine andere Kategorie verschieben.",
             "{reasonGeneratorFull}": "Dieser Generator hat bereits {maxActiveDynamicChannels} Kanäle offen - mehr darf er nicht gleichzeitig haben.\n\nEiner wird frei, sobald sich ein Kanal leert. Sind alle belegt, kann ein Server-Admin einen weiteren Generator einrichten.",
+            "{reasonMissingPermissions}": "Discord hat dem Bot nicht erlaubt, den Kanal in **{categoryName}** zu erstellen - der Kategorie, in die dieser Generator seine Kanäle legt. Dem Bot fehlen dort:\n\n{missingPermissions}\n\nBitte informiere einen Server-Admin - diese Rechte dem Bot in dieser Kategorie zu geben oder aufzuheben, was sie dort verweigert, genügt.",
             "{reasonUnknown}": "Meist bedeutet das, dass der Server ein Discord-Limit erreicht hat oder dass eine Berechtigung des Bots entfernt wurde.\n\nBitte informiere einen Server-Admin. Der Grund steht in den Bot-Logs."
+          }
+        },
+        "arrayOptions": {
+          "missingPermissions": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
           }
         }
       }

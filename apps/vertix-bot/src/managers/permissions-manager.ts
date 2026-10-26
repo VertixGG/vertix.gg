@@ -14,6 +14,7 @@ import {
 } from "@vertix.gg/bot/src/definitions/master-channel";
 
 import type {
+    CategoryChannel,
     GuildChannel,
     Interaction,
     OverwriteResolvable,
@@ -164,6 +165,38 @@ export class PermissionsManager extends InitializeBase {
         }
 
         return this.getMissingChannelPermissions( permissions, context );
+    }
+
+    /**
+     * Function getMissingCategoryPermissions() :: What the bot is missing in a category, the way
+     * discord works it out before it will create a channel there.
+     *
+     * Every check above reads the bot's *roles* - what the server granted it, server-wide. A
+     * channel is created inside a category, and discord weighs the create against the bot's
+     * permissions in that category instead: those same role permissions with the category's own
+     * overwrites applied over the top. A category that denies the bot something its roles do grant
+     * is therefore invisible to all of them, and to `filterWritableOverwrites()`, which trims
+     * against the roles as well - so the create comes back a bare 403 naming nothing, and nothing
+     * in the join path can say which permission it was.
+     *
+     * `permissionsFor()` is what does the computing, Administrator included, so a bot holding it is
+     * missing nothing here. A bot whose own member is not cached answers nothing missing rather
+     * than everything: a permission we could not read is not a permission to blame.
+     */
+    public getMissingCategoryPermissions(
+        permissions: bigint[],
+        category: CategoryChannel,
+        member = category.guild.members.me
+    ): string[] {
+        const held = member ? category.permissionsFor( member ) : null;
+
+        if ( ! held ) {
+            return [];
+        }
+
+        return new PermissionsBitField( permissions )
+            .toArray()
+            .filter( ( permission ) => ! held.has( permission ) );
     }
 
     /**

@@ -1533,7 +1533,14 @@
                                     "{reasonCategoryFull}": "The category this channel lives in is full. Discord allows 50 channels per category, and it has reached that.\n\nPlease let a server admin know - they can free a channel or move the generator to another category.",
                                     "{reasonGeneratorFull}": "This generator already has {maxActiveDynamicChannels} channels open, which is as many as it may have at once.\n\nOne will free up when a channel empties out. If they are all in use, a server admin can set up another generator.",
                                     "{reasonNotCovered}": "This server has more generators than its plan allows, and this is one of the extra ones - so it is not making channels at the moment.\n\nThe generators it set up first are still working. A server admin can upgrade the plan to switch this one back on, or delete a generator it no longer uses.",
+                                    "{reasonMissingPermissions}": "Discord would not let the bot create the channel in **{categoryName}**, the category this generator puts its channels in. The bot is missing there:\n\n{missingPermissions}\n\nPlease let a server admin know - granting those to the bot on that category, or lifting whatever denies them there, is all it takes.",
                                     "{reasonUnknown}": "This usually means the server reached one of Discord's limits, or that a permission the bot needs was removed.\n\nPlease let a server admin know. The reason is written to the bot logs."
+                                }
+                            },
+                            "arrayOptions": {
+                                "missingPermissions": {
+                                    "format": "- {value}{separator}",
+                                    "separator": "\n"
                                 }
                             },
                             "vars": {
@@ -1542,17 +1549,23 @@
                                 "reasonCategoryFull": "{reasonCategoryFull}",
                                 "reasonGeneratorFull": "{reasonGeneratorFull}",
                                 "reasonNotCovered": "{reasonNotCovered}",
+                                "reasonMissingPermissions": "{reasonMissingPermissions}",
                                 "maxActiveDynamicChannels": "{maxActiveDynamicChannels}",
+                                "categoryName": "{categoryName}",
+                                "missingPermissions": "{missingPermissions}",
+                                "value": "{value}",
+                                "separator": "{separator}",
                                 "reasonUnknown": "{reasonUnknown}"
                             },
                             "defaultVars": {
                                 "masterChannelId": "123456789",
-                                "maxActiveDynamicChannels": "20"
+                                "maxActiveDynamicChannels": "20",
+                                "categoryName": "Voice Channels"
                             },
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args) => {\n  const reason = args.isNotCovered ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonNotCovered : args.isGeneratorFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonGeneratorFull : args.isCategoryFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown;\n  return {\n    masterChannelId: args.masterChannelId,\n    maxActiveDynamicChannels: args.maxActiveDynamicChannels,\n    reason\n  };\n}",
+                                        "source": "(args) => {\n  const missingPermissions = (Array.isArray(args.missingPermissions) ? args.missingPermissions : []).map((permission) => permission.split(/(?=[A-Z])/).join(\" \")), reason = args.isNotCovered ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonNotCovered : args.isGeneratorFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonGeneratorFull : args.isCategoryFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull : missingPermissions.length ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonMissingPermissions : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown;\n  return {\n    masterChannelId: args.masterChannelId,\n    maxActiveDynamicChannels: args.maxActiveDynamicChannels,\n    categoryName: args.categoryName,\n    missingPermissions,\n    reason\n  };\n}",
                                         "binds": [
                                             "CHANNEL_CREATE_FAILED_EMBED_VARS"
                                         ]

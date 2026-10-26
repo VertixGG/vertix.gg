@@ -13,7 +13,12 @@ const CHANNEL_CREATE_FAILED_EMBED_VARS = {
     reasonCategoryFull: uiUtilsWrapAsTemplate( "reasonCategoryFull" ),
     reasonGeneratorFull: uiUtilsWrapAsTemplate( "reasonGeneratorFull" ),
     reasonNotCovered: uiUtilsWrapAsTemplate( "reasonNotCovered" ),
+    reasonMissingPermissions: uiUtilsWrapAsTemplate( "reasonMissingPermissions" ),
     maxActiveDynamicChannels: uiUtilsWrapAsTemplate( "maxActiveDynamicChannels" ),
+    categoryName: uiUtilsWrapAsTemplate( "categoryName" ),
+    missingPermissions: uiUtilsWrapAsTemplate( "missingPermissions" ),
+    value: uiUtilsWrapAsTemplate( "value" ),
+    separator: uiUtilsWrapAsTemplate( "separator" ),
     reasonUnknown: uiUtilsWrapAsTemplate( "reasonUnknown" )
 };
 
@@ -46,33 +51,58 @@ const ChannelCreateFailedEmbed = new EmbedBuilder<UIArgs, typeof CHANNEL_CREATE_
                 "ones - so it is not making channels at the moment.\n\n" +
                 "The generators it set up first are still working. A server admin can upgrade the " +
                 "plan to switch this one back on, or delete a generator it no longer uses.",
+            [ CHANNEL_CREATE_FAILED_EMBED_VARS.reasonMissingPermissions ]:
+                "Discord would not let the bot create the channel in " +
+                `**${ CHANNEL_CREATE_FAILED_EMBED_VARS.categoryName }**, the category this generator ` +
+                "puts its channels in. The bot is missing there:\n\n" +
+                `${ CHANNEL_CREATE_FAILED_EMBED_VARS.missingPermissions }\n\n` +
+                "Please let a server admin know - granting those to the bot on that category, or " +
+                "lifting whatever denies them there, is all it takes.",
             [ CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown ]:
                 "This usually means the server reached one of Discord's limits, or that a permission " +
                 "the bot needs was removed.\n\n" +
                 "Please let a server admin know. The reason is written to the bot logs."
         }
     } ) )
+    .setArrayOptions( () => ( {
+        missingPermissions: {
+            format: `- ${ CHANNEL_CREATE_FAILED_EMBED_VARS.value }${ CHANNEL_CREATE_FAILED_EMBED_VARS.separator }`,
+            separator: "\n"
+        }
+    } ) )
     .setLogic( ( args: UIArgs ) => {
+        // Discord's own flag names, spaced out the way the missing permissions screen spaces them -
+        // `ManageChannels` is the api's word for what the server's own settings call Manage
+        // Channels, and it is a server admin who has to go and find it there.
+        const missingPermissions = ( Array.isArray( args.missingPermissions ) ? args.missingPermissions : [] )
+            .map( ( permission: string ) => permission.split( /(?=[A-Z])/ ).join( " " ) );
+
         // Ordered by who can do something about it: a generator switched off for the plan is the
         // server's to settle, a generator at its cap is the member's to wait out, a full category is
-        // an admin's to clear, and the rest is a line in the log.
+        // an admin's to clear, a permission the category withholds is an admin's to grant, and the
+        // rest is a line in the log.
         const reason = args.isNotCovered
             ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonNotCovered
             : args.isGeneratorFull
                 ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonGeneratorFull
                 : args.isCategoryFull
                     ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull
-                    : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown;
+                    : missingPermissions.length
+                        ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonMissingPermissions
+                        : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown;
 
         return {
             masterChannelId: args.masterChannelId,
             maxActiveDynamicChannels: args.maxActiveDynamicChannels,
+            categoryName: args.categoryName,
+            missingPermissions,
             reason
         };
     } )
     .setDefaultVars( () => ( {
         masterChannelId: "123456789",
-        maxActiveDynamicChannels: "20"
+        maxActiveDynamicChannels: "20",
+        categoryName: "Voice Channels"
     } ) )
     .build();
 

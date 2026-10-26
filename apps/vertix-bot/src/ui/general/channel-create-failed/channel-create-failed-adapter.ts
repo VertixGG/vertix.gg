@@ -29,7 +29,9 @@ const ChannelCreateFailedAdapter = new AdapterBuilderBase<
         isCategoryFull: argsFromManager?.isCategoryFull,
         isGeneratorFull: argsFromManager?.isGeneratorFull,
         isNotCovered: argsFromManager?.isNotCovered,
-        maxActiveDynamicChannels: argsFromManager?.maxActiveDynamicChannels
+        maxActiveDynamicChannels: argsFromManager?.maxActiveDynamicChannels,
+        categoryName: argsFromManager?.categoryName,
+        missingPermissions: argsFromManager?.missingPermissions
     } ) )
     .disableMiddleware()
     .build();

@@ -1816,7 +1816,14 @@
             "{reasonNotCovered}": "此服务器的生成器数量超出了套餐允许的上限，而这个生成器属于超出的部分，所以它目前不会创建频道。\n\n最先设置的那些生成器仍在正常工作。服务器管理员可以升级套餐来重新启用它，或删除不再使用的生成器。",
             "{reasonCategoryFull}": "此频道所在的分类已满。Discord 每个分类最多允许 50 个频道，该分类已达到上限。\n\n请告知服务器管理员——他们可以腾出一个频道，或将生成器移到其他分类。",
             "{reasonGeneratorFull}": "此生成器已开启 {maxActiveDynamicChannels} 个频道，已达到可同时开启的上限。\n\n有频道空出来后就能再创建。如果频道都在使用中，服务器管理员可以再设置一个生成器。",
+            "{reasonMissingPermissions}": "Discord 不允许机器人在 **{categoryName}** 中创建频道，这个生成器的频道都放在该分类里。机器人在那里缺少：\n\n{missingPermissions}\n\n请告知服务器管理员——只需在该分类中把这些权限授予机器人，或取消那里的拒绝设置即可。",
             "{reasonUnknown}": "这通常意味着服务器达到了 Discord 的某项限制，或者机器人所需的某项权限被移除了。\n\n请告知服务器管理员。具体原因已写入机器人日志。"
+          }
+        },
+        "arrayOptions": {
+          "missingPermissions": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
           }
         }
       }

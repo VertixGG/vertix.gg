@@ -65,8 +65,11 @@ export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
 /**
  * What the bot's own guild role has to hold for the dynamic channel features to work.
  *
- * This is only ever read by `getMissingPermissions()` against the guild - it is never written to a
- * channel, so nothing inherits it. The website's "optimal" invite grants exactly this set.
+ * Read against the guild, by `getMissingPermissions()` as somebody joins a generator, and against
+ * the generator's category by `getMissingCategoryPermissions()` once a create has failed - the same
+ * set either way, because a category that withholds one of these costs the create exactly as a
+ * missing role permission does. It is never written to a channel, so nothing inherits it. The
+ * website's "optimal" invite grants exactly this set.
  */
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
     allow: [

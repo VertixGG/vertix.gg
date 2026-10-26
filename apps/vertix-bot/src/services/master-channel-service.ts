@@ -620,12 +620,6 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function notifyChannelCreateFailed() :: Tells the user their channel was not created.
-     *
-     * Without this the three layers below only write to the log and return, so the user sits in the
-     * master channel with nothing happening and no reason given - which reads as the bot being down.
-     */
-    /**
      * Function findChannelCreateRefusal() :: Why this generator will make no room, if it will not.
      *
      * The two reasons are asked in this order deliberately. A generator the plan does not reach
@@ -669,6 +663,12 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return undefined;
     }
 
+    /**
+     * Function notifyChannelCreateFailed() :: Tells the user their channel was not created.
+     *
+     * Without this the three layers below only write to the log and return, so the user sits in the
+     * master channel with nothing happening and no reason given - which reads as the bot being down.
+     */
     private async notifyChannelCreateFailed(
         newState: VoiceState,
         refusal?: TChannelCreateRefusal
@@ -690,13 +690,62 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return;
         }
 
+        const category = newState.channel?.parent ?? null;
+
         await adapter.sendToUser( newState.guild.id, userId, {
             masterChannelId: newState.channelId,
-            isCategoryFull: this.isCategoryFull( newState.channel?.parent ?? null ),
+            isCategoryFull: this.isCategoryFull( category ),
             isGeneratorFull: refusal && "isGeneratorFull" in refusal,
             maxActiveDynamicChannels: refusal && "isGeneratorFull" in refusal ? refusal.roomsLimit : undefined,
-            isNotCovered: refusal && "isNotCovered" in refusal
+            isNotCovered: refusal && "isNotCovered" in refusal,
+            categoryName: category?.name,
+            missingPermissions: refusal ? [] : this.findCategoryMissingPermissions( newState.guild, category )
         } );
+    }
+
+    /**
+     * Function findCategoryMissingPermissions() :: What the bot is missing where the room would
+     * have gone, when that is what stopped it.
+     *
+     * A room is created in the generator's own category, so that is the category discord weighs the
+     * create against - and the one nothing else in this path reads. The readiness check above asks
+     * the bot's roles guild-wide and `filterWritableOverwrites()` trims against those same roles,
+     * so a category that denies the bot what the server granted it passes both and arrives as a
+     * bare 403 `Missing Permissions`, which is how a server can be told only that its channel
+     * "could not be created" while the one thing an admin had to change went unnamed.
+     *
+     * Asked only once a create has actually failed, never with a refusal in hand: the refusals are
+     * settled before discord is called at all, and a permission the category happens to withhold is
+     * not what stopped those.
+     */
+    private findCategoryMissingPermissions( guild: Guild, category: CategoryChannel | null ): string[] {
+        if ( ! category ) {
+            return [];
+        }
+
+        const missingPermissions = PermissionsManager.$.getMissingCategoryPermissions(
+            DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+            category
+        );
+
+        if ( ! missingPermissions.length ) {
+            return [];
+        }
+
+        this.logger.warn(
+            this.findCategoryMissingPermissions,
+            `Guild id: '${ guild.id }' - Category id: '${ category.id }' name: '${ category.name }' - ` +
+                `The bot is missing '${ missingPermissions.join( "', '" ) }' in the category the room would ` +
+                "have been created in - discord refuses the create without them"
+        );
+
+        this.logger.admin(
+            this.findCategoryMissingPermissions,
+            `🔐 Vertix missing category permissions - "${ missingPermissions.join( ", " ) }" ` +
+                `in "${ category.name }" (${ guild.name }) (${ guild.memberCount })`
+        );
+
+        return missingPermissions;
     }
 
     /**

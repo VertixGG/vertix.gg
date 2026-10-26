@@ -1812,7 +1812,14 @@
             "{reasonNotCovered}": "Ce serveur a plus de générateurs que son offre ne le permet, et celui-ci fait partie des générateurs en trop - il ne crée donc aucun canal pour le moment.\n\nLes générateurs créés en premier fonctionnent toujours. Un administrateur du serveur peut faire évoluer l'offre pour le réactiver, ou supprimer un générateur devenu inutile.",
             "{reasonCategoryFull}": "La catégorie qui contient ce canal est pleine. Discord autorise 50 canaux par catégorie, et la limite est atteinte.\n\nPrévenez un administrateur : il peut libérer un canal ou déplacer le générateur vers une autre catégorie.",
             "{reasonGeneratorFull}": "Ce générateur a déjà {maxActiveDynamicChannels} canaux ouverts, soit le maximum qu'il peut avoir à la fois.\n\nUn canal se libérera dès que l'un d'eux se videra. S'ils sont tous occupés, un administrateur du serveur peut créer un autre générateur.",
+            "{reasonMissingPermissions}": "Discord n'a pas laissé le bot créer le salon dans **{categoryName}**, la catégorie où ce générateur place ses salons. Il manque au bot, à cet endroit :\n\n{missingPermissions}\n\nPrévenez un administrateur du serveur - il suffit de les accorder au bot sur cette catégorie, ou de lever ce qui les y refuse.",
             "{reasonUnknown}": "Cela signifie généralement que le serveur a atteint une limite de Discord, ou qu'une permission nécessaire au bot a été retirée.\n\nPrévenez un administrateur du serveur. La raison est inscrite dans les journaux du bot."
+          }
+        },
+        "arrayOptions": {
+          "missingPermissions": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
           }
         }
       }

@@ -624,9 +624,11 @@ async function onLogChannelSelected(
 
     context.setArgs( interaction, args );
 
-    await warnOnMissingLogsChannelPermissions( interaction, channelId );
-
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+
+    // After the redraw, never before it: a notice posted first takes the interaction's one reply,
+    // and the redraw then patches the notice instead of the screen - see `UIAdapterBase.ephemeral()`.
+    await warnOnMissingLogsChannelPermissions( interaction, channelId );
 }
 
 async function onDefaultPrivacySelected(
@@ -742,9 +744,11 @@ async function onVoiceRoleSelected(
 
     context.setArgs( interaction, args );
 
-    await warnOnUnassignableVoiceRole( interaction, roleId );
-
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVoiceRole" );
+
+    // After the redraw, never before it: a notice posted first takes the interaction's one reply,
+    // and the redraw then patches the notice instead of the screen - see `UIAdapterBase.ephemeral()`.
+    await warnOnUnassignableVoiceRole( interaction, roleId );
 }
 
 async function onLfmChannelsSelected(
@@ -765,9 +769,11 @@ async function onLfmChannelsSelected(
 
     context.setArgs( interaction, args );
 
-    await warnOnMissingLfmChannelsPermissions( interaction, channelIds );
-
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditLfmChannels" );
+
+    // After the redraw, never before it: a notice posted first takes the interaction's one reply,
+    // and the redraw then patches the notice instead of the screen - see `UIAdapterBase.ephemeral()`.
+    await warnOnMissingLfmChannelsPermissions( interaction, channelIds );
 }
 
 async function onLfmPingRolesSelected(

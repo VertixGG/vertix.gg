@@ -6,7 +6,11 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
+import { ChannelType } from "discord.js";
+
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+
+import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
 import { getBoundHandler } from "@vertix.gg/bot/test/__test_utils__/bound-handler";
 
@@ -233,5 +237,102 @@ describe( "VertixBot/UI-V3/SetupEditAdapter/delete", () => {
         // Discord shows that modal an error - the generator must not vanish behind it.
         expect( deleteDynamicMasterChannelWithCleanup ).not.toHaveBeenCalled();
         expect( editReply ).not.toHaveBeenCalled();
+    } );
+} );
+
+/**
+ * A press is answered once, so the order these two go out in decides which message each one lands
+ * on. Posting the notice first takes that answer, and the redraw then patches the notice instead of
+ * the screen - which on this adapter is a Components V2 container, so discord refuses it outright
+ * (`MESSAGE_CANNOT_USE_LEGACY_FIELDS_WITH_COMPONENTS_V2`) and the admin is left looking at the
+ * notice with no screen to go back to.
+ */
+describe( "VertixBot/UI-V3/SetupEditAdapter/logs channel", () => {
+    beforeAll( async() => {
+        await TestWithServiceLocatorMock.withUIServiceMock();
+
+        ( { SetupEditAdapter } = await import( "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-adapter" ) );
+    } );
+
+    afterEach( () => {
+        jest.restoreAllMocks();
+    } );
+
+    function setupLogChannel( missingPermissions: string[] ) {
+        const order: string[] = [],
+            ephemeral = jest.fn( async() => {
+                order.push( "notice" );
+            } );
+
+        jest.spyOn( ServiceLocator, "$", "get" ).mockReturnValue( {
+            get: () => ( { get: () => ( { ephemeral } ) } )
+        } as never );
+
+        jest.spyOn( MasterChannelDataManager, "$", "get" ).mockReturnValue( {
+            setChannelLogsChannel: async() => {}
+        } as never );
+
+        jest.spyOn( PermissionsManager, "$", "get" ).mockReturnValue( {
+            getMissingChannelPermissionsForBot: () => missingPermissions
+        } as never );
+
+        jest.spyOn( GlobalLogger.$, "admin" ).mockImplementation( () => {} );
+
+        const context = {
+            getArgs: () => ( { ChannelDBId: MASTER_CHANNEL_DB_ID } ),
+            setArgs: () => {},
+            editReplyWithStep: jest.fn( async() => {
+                order.push( "redraw" );
+            } )
+        };
+
+        // A text channel the admin picked, which the bot may or may not be able to post in.
+        const logsChannel = { id: "logs-channel-id", type: ChannelType.GuildText },
+            pick = {
+                values: [ logsChannel.id ],
+                guildId: GUILD_ID,
+                guild: {
+                    id: GUILD_ID,
+                    name: "a server",
+                    memberCount: 3,
+                    channels: { cache: new Map( [ [ logsChannel.id, logsChannel ] ] ) },
+                    client: { user: { username: "VoiceChannels" } }
+                }
+            };
+
+        const onLogChannelSelected = getBoundHandler<typeof context, typeof pick>(
+            SetupEditAdapter,
+            "VertixBot/UI-V3/LogChannelSelectMenu"
+        );
+
+        return { context, pick, onLogChannelSelected, ephemeral, order };
+    }
+
+    it( "should redraw the screen before it warns about the channel", async() => {
+        // Arrange - a logs channel the bot cannot see.
+        const { context, pick, onLogChannelSelected, ephemeral, order } = setupLogChannel( [ "ViewChannel" ] );
+
+        // Act.
+        await onLogChannelSelected( context, pick );
+
+        // Assert - both go out, and the screen first: the notice rides on `followUp()` from there.
+        expect( order ).toEqual( [ "redraw", "notice" ] );
+        expect( context.editReplyWithStep ).toHaveBeenCalledTimes( 1 );
+        expect( ephemeral ).toHaveBeenCalledWith(
+            pick,
+            expect.objectContaining( { missingPermissions: [ "ViewChannel" ] } )
+        );
+    } );
+
+    it( "should say nothing when the bot can post in the channel", async() => {
+        // Arrange.
+        const { context, pick, onLogChannelSelected, ephemeral, order } = setupLogChannel( [] );
+
+        // Act.
+        await onLogChannelSelected( context, pick );
+
+        // Assert.
+        expect( order ).toEqual( [ "redraw" ] );
+        expect( ephemeral ).not.toHaveBeenCalled();
     } );
 } );

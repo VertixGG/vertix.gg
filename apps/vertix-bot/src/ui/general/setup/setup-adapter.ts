@@ -535,11 +535,13 @@ async function onVoiceRoleSelected(
     // and the move ends in the same place whatever order it meets their own joins and leaves in.
     void VoiceRoleManager.$.resyncGuild( interaction.guild, [ previousRoleId ] );
 
+    await context.editReplyWithStep( interaction, SETUP_VOICE_ROLE_STEP );
+
+    // After the redraw, never before it: a notice posted first takes the interaction's one reply,
+    // and the redraw then patches the notice instead of the screen - see `UIAdapterBase.ephemeral()`.
     if ( roleId ) {
         await warnOnUnassignableVoiceRole( interaction, roleId );
     }
-
-    await context.editReplyWithStep( interaction, SETUP_VOICE_ROLE_STEP );
 }
 
 /**

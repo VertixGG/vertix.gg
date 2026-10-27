@@ -773,6 +773,15 @@ export abstract class UIAdapterBase<
          * answered, so take it that way whenever the first answer is spent. It returns the message
          * directly rather than wrapping it in an interaction callback response, so both branches
          * are normalised to the message before the shared handling below.
+         *
+         * Which branch is taken is the caller's to decide, by when it calls: a notice posted here
+         * *before* the screen is redrawn takes the interaction's one reply, and `editReply()` then
+         * patches that reply - the notice - instead of updating the message the press came from. On
+         * an embeds screen that merely overwrites the notice nobody then reads; on a Components V2
+         * container it cannot be done at all, and discord refuses the redraw with
+         * `MESSAGE_CANNOT_USE_LEGACY_FIELDS_WITH_COMPONENTS_V2`, leaving the notice where the screen
+         * should be. So redraw first and post the notice second, which is also the order
+         * `followUp()` is here for.
          */
         const isAlreadyAnswered = interaction.deferred || interaction.replied;
 

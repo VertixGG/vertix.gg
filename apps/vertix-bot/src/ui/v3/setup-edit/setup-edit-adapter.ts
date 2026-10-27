@@ -1370,11 +1370,14 @@ async function onLogChannelSelected(
 
     context.setArgs( interaction, args );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
+
     // The logs channel belongs to the admin, not to the bot, so nothing grants the bot anything
     // there. Say so at the moment of the pick rather than letting logging fail in silence later.
+    //
+    // After the redraw, never before it: a notice posted first takes the interaction's one reply,
+    // and the redraw then patches the notice instead of the screen - see `UIAdapterBase.ephemeral()`.
     await warnOnMissingLogsChannelPermissions( interaction, channelId );
-
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onStaffRolesSelected(
@@ -1524,9 +1527,11 @@ async function onVoiceRoleSelected(
 
     context.setArgs( interaction, args );
 
-    await warnOnUnassignableVoiceRole( interaction, roleId );
-
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVoiceRole" );
+
+    // After the redraw, never before it: a notice posted first takes the interaction's one reply,
+    // and the redraw then patches the notice instead of the screen - see `UIAdapterBase.ephemeral()`.
+    await warnOnUnassignableVoiceRole( interaction, roleId );
 }
 
 async function onVerifiedRolesSelected(

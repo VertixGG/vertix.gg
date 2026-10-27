@@ -62,6 +62,7 @@
         "vertix:gui:typecheck": "cd packages/vertix-gui && bun run vertix-gui:typecheck",
         "vertix:jest": "time ( bun run vertix:api:jest & bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:data:jest & bun run vertix:definitions:jest & bun run vertix:gui:jest & bun run vertix:utils:jest & bun run vertix:watchdog:jest )",
         "vertix:languages:check": "bun run --bun scripts/check-languages.js",
+        "vertix:ui:notice-order:check": "bun run --bun scripts/check-notice-order.js",
         "vertix:logger:dev": "cd packages/vertix-logger && bun run vertix-logger:dev",
         "vertix:logger:start": "cd packages/vertix-logger && bun run vertix-logger:start",
         "vertix:mcp:dev": "cd apps/vertix-mcp && bun run vertix-mcp:start:dev",

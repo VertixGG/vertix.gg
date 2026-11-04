@@ -233,6 +233,46 @@ const PLATFORM = [
     },
 ] as const;
 
+const MORE_WAYS = [
+    {
+        title: "Team Lobby",
+        body: "One voice channel your members gather in. Split it into team rooms or groups, "
+            + "then bring everyone back with one press.",
+        href: "/features/team-lobby",
+        linkText: "See Team Lobby",
+    },
+    {
+        title: "Private rooms",
+        body: "Members lock, hide and cap their own room, with trusted and blocked lists.",
+        href: "/posts/private-voice-channels",
+        linkText: "Make rooms private",
+    },
+    {
+        title: "Numbered rooms",
+        body: "A tidy row of Room-1, Room-2, Room-3 that opens the next room before the last one fills.",
+        href: "/posts/numbered-voice-channels",
+        linkText: "Number your rooms",
+    },
+    {
+        title: "Voice role",
+        body: "Give members a role while they are in a room and take it back when they leave.",
+        href: "/features/voice-role",
+        linkText: "See the voice role",
+    },
+    {
+        title: "Verified roles",
+        body: "Keep rooms to the roles members earn. Everyone else sees neither the generator nor its rooms.",
+        href: "/features/verified-roles",
+        linkText: "See verified roles",
+    },
+    {
+        title: "Channel features",
+        body: "Turn individual controls, such as transfer ownership, on or off for your server.",
+        href: "/posts/enable-features",
+        linkText: "Enable channel features",
+    },
+] as const;
+
 export default function Home() {
     return (
         <>
@@ -350,6 +390,24 @@ export default function Home() {
                                     : {} ) }>
                                 { item.linkText } →
                             </a>
+                        </div>
+                    ) ) }
+                </div>
+            </section>
+
+            { /* --- More ways to run rooms ------------------------------------- */ }
+            <section className="vc-shell vc-band">
+                <h2 className="vc-section-title mb-3">More ways to run your rooms</h2>
+                <p className="vc-lede mb-10">
+                    Set these up when your server needs them.
+                </p>
+
+                <div className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+                    { MORE_WAYS.map( ( item ) => (
+                        <div key={ item.title }>
+                            <h3 className="mb-1 text-h6 font-semibold">{ item.title }</h3>
+                            <p className="mb-2 text-vc-ice-dim">{ item.body }</p>
+                            <a className="text-fine" href={ item.href }>{ item.linkText } →</a>
                         </div>
                     ) ) }
                 </div>

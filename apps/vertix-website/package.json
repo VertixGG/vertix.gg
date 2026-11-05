@@ -23,7 +23,7 @@
         "react-dom": "^18.3.1",
         "react-markdown": "^8.0.7",
         "react-photo-view": "^1.2.7",
-        "react-router-dom": "^7.18.4",
+        "react-router-dom": "^7.18.5",
         "tailwind-merge": "^3.7.0",
         "typescript": "^5.9.3",
         "web-vitals": "^2.1.4"
@@ -31,7 +31,7 @@
     "devDependencies": {
         "@tailwindcss/postcss": "^4.3.3",
         "@vitejs/plugin-react": "^4.7.0",
-        "autoprefixer": "^10.6.1",
+        "autoprefixer": "^10.6.2",
         "postcss": "^8.5.31",
         "puppeteer": "^25.16.0",
         "tailwindcss": "^4.3.3",

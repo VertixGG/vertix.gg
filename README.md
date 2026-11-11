@@ -31,14 +31,15 @@ powered by an **open-source framework** for declaring Discord UIs as state machi
 <details>
 <summary><strong>📑 Table of Contents</strong></summary>
 
-- [Quick Start](#quick-start--run-vertix-locally) — clone, install, run every service locally
-- [Why You Should Build on Vlk](#why-you-should-build-on-vertix-) — the pitch, use cases, comparisons, stack
+- [Quick Start](#quick-start--run-voicechannels-locally) — clone, install, run every service locally
+- [Why You Should Build on VoiceChannels](#why-you-should-build-on-voicechannels-) — the pitch, use cases, comparisons, stack
 - [How it's modeled](#how-its-actually-modeled) — flows, adapters, the round-trip
 - [Core Concepts](#getting-to-know-the-basics) — Master / Dynamic channels
 - [Voice Channel Features](#temporary-voice-channels--v2-features) — V2 + V3
 - [Auto-Scaling Channels](#auto-scaling-channels-) — fleets that grow on demand
 - [Dashboard](#dashboard-) — visual editor + bot management
 - [Project Structure](#project-structure) — the monorepo layout
+- [Showcase](#showcase) — features and guides on [voicechannels.online](https://voicechannels.online)
 - [License](#license)
 
 </details>
@@ -512,6 +513,9 @@ See it in action without installing anything:
 | 🎬 **Live demos & docs** | [voicechannels.online/welcome](https://voicechannels.online/welcome) — every dynamic-channel feature rendered as a real interactive Discord component using `@vertix.gg/discord-ui` |
 | 🧰 **Auto-scaling walkthrough** | [voicechannels.online/features/auto-scaling](https://voicechannels.online/features/auto-scaling) — wizard, configuration, and scaling logic explained step-by-step |
 | 🎛️ **The dashboard** | [dashboard.voicechannels.online](https://dashboard.voicechannels.online) — sign in with Discord and edit master channel UIs with the visual flow editor |
+| 🧩 **Features** | [All features](https://voicechannels.online/features) · [Team Lobby](https://voicechannels.online/features/team-lobby) · [Events](https://voicechannels.online/features/events) · [Voice role](https://voicechannels.online/features/voice-role) · [Verified roles](https://voicechannels.online/features/verified-roles) · [Staff roles](https://voicechannels.online/features/staff-roles) |
+| 📚 **Guides** | [Setup](https://voicechannels.online/posts/how-to-setup) · [Join to create](https://voicechannels.online/posts/join-to-create) · [Private voice channels](https://voicechannels.online/posts/private-voice-channels) · [Numbered voice channels](https://voicechannels.online/posts/numbered-voice-channels) · [Channel name placeholders](https://voicechannels.online/posts/channel-name-placeholders) · [Event check-in](https://voicechannels.online/posts/event-check-in) · [Event attendance](https://voicechannels.online/posts/event-attendance) · [Comparison with other bots](https://voicechannels.online/posts/comparison) |
+| 💳 **Pricing** | [voicechannels.online/pricing](https://voicechannels.online/pricing) — free, with an optional Pro plan |
 | 📜 **Changelog** | [voicechannels.online/changelog](https://voicechannels.online/changelog) — what shipped recently and what's next |
 
 ---

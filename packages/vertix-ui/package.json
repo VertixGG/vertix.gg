@@ -9,7 +9,7 @@
     "dependencies": {
         "react": "latest",
         "tailwind-merge": "^3.7.0",
-        "tailwindcss": "^4.1.17",
+        "tailwindcss": "^4.3.5",
         "tailwindcss-animate": "^1.0.7"
     },
     "devDependencies": {
